@@ -10,3 +10,4 @@ data/
 # Outputs
 data_out/
 *.html
+.Rproj.user
