@@ -1,0 +1,12 @@
+# RStudio files
+.RData
+.Rhistory
+.Rproj.user*
+*.Rproj
+
+# Folders
+data/
+
+# Outputs
+data_out/
+*.html

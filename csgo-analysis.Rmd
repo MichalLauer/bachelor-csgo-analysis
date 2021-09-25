@@ -1,0 +1,120 @@
+---
+title: "Analýza esportových dat"
+author: "Michal Lauer"
+date: "Bakalářská práce"
+output:
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    df_print: paged
+  theme: paper
+  highlight: pygments
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE,
+                      fig.align = "center", fig.width = 9)
+set.seed(12345)
+count_na <- \(tbl){
+  tbl %>%
+    summarise_all(is.na) %>%
+    summarise_all(sum) %>%
+    pivot_longer(cols = everything(),
+                 names_to = "column_name",
+                 values_to = "count_of_NAs") %>%
+    mutate(percent_ratio = count_of_NAs/nrow(tbl)*100) %>%
+    filter(count_of_NAs != 0)
+}
+
+```
+# Úvod
+Tento report se zabývá deskriptivní a inferenční analýzou dat. Dataset, který se dá získat na portálu
+[kaggle.com](https://www.kaggle.com/mateusdmachado/csgo-professional-matches), obsahuje 4 csv soubory
+
+- *players.csv* -> obsahuje statistiky hráčů v zápasech. Dataset je použit pro **deskriptivní analýzu**
+- *economy.csv* -> zde se nachází stav financí každého teamu v jednotlivém kole každého zápasu. Toto lze využít pro **inferenční analýzu**
+- *picks.csv* -> v tomto souboru jsou vybrané mapy každého teamu v jejich zápasech. Tento soubor lze použít k **inferenční analýze** map, které si team nejspíše vybere proti oponentu
+- *results.csv* -> díky tomuto souboru, který obsahuje výsledky zápasu, můžeme simulovat utkání jednotlivých teamů a určit, který team má větší šanci vyhrát. Toto je část **inferenční analýzy**
+
+
+Každý soubor má vlastní sekci, která se skládá z několika částí
+
+1) *porozumnění datasetu*
+2) *nahrání, očištění a transformace dat*
+3) *daná analýza*
+4) *závěr*
+
+# Statistiky hráčů
+Díky souboru *players.csv* můžeme získat statistiky hráčů. Ty lze dále použít k popisu hráču,
+statistik dle různých kategorií, porovnání hráčů či nalezení nejlepších/nejhorších jedinců.
+
+## Porozumnění datasetu
+
+## Nahrání dat
+Data narhajeme, vybere pouze sloupce, které se nám k analýze hodí a nastavíme jim správné datové typy.
+```{r players-load}
+library(tidyverse)
+players <- read_csv("data/players.csv",
+                    col_select = c("date", "player_name", "team", "opponent", "country",
+                                   "player_id", "match_id",
+                                   "event_name", "best_of", "map_1", "map_2", "map_3",
+                                   "kills", "assists", "deaths", "hs",
+                                   "m1_kills", "m1_assists", "m1_deaths","m1_hs",
+                                   "m2_kills", "m2_assists", "m2_deaths","m2_hs",
+                                   "m3_kills", "m3_assists", "m3_deaths","m3_hs"),
+                    col_types = list(
+                      date = col_date(),
+                      player_name = col_factor(),
+                      team = col_factor(),
+                      opponent = col_factor(),
+                      country = col_factor(),
+                      player_id = col_factor(),
+                      match_id = col_factor(),
+                      event_name = col_factor(),
+                      best_of = col_factor(levels = c("1","2","3","5"),
+                                           ordered = T),
+                      map_1 = col_factor(),
+                      map_2 = col_factor(),
+                      map_3 = col_factor()
+                    )
+) %>%
+  mutate(
+    across(.cols = everything(), .fns = na_if, y = "")
+    )
+
+attr(players, "spec") <- NULL
+
+players %>% 
+  sample_n(10) %>%
+  str
+
+```
+
+## Očištění dat
+Data je načase očistit. Prve zjistíme, kde se nachází NA hodnoty.
+```{r players-null-analysis}
+count_na(players)
+```
+NA, neboly chybějící hodnoty v prvním sloupci jsou problém. Pokud nemáme jméno hráče, data nám moc užitečná nebudou - záznam proto smažeme. Zbývající proměnné problém nejsou. Ne každý zápas měl druhou či třetí mapu. Pokud třetí mapu neměl, data z daných map nebudou existovat.
+```{r player-cleanup}
+players <- players  %>%
+  filter(!is.na(player_name))
+```
+
+## Transformace dat
+Data jsou již očištěna a zkontrolována. Nyní přídamě dvě proměnné - rok a měsíc daného zápasu. Tvorba je velmi jednoduchá, jelikož sloupce jdou lehce odvodit z proměnné *date*.
+```{r players-transform}
+players <- players %>%
+  mutate(year = format(date, "%Y"),
+         month = format(date, "%B")) %>%
+  mutate(player_name = fct_relevel(player_name, sort))
+
+players %>%
+  select(date, player_name, month, year) %>%
+  sample_n(10)
+```
+
+## Statistiky hráčů
+  
