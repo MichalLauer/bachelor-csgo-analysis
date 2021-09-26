@@ -51,6 +51,8 @@ Díky souboru *players.csv* můžeme získat statistiky hráčů. Ty lze dále p
 statistik dle různých kategorií, porovnání hráčů či nalezení nejlepších/nejhorších jedinců.
 
 ## Porozumnění datasetu
+Dataset obsahuje záznamy o zápasech a hráčích. Každý záznam se rovná právě jednomu hráči. Zápasy můžeme spojit díky proměnné *match_id*. Každý hráč je dále identifikován svým id *(player_id)* a jménem *(player_name)*. Dále se nám hodí team, za který hráč hraje *(team)*, oponent v daném zápase *(opponent)*, jménu turnaje *(event_name)* a země, ze které daný hráč je *(country)*. O zápase známejeho typ *(best_of)* a názvy map *(map_1, map_2, map_3)*.
+  Jednotlivé statistiky hráče obsahují počet zabití v celém zápase *(kills)*, počet asistencí v zápase *(assists)*, počet smrtí v zápase *(deaths)* a počet tzn. headshotů v zápase - usmrcení nepřátelského hráče do hlavy *(hs)*. Pokud zápas obsahoval více map, jsou dle toho statistiky dále rozděleny.
 
 ## Nahrání dat
 Data narhajeme, vybere pouze sloupce, které se nám k analýze hodí a nastavíme jim správné datové typy.
@@ -104,17 +106,104 @@ players <- players  %>%
 ```
 
 ## Transformace dat
-Data jsou již očištěna a zkontrolována. Nyní přídamě dvě proměnné - rok a měsíc daného zápasu. Tvorba je velmi jednoduchá, jelikož sloupce jdou lehce odvodit z proměnné *date*.
+Data jsou již očištěna a zkontrolována. Nyní přídamě dvě proměnné - rok a měsíc daného zápasu. Tvorba je velmi jednoduchá, jelikož sloupce jdou lehce odvodit z proměnné *date*. Dále přidáme kontinent, který lehce získáme z package *countrycode*. V případě, že je kontinent *NA*, záznam odstraníme. Jedná se pouze o 15 záznamu, což analýzu nijak zvláštně neovlivní.
 ```{r players-transform}
+library(countrycode)
 players <- players %>%
+  filter(country != "Other") %>%
   mutate(year = format(date, "%Y"),
-         month = format(date, "%B")) %>%
-  mutate(player_name = fct_relevel(player_name, sort))
+         month = format(date, "%B"),
+         player_name = fct_relevel(player_name, sort),
+         continent = countrycode(country, "country.name", "continent")
+         )
 
 players %>%
-  select(date, player_name, month, year) %>%
+  select(date, player_name, month, year, continent) %>%
   sample_n(10)
 ```
 
-## Statistiky hráčů
-  
+## Popis dat
+... DOPSAT
+
+### Statistiky dle země
+... DOPSAT, 
+```{r players-avg-matches-per-player}
+library(ggplot2)
+players.cnt_per_cont_year <- players %>%
+  group_by(continent, year) %>%
+  summarise(player_count = n_distinct(player_id),
+            match_count = n_distinct(match_id),
+            ratio = round(match_count*10 / player_count, 2)) %>%
+  filter(year != 2015, year != 2020)
+
+ggplot(players.cnt_per_cont_year, aes(x = continent, y = ratio,
+                                      fill = year)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = ratio, hjust = -0.2), angle = 90, 
+            position = position_dodge(width = 0.9)) +
+  theme_bw() + 
+  scale_y_continuous(limits = c(0, 60),
+                     expand = c(0,0)) +
+  ggtitle("Average number of matches per player per year") +
+  ylab("Ratio of matches vs. players") + 
+  xlab("Continent")
+```
+test....
+```{r players-match-player-count}
+players.cnt_per_cont_year_longer <- players.cnt_per_cont_year %>%
+  select(-ratio) %>%
+  pivot_longer(-c(continent, year), names_to = "stat", values_to = "value")
+
+
+
+ggplot(players.cnt_per_cont_year_longer, aes(x = continent, y = value,
+                                             fill = year)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_grid(rows = vars(stat), scales = "free") + 
+  scale_y_continuous(expand = expansion(mult = c(0, .4))) +
+  geom_text(aes(label = value, hjust = -0.2),
+            angle = 90,
+            position = position_dodge(width = 0.9)) +
+  theme_bw() +
+  ggtitle("Number of players or matches per year per continent") +
+  xlab("Continent") +
+  theme(axis.title.y = element_blank(),
+        legend.position = "bottom") +
+  guides(fill = guide_legend(nrow = 1))
+```
+test....
+```{r players-match-player-growth}
+players.gth_per_cont_year_longer <- players.cnt_per_cont_year %>%
+  select(-ratio) %>%
+  filter(year != 2015) %>%
+  mutate(player_growth = round(
+    (player_count - lag(player_count))/lag(player_count) * 100,
+    2),
+    match_growth = round(
+    (match_count - lag(match_count))/lag(match_count) * 100,
+    2)
+  ) %>%
+  select(!ends_with("_count")) %>%
+  pivot_longer(-c(continent, year), names_to = "stat", values_to = "value") %>%
+  mutate(value = ifelse(is.na(value), 100, value))
+
+
+
+ggplot(players.gth_per_cont_year_longer, aes(x = year, y = value,
+                                             color = continent, group = continent)) +
+  geom_point() +
+  geom_line() +
+  facet_grid(cols = vars(stat), scales = "free") +
+  theme_bw() +
+  ggtitle("Number of players or matches per year per continent") +
+  xlab("Continent") +
+  theme(axis.title.y = element_blank(),
+        legend.position = "bottom") +
+  guides(fill = guide_legend(nrow = 1))
+```
+
+
+
+
+
+
