@@ -99,14 +99,14 @@ Data je načase očistit. Prve zjistíme, kde se nachází NA hodnoty.
 ```{r players-null-analysis}
 count_na(players)
 ```
-NA, neboly chybějící hodnoty v prvním sloupci jsou problém. Pokud nemáme jméno hráče, data nám moc užitečná nebudou - záznam proto smažeme. Zbývající proměnné problém nejsou. Ne každý zápas měl druhou či třetí mapu. Pokud třetí mapu neměl, data z daných map nebudou existovat.
+NA v prvním sloupci jsou problém. Pokud nemáme jméno hráče, data nám moc užitečná nebudou - záznam proto smažeme. Zbývající proměnné problém nejsou. Ne každý zápas měl druhou či třetí mapu. Pokud třetí mapu neměl, data z ní nebudou existovat.
 ```{r player-cleanup}
 players <- players  %>%
   filter(!is.na(player_name))
 ```
 
 ## Transformace dat
-Data jsou již očištěna a zkontrolována. Nyní přídamě dvě proměnné - rok a měsíc daného zápasu. Tvorba je velmi jednoduchá, jelikož sloupce jdou lehce odvodit z proměnné *date*. Dále přidáme kontinent, který lehce získáme z package *countrycode*. V případě, že je kontinent *NA*, záznam odstraníme. Jedná se pouze o 15 záznamu, což analýzu nijak zvláštně neovlivní.
+Data jsou již očištěna a zkontrolována. Nyní přídamě několik proměnných. Začneme rokmen a měsícem daného zápasu. Tvorba je velmi jednoduchá, jelikož sloupce jdou lehce odvodit z proměnné *date*. Dále přidáme kontinent, který reprezentuje původ hráče. Tohoto jde lehce docílit pomocí package *countrycode*. V případě, že je kontinent *NA*, záznam odstraníme. Jedná se pouze o 15 záznamu, což analýzu nijak zvláštně neovlivní.
 ```{r players-transform}
 library(countrycode)
 players <- players %>%
@@ -122,85 +122,56 @@ players %>%
   sample_n(10)
 ```
 
-## Popis dat
-... DOPSAT
+## Deskriptivní popis dat
+Prve se podíváme na rozpětí čtyř sledovaných statistik.
+```{r players-stats-boxplot}
+players.range <- players %>%
+  select(m1_kills:m3_hs) %>%
+  pivot_longer(everything(), names_to = "stat", values_to = "value") %>%
+  mutate(map = paste0("Map ", substring(stat, 2, 2)),
+         stat = substring(stat, 4, length(stat))) %>%
+  filter(!is.na(value))
 
+ggplot(players.range, aes(y = value)) +
+  geom_boxplot() +
+  facet_grid(rows = vars(stat), cols = vars(map), 
+             scales = "free_y") +
+  theme_bw() +
+  scale_y_continuous(expand = c(0,0))
+```
+Díky boxplotům můžeme vidět, že medián a mezikvartilové rozpětí všech statistik je pro všechny tři mapy podobné. Podívejme ještě se na histogram, jak jsou data rozprostřena
+```{r players-stats-histogram}
+players.hist_stats <- players.range %>%
+  group_by(map, stat) %>%
+  summarise(mean = mean(value),
+            sd = sd(value),
+            median = median(value))
+  
+players.hist <- players.range %>%
+  distinct() %>%
+  left_join(players.hist_stats, by = c("map", "stat"))  %>%
+  mutate(dens = dnorm(value, mean, sd)) %>%
+  select(!sd)
+
+ggplot(players.hist, aes(x = value, y = dens, color = stat)) + 
+  geom_line() +  
+  geom_text(aes(x = 30, y = 0.2, 
+                label = paste("mean: ", round(mean, 2)),
+                vjust = "top", hjust = "left",
+                color = "#fff")) +
+  geom_text(aes(x = 30, y = 0.2, 
+                label = paste("median: ", median),
+                vjust = 2.4, hjust = "left",
+                color = "#fff")) +
+  facet_grid(rows = vars(stat), cols = vars(map), 
+             scales = "free") +
+  scale_y_continuous(expand = c(0,0)) + 
+  theme_bw() +
+  theme(legend.position = "none")
+
+```
 ### Statistiky dle země
-... DOPSAT, 
-```{r players-avg-matches-per-player}
-library(ggplot2)
-players.cnt_per_cont_year <- players %>%
-  group_by(continent, year) %>%
-  summarise(player_count = n_distinct(player_id),
-            match_count = n_distinct(match_id),
-            ratio = round(match_count*10 / player_count, 2)) %>%
-  filter(year != 2015, year != 2020)
-
-ggplot(players.cnt_per_cont_year, aes(x = continent, y = ratio,
-                                      fill = year)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  geom_text(aes(label = ratio, hjust = -0.2), angle = 90, 
-            position = position_dodge(width = 0.9)) +
-  theme_bw() + 
-  scale_y_continuous(limits = c(0, 60),
-                     expand = c(0,0)) +
-  ggtitle("Average number of matches per player per year") +
-  ylab("Ratio of matches vs. players") + 
-  xlab("Continent")
-```
-test....
-```{r players-match-player-count}
-players.cnt_per_cont_year_longer <- players.cnt_per_cont_year %>%
-  select(-ratio) %>%
-  pivot_longer(-c(continent, year), names_to = "stat", values_to = "value")
-
-
-
-ggplot(players.cnt_per_cont_year_longer, aes(x = continent, y = value,
-                                             fill = year)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  facet_grid(rows = vars(stat), scales = "free") + 
-  scale_y_continuous(expand = expansion(mult = c(0, .4))) +
-  geom_text(aes(label = value, hjust = -0.2),
-            angle = 90,
-            position = position_dodge(width = 0.9)) +
-  theme_bw() +
-  ggtitle("Number of players or matches per year per continent") +
-  xlab("Continent") +
-  theme(axis.title.y = element_blank(),
-        legend.position = "bottom") +
-  guides(fill = guide_legend(nrow = 1))
-```
-test....
-```{r players-match-player-growth}
-players.gth_per_cont_year_longer <- players.cnt_per_cont_year %>%
-  select(-ratio) %>%
-  filter(year != 2015) %>%
-  mutate(player_growth = round(
-    (player_count - lag(player_count))/lag(player_count) * 100,
-    2),
-    match_growth = round(
-    (match_count - lag(match_count))/lag(match_count) * 100,
-    2)
-  ) %>%
-  select(!ends_with("_count")) %>%
-  pivot_longer(-c(continent, year), names_to = "stat", values_to = "value") %>%
-  mutate(value = ifelse(is.na(value), 100, value))
-
-
-
-ggplot(players.gth_per_cont_year_longer, aes(x = year, y = value,
-                                             color = continent, group = continent)) +
-  geom_point() +
-  geom_line() +
-  facet_grid(cols = vars(stat), scales = "free") +
-  theme_bw() +
-  ggtitle("Number of players or matches per year per continent") +
-  xlab("Continent") +
-  theme(axis.title.y = element_blank(),
-        legend.position = "bottom") +
-  guides(fill = guide_legend(nrow = 1))
-```
+... DOPSAT
 
 
 
