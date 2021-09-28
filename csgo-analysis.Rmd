@@ -125,56 +125,107 @@ players %>%
 ## Deskriptivní popis dat
 Prve se podíváme na rozpětí čtyř sledovaných statistik.
 ```{r players-stats-boxplot}
-players.range <- players %>%
+players.stats_per_map_num <- players %>%
   select(m1_kills:m3_hs) %>%
   pivot_longer(everything(), names_to = "stat", values_to = "value") %>%
   mutate(map = paste0("Map ", substring(stat, 2, 2)),
          stat = substring(stat, 4, length(stat))) %>%
   filter(!is.na(value))
 
-ggplot(players.range, aes(y = value)) +
+ggplot(players.stats_per_map_num, aes(y = value)) +
   geom_boxplot() +
   facet_grid(rows = vars(stat), cols = vars(map), 
              scales = "free_y") +
   theme_bw() +
   scale_y_continuous(expand = c(0,0))
 ```
-Díky boxplotům můžeme vidět, že medián a mezikvartilové rozpětí všech statistik je pro všechny tři mapy podobné. Podívejme ještě se na histogram, jak jsou data rozprostřena
+Díky boxplotům můžeme vidět, že medián a mezikvartilové rozpětí všech statistik je pro všechny tři mapy podobné. Podívejme se ještě na normalizovanou distribuci dat
 ```{r players-stats-histogram}
-players.hist_stats <- players.range %>%
+players.hist_stats <- players.stats_per_map_num %>%
   group_by(map, stat) %>%
   summarise(mean = mean(value),
             sd = sd(value),
             median = median(value))
   
-players.hist <- players.range %>%
+players.hist <- players.stats_per_map_num %>%
   distinct() %>%
   left_join(players.hist_stats, by = c("map", "stat"))  %>%
-  mutate(dens = dnorm(value, mean, sd)) %>%
-  select(!sd)
+  mutate(dens = dnorm(value, mean, sd))
 
 ggplot(players.hist, aes(x = value, y = dens, color = stat)) + 
   geom_line() +  
-  geom_text(aes(x = 30, y = 0.2, 
-                label = paste("mean: ", round(mean, 2)),
+  geom_text(aes(x = 20, y = 0.2, 
+                label = paste("Průměr: ", round(mean, 2)),
                 vjust = "top", hjust = "left",
                 color = "#fff")) +
-  geom_text(aes(x = 30, y = 0.2, 
-                label = paste("median: ", median),
+  geom_text(aes(x = 20, y = 0.2, 
+                label = paste("Medián: ", round(median, 2)),
                 vjust = 2.4, hjust = "left",
+                color = "#fff")) +
+  geom_text(aes(x = 20, y = 0.2, 
+                label = paste("Rozptyl: ", round(sd^2, 2)),
+                vjust = 3.8, hjust = "left",
                 color = "#fff")) +
   facet_grid(rows = vars(stat), cols = vars(map), 
              scales = "free") +
   scale_y_continuous(expand = c(0,0)) + 
+  scale_x_continuous(breaks = seq(0, 55, by = 5),
+                     limits = c(0, 40))+
   theme_bw() +
   theme(legend.position = "none")
 
 ```
-### Statistiky dle země
-... DOPSAT
+Z grafů si můžeme všimnout, že mapy na průměrný výkon hráčů nemají veliký vliv. Malý rozptyl značí, že se hodnoty pohybují blízko mediánu *(proměnná assists*). Pokud je rozptyl větší, hodnoty jsou více rozprostřené *(nejvíce u proměnné kills)*.
+
+Jelikož proměnná *kills* má největší rozptyl, podíváme se ještě na její rozbor dle různých map. Pro tuto analýzu odstraníme mapu s názvem "Default" - jedná se o specální výběr, pod kterým se skrývá jiná mapa, která bohužel v datasetu chybí.
+```{r players-stats-histogram-per-map}
+get_map_stats <- \(data, i) {
+  players %>%
+    select(matches(as.character(i))) %>%
+    rename(map = 1, kills = 2, assists = 3, deaths = 4, hs = 5) %>%
+    filter(map != "Default", !is.na(map)) %>%
+    pivot_longer(!map, names_to = "stat", values_to = "value") %>%
+    filter(!is.na(value))
+}
+
+players.stats_per_map_name <- get_map_stats(players, 1) %>%
+  rbind(get_map_stats(players, 2)) %>%
+   rbind(get_map_stats(players, 3))
 
 
+ggplot(players.stats_per_map_name, aes(x = map, y = value,
+                                       color = map)) + 
+  geom_boxplot() +  
+  facet_grid(rows = vars(stat), 
+             scales = "free") +
+  scale_y_continuous(expand = c(0,0)) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+Vidíme, že v datech máme mnoho outliers. Pro lepší zobrazení bude dobré se podívat na data, kde tyto outliers vyloučíme.
+```{r players-stats-histogram-per-map-no-outliers}
+players.stats_per_map_outliers <- players.stats_per_map_name %>%
+  group_by(map, stat) %>%
+  summarise(IQR = IQR(value, type = 2),
+            upper_limit = quantile(value, 0.75) + IQR * 1.5,
+            lower_limit = quantile(value, 0.25) - IQR * 1.5) %>%
+  select(!IQR)
 
+players.stats_per_map_name_no_out <- players.stats_per_map_name %>%
+  left_join(players.stats_per_map_outliers, by = c("map", "stat")) %>%
+  filter(value <= upper_limit, value >= lower_limit) %>%
+  select(!upper_limit)
+
+ggplot(players.stats_per_map_name_no_out, aes(x = map, y = value,
+                                       color = map)) + 
+  geom_boxplot() +  
+  facet_grid(rows = vars(stat), 
+             scales = "free") +
+  scale_y_continuous(expand = c(0,0)) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+Můžeme znovu vidět, že statistiky se mezi mapami nijak výrazně neliší. 
 
 
 
