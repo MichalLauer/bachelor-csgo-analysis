@@ -1,12 +1,7 @@
-%% Verze pro jednostranný tisk:
-%\documentclass[11pt,a4paper]{report}
-%\usepackage[top=25mm,bottom=25mm,right=25mm,left=30mm,head=12.5mm,foot=12.5mm]{geometry}
-%\let\openright=\clearpage
-
-%% Pokud tiskneme oboustranně:
-\documentclass[11pt,a4paper,twoside,openright]{report}
+% Verze pro jednostranný tisk:
+\documentclass[11pt,a4paper]{report}
 \usepackage[top=25mm,bottom=25mm,right=25mm,left=30mm,head=12.5mm,foot=12.5mm]{geometry}
-\let\openright=\cleardoublepage
+\let\openright=\clearpage
 
 %% Definice různých užitečných maker (viz popis uvnitř souboru)
 \input{makra}
@@ -16,31 +11,25 @@
 \def\NazevPrace{Název práce}
 
 % Typ práce
-\def\TypPrace{BAKALÁŘSKÁ PRÁCE}
+\def\TypPrace{Modely logistické regrese v oblasti esportových dat}
 %\def\TypPrace{DIPLOMOVÁ PRÁCE}
 
 
 % Jméno autora
-\def\AutorPrace{Jméno Příjmení}
+\def\AutorPrace{Michal Lauer}
 
 % Rok odevzdání. měsíc (slovně)
-\def\DatumOdevzdani{měsíc RRRR}
+\def\DatumOdevzdani{Duben 2022}
 
 % Vedoucí práce: Jméno a příjmení s~tituly
-\def\Vedouci{Vedoucí práce}
+\def\Vedouci{Ing. Zdeněk Šulc, Ph.D.}
 
 % Studijní program a obor
-\def\StudijniProgram{studijní program}
-\def\StudijniObor{studijní obor}
+\def\StudijniProgram{Aplikovaná informatika}
+\def\StudijniObor{Aplikovaná informatika}
 
-% Text čestného prohlášení pro MUŽE pro bakalářskou prácí
+% Text čestného prohlášení pro MUŽE pro bakalářskou práci
 \def\Prohlaseni{Prohlašuji, že jsem bakalářskou práci \textit{\NazevPrace} vypracoval samostatně za použití v práci uvedených pramenů a literatury.}
-% Text čestného prohlášení pro MUŽE pro diplomovou prácí
-%\def\Prohlaseni{Prohlašuji, že jsem diplomovou práci \textit{\NazevPrace} vypracoval samostatně za použití v práci uvedených pramenů a literatury.}
-% Text čestného prohlášení pro ŽENY pro bakalářskou prácí
-%\def\Prohlaseni{Prohlašuji, že jsem bakalářskou práci \textit{\NazevPrace} vypracovala samostatně za použití v práci uvedených pramenů a literatury.}
-% Text čestného prohlášení pro ŽENY pro diplomovou prácí
-%\def\Prohlaseni{Prohlašuji, že jsem diplomovou práci \textit{\NazevPrace} vypracovala samostatně za použití v práci uvedených pramenů a literatury.}
 
 % Nepovinné poděkování (vedoucímu práce, konzultantovi, tomu, kdo
 % zapůjčil software, literaturu apod.)
