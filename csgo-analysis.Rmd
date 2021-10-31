@@ -12,6 +12,8 @@ output:
     df_print: paged
   theme: paper
   highlight: pygments
+editor_options: 
+  chunk_output_type: inline
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE,
@@ -29,203 +31,21 @@ count_na <- \(tbl){
 }
 
 ```
-# Úvod
-Tento report se zabývá deskriptivní a inferenční analýzou dat. Dataset, který se dá získat na portálu
-[kaggle.com](https://www.kaggle.com/mateusdmachado/csgo-professional-matches), obsahuje 4 csv soubory
+```{r data-merge}
+library(readr)
+economy <- read_csv("data/economy.csv",
+                    col_select = c("match_id", "event_id"))
 
-- *players.csv* -> obsahuje statistiky hráčů v zápasech. Dataset je použit pro **deskriptivní analýzu**
-- *economy.csv* -> zde se nachází stav financí každého teamu v jednotlivém kole každého zápasu. Toto lze využít pro **inferenční analýzu**
-- *picks.csv* -> v tomto souboru jsou vybrané mapy každého teamu v jejich zápasech. Tento soubor lze použít k **inferenční analýze** map, které si team nejspíše vybere proti oponentu
-- *results.csv* -> díky tomuto souboru, který obsahuje výsledky zápasu, můžeme simulovat utkání jednotlivých teamů a určit, který team má větší šanci vyhrát. Toto je část **inferenční analýzy**
-
-
-Každý soubor má vlastní sekci, která se skládá z několika částí
-
-1) *porozumnění datasetu*
-2) *nahrání, očištění a transformace dat*
-3) *daná analýza*
-4) *závěr*
-
-# Statistiky hráčů
-Díky souboru *players.csv* můžeme získat statistiky hráčů. Ty lze dále použít k popisu hráču,
-statistik dle různých kategorií, porovnání hráčů či nalezení nejlepších/nejhorších jedinců.
-
-## Porozumnění datasetu
-Dataset obsahuje záznamy o zápasech a hráčích. Každý záznam se rovná právě jednomu hráči. Zápasy můžeme spojit díky proměnné *match_id*. Každý hráč je dále identifikován svým id *(player_id)* a jménem *(player_name)*. Dále se nám hodí team, za který hráč hraje *(team)*, oponent v daném zápase *(opponent)*, jménu turnaje *(event_name)* a země, ze které daný hráč je *(country)*. O zápase známejeho typ *(best_of)* a názvy map *(map_1, map_2, map_3)*.
-  Jednotlivé statistiky hráče obsahují počet zabití v celém zápase *(kills)*, počet asistencí v zápase *(assists)*, počet smrtí v zápase *(deaths)* a počet tzn. headshotů v zápase - usmrcení nepřátelského hráče do hlavy *(hs)*. Pokud zápas obsahoval více map, jsou dle toho statistiky dále rozděleny.
-
-## Nahrání dat
-Data narhajeme, vybere pouze sloupce, které se nám k analýze hodí a nastavíme jim správné datové typy.
-```{r players-load}
-library(tidyverse)
 players <- read_csv("data/players.csv",
-                    col_select = c("date", "player_name", "team", "opponent", "country",
-                                   "player_id", "match_id",
-                                   "event_name", "best_of", "map_1", "map_2", "map_3",
-                                   "kills", "assists", "deaths", "hs",
-                                   "m1_kills", "m1_assists", "m1_deaths","m1_hs",
-                                   "m2_kills", "m2_assists", "m2_deaths","m2_hs",
-                                   "m3_kills", "m3_assists", "m3_deaths","m3_hs"),
-                    col_types = list(
-                      date = col_date(),
-                      player_name = col_factor(),
-                      team = col_factor(),
-                      opponent = col_factor(),
-                      country = col_factor(),
-                      player_id = col_factor(),
-                      match_id = col_factor(),
-                      event_name = col_factor(),
-                      best_of = col_factor(levels = c("1","2","3","5"),
-                                           ordered = T),
-                      map_1 = col_factor(),
-                      map_2 = col_factor(),
-                      map_3 = col_factor()
-                    )
-) %>%
-  mutate(
-    across(.cols = everything(), .fns = na_if, y = "")
-    )
+                    col_select = c(""))
 
-attr(players, "spec") <- NULL
+picks <- read_csv("data/picks.csv")
 
-players %>% 
-  sample_n(10) %>%
-  str
+results <- read_csv("data/results.csv")
+
+
+
+str(players)
+
 
 ```
-
-## Očištění dat
-Data je načase očistit. Prve zjistíme, kde se nachází NA hodnoty.
-```{r players-null-analysis}
-count_na(players)
-```
-NA v prvním sloupci jsou problém. Pokud nemáme jméno hráče, data nám moc užitečná nebudou - záznam proto smažeme. Zbývající proměnné problém nejsou. Ne každý zápas měl druhou či třetí mapu. Pokud třetí mapu neměl, data z ní nebudou existovat.
-```{r player-cleanup}
-players <- players  %>%
-  filter(!is.na(player_name))
-```
-
-## Transformace dat
-Data jsou již očištěna a zkontrolována. Nyní přídamě několik proměnných. Začneme rokmen a měsícem daného zápasu. Tvorba je velmi jednoduchá, jelikož sloupce jdou lehce odvodit z proměnné *date*. Dále přidáme kontinent, který reprezentuje původ hráče. Tohoto jde lehce docílit pomocí package *countrycode*. V případě, že je kontinent *NA*, záznam odstraníme. Jedná se pouze o 15 záznamu, což analýzu nijak zvláštně neovlivní.
-```{r players-transform}
-library(countrycode)
-players <- players %>%
-  filter(country != "Other") %>%
-  mutate(year = format(date, "%Y"),
-         month = format(date, "%B"),
-         player_name = fct_relevel(player_name, sort),
-         continent = countrycode(country, "country.name", "continent")
-         )
-
-players %>%
-  select(date, player_name, month, year, continent) %>%
-  sample_n(10)
-```
-
-## Deskriptivní popis dat
-Prve se podíváme na rozpětí čtyř sledovaných statistik.
-```{r players-stats-boxplot}
-players.stats_per_map_num <- players %>%
-  select(m1_kills:m3_hs) %>%
-  pivot_longer(everything(), names_to = "stat", values_to = "value") %>%
-  mutate(map = paste0("Map ", substring(stat, 2, 2)),
-         stat = substring(stat, 4, length(stat))) %>%
-  filter(!is.na(value))
-
-ggplot(players.stats_per_map_num, aes(y = value)) +
-  geom_boxplot() +
-  facet_grid(rows = vars(stat), cols = vars(map), 
-             scales = "free_y") +
-  theme_bw() +
-  scale_y_continuous(expand = c(0,0))
-```
-Díky boxplotům můžeme vidět, že medián a mezikvartilové rozpětí všech statistik je pro všechny tři mapy podobné. Podívejme se ještě na normalizovanou distribuci dat
-```{r players-stats-histogram}
-players.hist_stats <- players.stats_per_map_num %>%
-  group_by(map, stat) %>%
-  summarise(mean = mean(value),
-            sd = sd(value),
-            median = median(value))
-  
-players.hist <- players.stats_per_map_num %>%
-  distinct() %>%
-  left_join(players.hist_stats, by = c("map", "stat"))  %>%
-  mutate(dens = dnorm(value, mean, sd))
-
-ggplot(players.hist, aes(x = value, y = dens, color = stat)) + 
-  geom_line() +  
-  geom_text(aes(x = 20, y = 0.2, 
-                label = paste("Průměr: ", round(mean, 2)),
-                vjust = "top", hjust = "left",
-                color = "#fff")) +
-  geom_text(aes(x = 20, y = 0.2, 
-                label = paste("Medián: ", round(median, 2)),
-                vjust = 2.4, hjust = "left",
-                color = "#fff")) +
-  geom_text(aes(x = 20, y = 0.2, 
-                label = paste("Rozptyl: ", round(sd^2, 2)),
-                vjust = 3.8, hjust = "left",
-                color = "#fff")) +
-  facet_grid(rows = vars(stat), cols = vars(map), 
-             scales = "free") +
-  scale_y_continuous(expand = c(0,0)) + 
-  scale_x_continuous(breaks = seq(0, 55, by = 5),
-                     limits = c(0, 40))+
-  theme_bw() +
-  theme(legend.position = "none")
-
-```
-Z grafů si můžeme všimnout, že mapy na průměrný výkon hráčů nemají veliký vliv. Malý rozptyl značí, že se hodnoty pohybují blízko mediánu *(proměnná assists*). Pokud je rozptyl větší, hodnoty jsou více rozprostřené *(nejvíce u proměnné kills)*.
-
-Jelikož proměnná *kills* má největší rozptyl, podíváme se ještě na její rozbor dle různých map. Pro tuto analýzu odstraníme mapu s názvem "Default" - jedná se o specální výběr, pod kterým se skrývá jiná mapa, která bohužel v datasetu chybí.
-```{r players-stats-histogram-per-map}
-get_map_stats <- \(data, i) {
-  players %>%
-    select(matches(as.character(i))) %>%
-    rename(map = 1, kills = 2, assists = 3, deaths = 4, hs = 5) %>%
-    filter(map != "Default", !is.na(map)) %>%
-    pivot_longer(!map, names_to = "stat", values_to = "value") %>%
-    filter(!is.na(value))
-}
-
-players.stats_per_map_name <- get_map_stats(players, 1) %>%
-  rbind(get_map_stats(players, 2)) %>%
-   rbind(get_map_stats(players, 3))
-
-
-ggplot(players.stats_per_map_name, aes(x = map, y = value,
-                                       color = map)) + 
-  geom_boxplot() +  
-  facet_grid(rows = vars(stat), 
-             scales = "free") +
-  scale_y_continuous(expand = c(0,0)) +
-  theme_bw() +
-  theme(legend.position = "none")
-```
-Vidíme, že v datech máme mnoho outliers. Pro lepší zobrazení bude dobré se podívat na data, kde tyto outliers vyloučíme.
-```{r players-stats-histogram-per-map-no-outliers}
-players.stats_per_map_outliers <- players.stats_per_map_name %>%
-  group_by(map, stat) %>%
-  summarise(IQR = IQR(value, type = 2),
-            upper_limit = quantile(value, 0.75) + IQR * 1.5,
-            lower_limit = quantile(value, 0.25) - IQR * 1.5) %>%
-  select(!IQR)
-
-players.stats_per_map_name_no_out <- players.stats_per_map_name %>%
-  left_join(players.stats_per_map_outliers, by = c("map", "stat")) %>%
-  filter(value <= upper_limit, value >= lower_limit) %>%
-  select(!upper_limit)
-
-ggplot(players.stats_per_map_name_no_out, aes(x = map, y = value,
-                                       color = map)) + 
-  geom_boxplot() +  
-  facet_grid(rows = vars(stat), 
-             scales = "free") +
-  scale_y_continuous(expand = c(0,0)) +
-  theme_bw() +
-  theme(legend.position = "none")
-```
-Můžeme znovu vidět, že statistiky se mezi mapami nijak výrazně neliší. 
-
-
-
