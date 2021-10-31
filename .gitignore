@@ -7,7 +7,7 @@
 # Latex
 *.aux
 *.xmpi
-*.pdf
+prace.pdf
 *.xmpdata
 *.toc
 *.gz
