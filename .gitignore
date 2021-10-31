@@ -1,5 +1,5 @@
 # RStudio
-.Rdata
+.RData
 .Rhistory
 *.Rproj
 .Rproj.user
@@ -23,5 +23,5 @@ prace.pdf
 *.bbl
 
 # Data
-*.csv
-*.xlsx
+/data
+*.html
