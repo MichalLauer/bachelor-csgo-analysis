@@ -1,10 +1,27 @@
-# Ignore everything
-*
+# RStudio
+.Rdata
+.Rhistory
+*.Rproj
+.Rproj.user
 
-# Except directories
-!*/
+# Latex
+*.aux
+*.xmpi
+*.pdf
+*.xmpdata
+*.toc
+*.gz
+*.lot
+*.log
+*.lof
+*.fls
+*.blg
+*.bcf
+*.fdb_latexmk
+*.out
+*.run.xml
+*.bbl
 
-# Except
-!*.tex
-!*.bib
-!*.gitignore
+# Data
+*.csv
+*.xlsx
