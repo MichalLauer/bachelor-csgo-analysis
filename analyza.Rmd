@@ -1,0 +1,66 @@
+---
+title: "Modely logistické regrese v oblasti esportových dat"
+author: "Michal Lauer"
+date: "19 11 2021"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    df_print: paged
+    code_folding: hide
+    number_sections: true
+  
+params:
+  url: https://www.kaggle.com/mateusdmachado/csgo-professional-matches
+---
+
+```{r data-load, include=FALSE}
+knitr::opts_chunk$set(echo = T)
+# Libraries
+library(tidyverse)
+```
+# Otázky
+Vadí, že to není předpověd???
+
+
+# Představení
+...
+
+# Cíl
+Logistický model pravděpodobnosti výhry určitého teamu dle historých výsledků
+teamu, výkonosti hráčů, typ hraných map a soupeře.
+# Zjištení vhodných parametrů
+...
+
+## Soubor economy.csv
+Není potřeba
+
+## Soubor picks.csv
+Změny
+
+- Odstraněné sloupce *date, inverted_teams, system*
+- Odstraněno 10 řádku s hodnout *best_of == NA* (`r 10/16035`% dat)
+- Všechny sloupce, až na *match_id, event_id*, převedeny na faktory
+
+```{r economy-load}
+create_factor <- \(x){
+  factor(x, levels = unique(x))
+}
+
+picks.raw <- read_csv("data/picks.csv", show_col_types = FALSE,
+                  col_select = -c(date, inverted_teams, system))
+
+picks.raw %>%
+  filter(!is.na(best_of)) %>%
+  mutate(
+    across(t1_removed_1:left_over, ~ ifelse(.x == '0.0', NA, .x)),
+    across(.cols = c(-best_of, match_id, event_id), .fns = create_factor),
+    best_of = factor(as.numeric(best_of), ordered = T)
+  ) %>% summary
+```
+
+
+
