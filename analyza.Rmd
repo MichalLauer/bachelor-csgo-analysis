@@ -12,20 +12,17 @@ output:
     df_print: paged
     code_folding: hide
     number_sections: true
+    highlight: tango
   
 params:
   url: https://www.kaggle.com/mateusdmachado/csgo-professional-matches
 ---
 
-```{r data-load, include=FALSE}
+```{r global-setup, include = F}
 knitr::opts_chunk$set(echo = T)
+set.seed(112233)
 # Libraries
 library(tidyverse)
-
-# Formating characters to factors - picks.csv
-create_factor <- \(x){
-  factor(x, levels = unique(x))
-}
 ```
 # Otázky
 Vadí, že to není předpověd???
@@ -37,24 +34,30 @@ Vadí, že to není předpověd???
 # Cíl
 Logistický model pravděpodobnosti výhry určitého teamu dle historých výsledků
 teamu, výkonosti hráčů, typ hraných map a soupeře.
-# Zjištení vhodných parametrů
+
+# Nahrání dat
 ...
 
 ## Soubor economy.csv
 Není potřeba
 
 ## Soubor picks.csv
+```{r picks-fx}
+# Formating characters to factors - picks.csv
+create_factor <- \(x){
+  factor(x, levels = unique(x))
+}
+
+```
 Změny
 
 - Odstraněné sloupce *date, inverted_teams, system*
-- Odstraněno 10 řádku s hodnout *best_of == NA* (`r 10/16035`% dat)
+- Odstraněno 10 řádku s hodnout *best_of == NA* (`r round(1000/16035, 2)`% dat)
 - Všechny sloupce, až na *match_id, event_id*, převedeny na faktory
 
-```{r economy-load}
-picks.raw <- read_csv("data/picks.csv", show_col_types = FALSE,
-                  col_select = -c(date, inverted_teams, system))
-
-picks <- picks.raw %>%
+```{r picks-load}
+picks <- read_csv("data/picks.csv", show_col_types = FALSE,
+                  col_select = -c(date, inverted_teams, system)) %>%
   filter(!is.na(best_of)) %>%
   mutate(
     across(t1_removed_1:left_over, ~ ifelse(.x == '0.0', NA, .x)),
@@ -62,50 +65,104 @@ picks <- picks.raw %>%
     best_of = factor(as.numeric(best_of), ordered = T)
   )
 
-summary(picks)
+sample_n(picks, 5)
 ```
 
 ## Soubor players.csv
+```{r players-fx}
+players.relevant_stats <- c('kills', 'deaths', 'adr', 'rating')
+
+# get relevant data for a map
+filter_map <- \(n) {
+  players.raw %>%
+    select(player_name, paste0('map_', n, sep = ""),
+           starts_with(paste0('m', n, '_', players.relevant_stats))) %>%
+    select(!matches('_c?t$')) %>%
+    rename_with(str_remove, pattern = sprintf('(_%d|m%d_)', n, n)) %>%
+    filter(map != 'Default') %>%
+    drop_na()
+}
+
+# filter player stats for player _xplayer_ and map _xmap_
+filter_players <- \(xplayer = '*', xmap = '*') {
+  players %>%
+    filter(grepl(xplayer, player_name), grepl(xmap, map))
+}
+
+# get statistics for a player
+stats_for_player <- \(xplayer = '*') {
+    filter_players(xplayer = xplayer) %>%
+    group_by(player_name) %>%
+    summarise(
+      across(kills:rating, mean)
+    )
+}
+
+# get statistics for a map_
+stats_for_map <- \(xmap = '*') {
+    filter_players(xmap = xmap) %>%
+    group_by(map) %>%
+    summarise(
+      across(kills:rating, mean)
+    )
+}
+
+# get statistics for a playerand a map
+stats_for_player_map <- \(xplayer = '*', xmap = '*') {
+    filter_players(xplayer = xplayer, xmap = xmap) %>%
+    group_by(player_name, map) %>%
+    summarise(
+      across(kills:rating, mean)
+    )
+}
+```
 Změny
 
-- Team může mít historicky > 5 hráču. Hráč se do teamu vybere podle
-  - délky působení v teamu
-  - nejnovější hráč
-  - jméno hráče (údaj je irelevantní, ale team musí mít předně 5 hráčů)
-  
-ZMĚNY: pouze hráč bez teamu???
+- Odstraněny mapy s názvem *Default*
+- Odstraněn 1 řádek s neznámým hráčem
+- Data přetransformována do tvaru, kde jeden řádek reprezentuje právě jednoho
+hráče a jeho výkon na právě jedné mapě
 
 ```{r players-load}
 players.raw <- read_csv('data/players.csv', show_col_types = F,
-                        col_select = -c(country, event_id, event_name, best_of))
+                        col_select = c(player_name, team, starts_with('map_'),
+                                       contains(players.relevant_stats)))
 
-head(players.raw)
+players <- NULL
+for(i in 1:3){
+  players <- rbind(players, filter_map(i))
+}
+players <- players %>%
+  mutate(across(
+    .cols = c(player_name, map), .fns = create_factor
+  ))
 
-players.squad <- players.raw %>%
-  distinct(team, player_name, date) %>%
-  group_by(team, player_name) %>%
-  summarise(min_date = min(date),
-            max_date = max(date)) %>%
-  mutate(period = max_date - min_date) %>%
-  arrange(desc(period, max_date, player_name)) %>%
-  mutate(order = row_number()) %>%
-  filter(order <= 5) %>%
-  ungroup() %>%
-  summarise(comb = paste(team, '-', player_name)) %>%
-  pull(comb)
-
-players.enough <- players.raw %>%
-  distinct(team, player_name) %>%
-  group_by(team) %>%
-  summarise(n = n()) %>%
-  filter(n >= 5) %>%
-  pull(team)
-
-players.raw %>%
-  filter(paste(team, '-', player_name) %in% players.squad,
-         team %in% players.enough) %>%
-  mutate(
-    across(c(player_name:map_3), create_factor)
-    )
+rm(players.raw)
+sample_n(players, 5)
 ```
 
+## Soubor results.csv
+```{r resluts-fx}
+
+```
+Změny
+
+- Odstraněno 21 záznamů kde je mapa Default
+
+```{r results-load}
+results.raw <- read_csv('data/results.csv', show_col_types = F,
+                        col_select = c(team_1, team_2, map = '_map',
+                                       winner = map_winner,
+                                      starting_ct, rank_1, rank_2)) %>%
+  filter(map != 'Default')
+
+results.teams <- unique(c(results.raw$team_1, results.raw$team_2))
+
+tibble(team_1 = results.teams, team_2 = results.teams) %>%
+  expand(a = results.teams, b = results.teams) %>%
+  filter((a == '100pinggods' & b == '100 Thieves') |
+         (a == '100 Thieves' & b == '100pinggods'))
+```
+
+## Spojení souborů
+Do jednoho datasetu
