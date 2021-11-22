@@ -21,6 +21,11 @@ params:
 knitr::opts_chunk$set(echo = T)
 # Libraries
 library(tidyverse)
+
+# Formating characters to factors - picks.csv
+create_factor <- \(x){
+  factor(x, levels = unique(x))
+}
 ```
 # Otázky
 Vadí, že to není předpověd???
@@ -46,21 +51,61 @@ Změny
 - Všechny sloupce, až na *match_id, event_id*, převedeny na faktory
 
 ```{r economy-load}
-create_factor <- \(x){
-  factor(x, levels = unique(x))
-}
-
 picks.raw <- read_csv("data/picks.csv", show_col_types = FALSE,
                   col_select = -c(date, inverted_teams, system))
 
-picks.raw %>%
+picks <- picks.raw %>%
   filter(!is.na(best_of)) %>%
   mutate(
     across(t1_removed_1:left_over, ~ ifelse(.x == '0.0', NA, .x)),
     across(.cols = c(-best_of, match_id, event_id), .fns = create_factor),
     best_of = factor(as.numeric(best_of), ordered = T)
-  ) %>% summary
+  )
+
+summary(picks)
 ```
 
+## Soubor players.csv
+Změny
 
+- Team může mít historicky > 5 hráču. Hráč se do teamu vybere podle
+  - délky působení v teamu
+  - nejnovější hráč
+  - jméno hráče (údaj je irelevantní, ale team musí mít předně 5 hráčů)
+  
+ZMĚNY: pouze hráč bez teamu???
+
+```{r players-load}
+players.raw <- read_csv('data/players.csv', show_col_types = F,
+                        col_select = -c(country, event_id, event_name, best_of))
+
+head(players.raw)
+
+players.squad <- players.raw %>%
+  distinct(team, player_name, date) %>%
+  group_by(team, player_name) %>%
+  summarise(min_date = min(date),
+            max_date = max(date)) %>%
+  mutate(period = max_date - min_date) %>%
+  arrange(desc(period, max_date, player_name)) %>%
+  mutate(order = row_number()) %>%
+  filter(order <= 5) %>%
+  ungroup() %>%
+  summarise(comb = paste(team, '-', player_name)) %>%
+  pull(comb)
+
+players.enough <- players.raw %>%
+  distinct(team, player_name) %>%
+  group_by(team) %>%
+  summarise(n = n()) %>%
+  filter(n >= 5) %>%
+  pull(team)
+
+players.raw %>%
+  filter(paste(team, '-', player_name) %in% players.squad,
+         team %in% players.enough) %>%
+  mutate(
+    across(c(player_name:map_3), create_factor)
+    )
+```
 
