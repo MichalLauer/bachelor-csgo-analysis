@@ -1,0 +1,34 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.RData": true,
+			"**/.Rhistory": true,
+			"**/*.Rproj": true,
+			"**/.Rproj.user": true,
+			"**/*.aux": true,
+			"**/*.xmpi": true,
+			"**/prace.pdf": true,
+			"**/*.xmpdata": true,
+			"**/*.toc": true,
+			"**/*.gz": true,
+			"**/*.lot": true,
+			"**/*.log": true,
+			"**/*.lof": true,
+			"**/*.fls": true,
+			"**/*.blg": true,
+			"**/*.bcf": true,
+			"**/*.fdb_latexmk": true,
+			"**/*.out": true,
+			"**/*.run.xml": true,
+			"**/*.bbl": true,
+			"data": true,
+			"**/*.html": true
+		},
+		"cSpell.language": "cs"
+	}
+}
