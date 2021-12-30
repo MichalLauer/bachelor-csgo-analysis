@@ -26,9 +26,18 @@
 			"**/*.out": true,
 			"**/*.run.xml": true,
 			"**/*.bbl": true,
+			"**/*.bib.bak": true,
 			"data": true,
 			"**/*.html": true
 		},
-		"cSpell.language": "cs"
+		"cSpell.language": "cs",
+		"cSpell.words": [
+			"Counter",
+			"Esport",
+			"esportem",
+			"Offensive",
+			"Strike",
+			"Valorant"
+		]
 	}
 }
