@@ -21,6 +21,7 @@ prace.pdf
 *.out
 *.run.xml
 *.bbl
+*.bib.bak
 
 # Data
 /data
