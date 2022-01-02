@@ -55,24 +55,21 @@ Ten je vyhodnocen vyhodnocen pomocí již zmínených statistik. Na konci práce
 
 %% Titulní strana a různé povinné informační strany
 \begin{document}
+\pagenumbering{gobble}
 \include{zacatek}
 
 %%% Strana s automaticky generovaným obsahem bakalářské práce
 \setcounter{tocdepth}{2}
 \tableofcontents
 
-%%% Obrázky v bakalářské práci
-\openright
-\listoffigures
 
-%%% Tabulky v bakalářské práci (opět nemusí být nutné uvádět)
-\clearpage
-\listoftables
 
-%%% Použité zkratky v bakalářské práci (opět nemusí být nutné uvádět)
-\include{zkratky}
+
+
+
 
 \pagestyle{fancy}
+\pagenumbering{arabic}
 %%% Jednotlivé kapitoly práce jsou pro přehlednost uloženy v samostatných souborech
 \include{01uvod}
 \include{02esport}
@@ -83,11 +80,24 @@ Ten je vyhodnocen vyhodnocen pomocí již zmínených statistik. Na konci práce
 %%% Seznam použité literatury
 \include{literatura}
 
-%%% Přílohy k bakalářské práci, existují-li. Každá příloha musí být alespoň jednou
-%%% odkazována z vlastního textu práce. Přílohy se číslují.
-\part*{Přílohy}
+%%% Obrázky v bakalářské práci
+\openright
+\phantomsection
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures
+
+%%% Tabulky v bakalářské práci (opět nemusí být nutné uvádět)
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{\listtablename}
+\listoftables
+
+%%% Použité zkratky v bakalářské práci (opět nemusí být nutné uvádět)
+\include{zkratky}
+
+%%% Přílohy k bakalářské práci
+\part{Přílohy}
 \appendix
 % \include{app01}
-% \include{app02}
 
 \end{document}
