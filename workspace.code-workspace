@@ -28,7 +28,8 @@
 			"**/*.bbl": true,
 			"**/*.bib.bak": true,
 			"data": true,
-			"**/*.html": true
+			"**/*.html": true,
+			"**/*.bib.sav.tmp": true
 		},
 		"cSpell.language": "cs",
 		"cSpell.words": [
@@ -36,9 +37,11 @@
 			"Esport",
 			"esportem",
 			"esportového",
+			"esportový",
 			"esportu",
 			"Offensive",
 			"Strike",
+			"teamů",
 			"Valorant"
 		]
 	}
