@@ -22,6 +22,7 @@ prace.pdf
 *.run.xml
 *.bbl
 *.bib.bak
+*.bib.sav.tmp
 
 # Data
 /data
