@@ -123,6 +123,12 @@
 
 \DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\small, frame=single}
 
-% Použití zkratek
+%%% Použití zkratek
 \usepackage[printonlyused]{acronym}
 \usepackage{csquotes}
+
+%%% Zabrání rozdělení paragrafů mezi stránkami
+\widowpenalties 1 10000
+\raggedbottom
+
+\graphicspath{ {./img/} }
