@@ -31,8 +31,9 @@
 			"**/*.html": true,
 			"**/*.bib.sav.tmp": true
 		},
-		"cSpell.language": "cs",
+		"cSpell.language": "en-US,cs",
 		"cSpell.words": [
+			"BYOC",
 			"Counter",
 			"Dota",
 			"Esport",
@@ -41,7 +42,9 @@
 			"esportový",
 			"esportu",
 			"fanouškovskou",
+			"Fortnite",
 			"Offensive",
+			"Spacewar",
 			"Strike",
 			"teamů",
 			"Valorant",
