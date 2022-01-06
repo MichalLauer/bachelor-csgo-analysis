@@ -24,10 +24,6 @@ set.seed(112233)
 # Libraries
 library(tidyverse)
 ```
-# Otázky
-Vadí, že to není předpověd???
-
-
 # Představení
 ...
 
@@ -47,7 +43,6 @@ Není potřeba
 create_factor <- \(x){
   factor(x, levels = unique(x))
 }
-
 ```
 Změny
 
@@ -90,7 +85,7 @@ filter_players <- \(xplayer = '*', xmap = '*') {
 }
 
 # get statistics for a player
-stats_for_player <- \(xplayer = '*') {
+stats_player <- \(xplayer = '*') {
     filter_players(xplayer = xplayer) %>%
     group_by(player_name) %>%
     summarise(
@@ -99,7 +94,7 @@ stats_for_player <- \(xplayer = '*') {
 }
 
 # get statistics for a map_
-stats_for_map <- \(xmap = '*') {
+stats_map <- \(xmap = '*') {
     filter_players(xmap = xmap) %>%
     group_by(map) %>%
     summarise(
@@ -108,7 +103,7 @@ stats_for_map <- \(xmap = '*') {
 }
 
 # get statistics for a playerand a map
-stats_for_player_map <- \(xplayer = '*', xmap = '*') {
+stats_overall <- \(xplayer = '*', xmap = '*') {
     filter_players(xplayer = xplayer, xmap = xmap) %>%
     group_by(player_name, map) %>%
     summarise(
@@ -143,26 +138,26 @@ sample_n(players, 5)
 
 ## Soubor results.csv
 ```{r resluts-fx}
-
+# results.raw <- 
+results <- read_csv('data/results.csv', col_select = c(event_id, match_id, date, team_1, team_2, map = '_map',
+                                            map_winner, rank_1, rank_2, starting_ct)) %>% 
+  mutate(map_winner = ifelse(map_winner == 1, team_1, team_2),
+         starting_ct = ifelse(starting_ct == 1, team_1, team_2))
 ```
 Změny
 
 - Odstraněno 21 záznamů kde je mapa Default
 
-```{r results-load}
-results.raw <- read_csv('data/results.csv', show_col_types = F,
-                        col_select = c(team_1, team_2, map = '_map',
-                                       winner = map_winner,
-                                      starting_ct, rank_1, rank_2)) %>%
-  filter(map != 'Default')
-
-results.teams <- unique(c(results.raw$team_1, results.raw$team_2))
-
-tibble(team_1 = results.teams, team_2 = results.teams) %>%
-  expand(a = results.teams, b = results.teams) %>%
-  filter((a == '100pinggods' & b == '100 Thieves') |
-         (a == '100 Thieves' & b == '100pinggods'))
-```
 
 ## Spojení souborů
 Do jednoho datasetu
+```{r all-together}
+picks
+players
+results
+```
+
+- Prve udělat model podle results
+- simulace zápasu dle team_1 a team_2
+  - vybrat mapu dle prob
+  - ...?
