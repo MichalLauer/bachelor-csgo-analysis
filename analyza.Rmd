@@ -48,15 +48,14 @@ Změny
 
 - Odstraněné sloupce *date, inverted_teams, system*
 - Odstraněno 10 řádku s hodnout *best_of == NA* (`r round(1000/16035, 2)`% dat)
-- Všechny sloupce, až na *match_id, event_id*, převedeny na faktory
 
 ```{r picks-load}
 picks <- read_csv("data/picks.csv", show_col_types = FALSE,
-                  col_select = -c(date, inverted_teams, system)) %>%
+                  col_select = -c(date, match_id, event_id, inverted_teams, system)) %>%
   filter(!is.na(best_of)) %>%
   mutate(
     across(t1_removed_1:left_over, ~ ifelse(.x == '0.0', NA, .x)),
-    across(.cols = c(-best_of, match_id, event_id), .fns = create_factor),
+    across(.cols = c(-best_of), .fns = create_factor),
     best_of = factor(as.numeric(best_of), ordered = T)
   )
 
@@ -139,8 +138,9 @@ sample_n(players, 5)
 ## Soubor results.csv
 ```{r resluts-fx}
 # results.raw <- 
-results <- read_csv('data/results.csv', col_select = c(event_id, match_id, date, team_1, team_2, map = '_map',
-                                            map_winner, rank_1, rank_2, starting_ct)) %>% 
+results <- read_csv('data/results.csv', show_col_types = F,
+                    col_select = c(team_1, team_2, map = '_map', map_winner, rank_1, rank_2,
+                                   starting_ct)) %>% 
   mutate(map_winner = ifelse(map_winner == 1, team_1, team_2),
          starting_ct = ifelse(starting_ct == 1, team_1, team_2))
 ```
@@ -156,8 +156,18 @@ picks
 players
 results
 ```
+```{r model}
+players
 
-- Prve udělat model podle results
-- simulace zápasu dle team_1 a team_2
-  - vybrat mapu dle prob
-  - ...?
+data <- results %>%
+  select(-map) %>%
+  select(-team_2, -rank_2) %>%
+  rename(team = team_1, rank = rank_1) %>%
+  rbind(results %>% select(-team_1, -rank_1) %>% rename(team = team_2, rank = rank_2)) %>%
+  mutate(map_winner = as.numeric(team == map_winner),
+         starting_ct = as.numeric(starting_ct == team)) %>%
+  select(-team)
+
+model <- glm(map_winner ~ ., data = data, family = binomial)
+summary(model)
+```
