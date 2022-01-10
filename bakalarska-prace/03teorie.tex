@@ -15,27 +15,55 @@ vhodné.
 
 \subsection{Boxplot}
 ... Půjčit knihu https://katalog.vse.cz/Record/
-
+\newpage
 \section{Logistický model}
 \subsection{Logistický regresní model}
 Logistický regresní model patří do rodiny Obecných lineárních modelů. Je to tedy zobecněný lineární model, který uvažuje tzn. spojovací funkci, která transformuje
-nezávislou proměnnou $y$. Spojovací funkce, značená $g(x)$ se v případě logistického regresního modelu nazývá funkce \textit{logitová}.
+proměnnou $y$. Proměnná, kterou chceme predikovat, musí být dichotomická. Spojovací funkce, značená $g(x)$ se v případě logistického regresního modelu nazývá funkce
+\textit{logitová} \cite{Hebak2015}
 \begin{equation}
+    \label{eq:spojovaci_fce}
     g(x) = ln\left(\frac{x}{1 - x}\right)
 \end{equation}
 Logitová funkce se dá také nazvat \uv{log-odds ratio}, neboli zlogaritmizovaný poměr mezi dvěma šancemi. To je z toho důvodu, že zlomek v přirozením logaritmu, tedy
-$\frac{x}{1-x}$ se používá na převod pravděpodobnosti na šanci. Jako příklad si můžeme uvést pravděpodobnost $p = 0.2$, která je po transformaci rovna šanci $1:4$.
-
+$\frac{x}{1-x}$ se používá na převod pravděpodobnosti na šanci. Jako příklad si můžeme uvést pravděpodobnost $p = 0.2$, která se po transformaci rovna šanci $1:4$.
+K logitové funkci existuje i její funkce inverzní, která se nazývá logistická. S jejím použitím můžeme provádět opačný převod, tedy šanci na pravděpodobnost.
 \begin{equation}
-    g(f(x)) = \beta_0 + \sum_{i=1}^k \beta_i*x_i
-\end{equation} 
-Logistická regrese se snaží předpovědět s jakou pravděpodobností se stane určitý jev. Zde ale vzniká, problém, jelikož klasický regresní model je zapsán ve tvaru
+    \label{eq:logisticka_fce}
+    g^{-1}(x) = \frac{1}{1 + e^{-z}}
+\end{equation}
+Zde nám proměnná $z$ značí výslednou predikci, neboli šanci, získanou z regresního modelu
 \begin{equation}
-    f(y) = \beta_0 + \sum_{i=1}^k \beta_i * x_i
-\end{equation} 
-kde $\beta_i$ je parametr pro proměnnou $x_i$. Protože proměnné $x$ nejsou ničím omezené, obor hodnot pro $f(y)$ je interval $(-\inf, \inf)$. Toto však je v základním rozporu
-s pravděpodobnostmi. Ty jsou totiž definované v intervalu $<0, 1>$. Tento problém vyřeší právě spojovací funkce, která  
+    z = \beta_0 + \sum_{i=1}^k \beta_i*x_i
+\end{equation}
+kde $\beta$ značí odhadnuté parametry a $x$ zvolené prediktory. $\beta_0$ nám zde značí průnik s osou $y$, což lze také pochopit jako počáteční šanci, že se událost stane.
+Důvod, proč používáme pro predikce šanci, je kvůli použití regresní přímky. Při hledání vhodných parametrů $\beta$ se snažíme najít přímku, která v případě použití 
+metody \textit{nejmenších čtverců} snaží minimalizovat vzdálenost od každého bodu k přímce. Jak již jsme si ale zmínili, pravděpodobnost je v jiném intervalu, než v kterém
+se nachází výsledná regresní přímka. Z tohoto důvodu používáme inverzi spojovací funkce na transformaci výsledné predikce
+\begin{equation}
+    g^{-1}(f(x)) = \beta_0 + \sum_{i=1}^k \beta_i*x_i
+\end{equation}
+Výsledný regresní graf je dán tzn. \uv{Sigmoidní křivkou}. Ta má obor hodnot v požadovaném intervalu, tedy $<0, 1>$, a zároveň je definovaná pro
+všechna $\mathbb{R}$.
 
+VLOŽIT OBRÁZEK FCE
+
+Regresní model jde tedy zapsat dvěma způsoby. První způsob, tzn. \uv{Logitový zápis}, používá spojovací funkci společně s pravděpodobností $P(X)$ která značí, se událost stala.
+$P(X)$ lze tedy označit jako pravděpodobnost, že se událost stane, za předpokladu různých nezávislých proměnných $x$, neboli $P(X = 1 | x_1, ..., x_n)$
+\begin{equation}
+\begin{split}
+    \beta_0 + \sum_{i=1}^k \beta_i*x_i &= g(P(X)) \\
+                                      &= \frac{p(x)}{1 - p(x)}
+\end{split}
+\end{equation}
+Druhý zápis definuje danou pravděpodobnost za použití logistické funkce
+\begin{align}
+\begin{split}
+    P(X) &= g^{-1}(f(x)) \\
+        &= \frac{1}{1+e^{-z}} \\
+        &= \frac{1}{1+e^{\beta_0 + \sum_{i=1}^k \beta_i*x_i}}    
+\end{split}
+\end{align} 
 \subsection{Jednoduchý tvar modelu s dichotomickou proměnnou}
 \subsection{Jednoduchý tvar modelu s interakcí}
 \subsection{Model s více proměnnými}
