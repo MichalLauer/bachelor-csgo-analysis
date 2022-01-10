@@ -1,8 +1,42 @@
 \chapter{Teoretická část}
+V následující části jsou popsány jak teoretické metody pro vizualizaci dat, tak i tvar, forma a vyhodnocení logistického regresního modelu. 
+Ke každé části, která se věnuje popisu dat pomocí nějakého grafu, je přidána praktická ukázka s popisem a praktickým vysvětlením. U regresního 
+modelu je následně dán důraz na teorii, jelikož model je následně prakticky použit v celé třetí části. Důležité je si uvědomit, že nástrojů pro
+vizualizaci dat je mnoho a grafů či souhrnných statistik je nespočet. V této práci se ovšem věnujeme vizualizacím, které jsou pro regresní model
+vhodné.
 \section{Vizualizace dat}
+... Půjčit knihu https://katalog.vse.cz/Record/
+
 \subsection{Bodový graf}
+... Půjčit knihu https://katalog.vse.cz/Record/
+
 \subsection{Histogram}
+... Půjčit knihu https://katalog.vse.cz/Record/
+
 \subsection{Boxplot}
+... Půjčit knihu https://katalog.vse.cz/Record/
+
 \section{Logistický model}
-\subsection{Tvar logistického modelu}
+\subsection{Logistický regresní model}
+Logistický regresní model patří do rodiny Obecných lineárních modelů. Je to tedy zobecněný lineární model, který uvažuje tzn. spojovací funkci, která transformuje
+nezávislou proměnnou $y$. Spojovací funkce, značená $g(x)$ se v případě logistického regresního modelu nazývá funkce \textit{logitová}.
+\begin{equation}
+    g(x) = ln\left(\frac{x}{1 - x}\right)
+\end{equation}
+Logitová funkce se dá také nazvat \uv{log-odds ratio}, neboli zlogaritmizovaný poměr mezi dvěma šancemi. To je z toho důvodu, že zlomek v přirozením logaritmu, tedy
+$\frac{x}{1-x}$ se používá na převod pravděpodobnosti na šanci. Jako příklad si můžeme uvést pravděpodobnost $p = 0.2$, která je po transformaci rovna šanci $1:4$.
+
+\begin{equation}
+    g(f(x)) = \beta_0 + \sum_{i=1}^k \beta_i*x_i
+\end{equation} 
+Logistická regrese se snaží předpovědět s jakou pravděpodobností se stane určitý jev. Zde ale vzniká, problém, jelikož klasický regresní model je zapsán ve tvaru
+\begin{equation}
+    f(y) = \beta_0 + \sum_{i=1}^k \beta_i * x_i
+\end{equation} 
+kde $\beta_i$ je parametr pro proměnnou $x_i$. Protože proměnné $x$ nejsou ničím omezené, obor hodnot pro $f(y)$ je interval $(-\inf, \inf)$. Toto však je v základním rozporu
+s pravděpodobnostmi. Ty jsou totiž definované v intervalu $<0, 1>$. Tento problém vyřeší právě spojovací funkce, která  
+
+\subsection{Jednoduchý tvar modelu s dichotomickou proměnnou}
+\subsection{Jednoduchý tvar modelu s interakcí}
+\subsection{Model s více proměnnými}
 \subsection{Vyhodnocení logistického modelu}
