@@ -1,0 +1,49 @@
+---
+title: "Modely logistické regrese v oblasti esportových dat"
+author: "Michal Lauer"
+date: "19 11 2021"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    df_print: paged
+    code_folding: hide
+    number_sections: true
+    highlight: tango
+  
+params:
+  dataset_url: https://www.kaggle.com/mateusdmachado/csgo-professional-matches
+  bachelor_url: https://www.placeholder.com/
+---
+```{r global-setup, include = F}
+knitr::opts_chunk$set(echo = T)
+set.seed(112233)
+# Libraries
+library(tidyverse)
+library(skimr)
+```
+# Představení
+Tato analýza slouží jako dokumentace a postup zpracování dat pro mou [bakalářskou práce](`r params$bachelor_url`). Dokument je zaměřený více na praktickou část zpracování než na teorii. K teoretickému rozboru slouží právě vypracovaná bakalářská práce.
+
+Dataset, s kterým se v analýze pracuje, se nachází na serveru [kaggle.com](`r params$dataset_url`) a obsahuje data popisující esportové zápasy ve hře Counter-Strike: Global Offensive. Dataset obsahuje čtyři datové soubory soubory
+
+- **results.csv** - výsledky zápasů
+- **picks.csv** - detaily o hlasování, na jakých mapách se bude hrát
+- **players.csv** - statistiky hráčů
+- **economy.csv** - data, týkající se herní ekonomiky v každém kole
+
+Prvním části analýzy jsou zpracovány datové soubory a jejich obsah V dalším kroku jsou vybráný proměnné, které jsou vhoné právě k tvorbě logistického regresního modelu. Následuje tvorba modelu a jeho vyhodnocení. V předposlední části je celý model slovně interpretován. Na konci analýzy je vytvořena interaktivní aplikace, která již není součástí bakalářské práce, kde bude možné různé zápasy simulovat.
+
+Pro práci s daty bude také potřeba využít několik vytvořených funkcí, které jsou pro přehlednost definovány na jednom místě.
+```{r functions, file = 'funkce.R'}
+source('funkce.R')
+```
+# Nahrání dat
+```{r child = 'nahrani-dat.Rmd'}
+```
+# EDA pro logistickou regresy
+```{r child = 'eda-regrese.Rmd'}
+```

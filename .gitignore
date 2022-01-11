@@ -25,5 +25,5 @@ prace.pdf
 *.bib.sav.tmp
 
 # Data
-/data
+/analyza/data
 *.html
