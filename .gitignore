@@ -1,29 +1,20 @@
 # RStudio
+.Rproj.user
 .RData
+.RDataTmp
 .Rhistory
 *.Rproj
-.Rproj.user
 
-# Latex
-*.aux
+# VSCode
+*.code-workspace
+
+# Analýza
+data/
+
+# LaTeX
+*.bak
+*.tmp
 *.xmpi
-prace.pdf
-*.xmpdata
-*.toc
-*.gz
-*.lot
-*.log
-*.lof
-*.fls
-*.blg
 *.bcf
-*.fdb_latexmk
-*.out
-*.run.xml
-*.bbl
-*.bib.bak
-*.bib.sav.tmp
-
-# Data
-/analyza/data
-*.html
+*.xml
+*.gz
