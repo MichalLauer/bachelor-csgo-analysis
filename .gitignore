@@ -12,9 +12,7 @@
 data/
 
 # LaTeX
-*.bak
-*.tmp
 *.xmpi
 *.bcf
-*.xml
+*.run.xml
 *.gz

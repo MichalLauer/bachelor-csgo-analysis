@@ -5,38 +5,6 @@
 		}
 	],
 	"settings": {
-		"files.exclude": {
-			"**/*.aux": true,
-			"**/prace.pdf": true,
-			"**/*.xmpdata": true,
-			"**/*.toc": true,
-			"**/*.lot": true,
-			"**/*.log": true,
-			"**/*.lof": true,
-			"**/*.fls": true,
-			"**/*.blg": true,
-			"**/*.fdb_latexmk": true,
-			"**/*.out": true,
-			"**/*.run.xml": true,
-			"**/*.bbl": true,
-			"**/*.bib.bak": true,
-			"data": true,
-			"**/*.html": true,
-			"**/*.bib.sav.tmp": true,
-			"**/.Rproj.user": true,
-			"**/.RData": true,
-			"**/.RDataTmp": true,
-			"**/.Rhistory": true,
-			"**/*.Rproj": true,
-			"**/*.code-workspace": true,
-			"**/data/": true,
-			"**/*.bak": true,
-			"**/*.tmp": true,
-			"**/*.xmpi": true,
-			"**/*.bcf": true,
-			"**/*.xml": true,
-			"**/*.gz": true
-		},
 		"cSpell.language": "en-US,cs",
 		"cSpell.words": [
 			"BYOC",
@@ -50,6 +18,7 @@
 			"esportu",
 			"fanouškovskou",
 			"Fortnite",
+			"kaggle",
 			"logitová",
 			"logitové",
 			"Offensive",
@@ -58,6 +27,19 @@
 			"teamů",
 			"Valorant",
 			"youtubového"
-		]
+		],
+		"files.exclude": {
+			"**/.Rproj.user": true,
+			"**/.RData": true,
+			"**/.RDataTmp": true,
+			"**/.Rhistory": true,
+			"**/*.Rproj": true,
+			"**/*.code-workspace": true,
+			"**/data/": true,
+			"**/*.xmpi": true,
+			"**/*.bcf": true,
+			"**/*.run.xml": true,
+			"**/*.gz": true
+		}
 	}
 }
