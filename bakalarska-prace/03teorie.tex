@@ -9,10 +9,88 @@ Testovací citace: \cite{Hebak2015}, \cite{Kleinbaum2010}
 ... Dopsat
 
 \subsection{Bodový graf}
-... Dopsat
-
+Bodový graf slouží pro zobrazení vztahu dvou numerických proměnných. Z pravidla se vysvětlovaná proměnná dává na osu Y,
+zatímco proměnná vysvětlující se nachází na ose X.  
+\newpage
 \subsection{Histogram}
-... Dopsat
+Histogram je speciální typ sloupcového grafu. Je specifický tím, že zobrazuje počet jednotlivých pozorování dané kategorie či proměnné. Jeho silná stránka spočívá v tom,
+že při vhodném výběru počtu skupin se dá pozorovat rozdělení spojité proměnné.
+Zároveň histogram oproti klasickému sloupcovému grafu, který zobrazuje kategorie, nemá mezi sloupci žádné mezery. Na grafu 
+\ref{fig:sloupcovy_graf} je příklad sloupcového grafu. Na ose X se nachází kategorická vysvětlovací proměnná. Vysvětlovaná proměnná Y je průměrná hrubá
+koňská síla.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{../../analyza/plots/sloupcovy_graf.png}
+    \caption{Sloupcový graf z data setu mtcars} 
+    \label{fig:sloupcovy_graf}
+\end{figure}
+
+Je-li histogram sestaven ze spojitých dat, je třeba data sloučit do skupin \textit{(bins)} o určité šířce. Správný výběr
+počtu skupin je kritický, jelikož může velmi ovlivnit interpretaci dat. Pokud se vybere moc malý počet skupin, data se moc seskupí a
+může se ztratit důležitý vztah. Pokud se ovšem vybere moc velký počet skupin, data se prakticky nerozdělí a nic nám to o rozdělení proměnné neřekne.
+Tento efekt je znázorněn na grafu \ref{fig:histogram_porovnani}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{../../analyza/plots/histogram_porovnani.png}
+    \caption{Porovnání histogramů s různým počtem skupin} 
+    \label{fig:histogram_porovnani}
+\end{figure}
+
+Pro vhodný počet skupin existuje mnoho způsobů. Nejznámější je takzvané Sturgesovo pravidlo (\ref{eq:sturgesovo_pravidlo}), které se spočítá následujícím vztahem:
+
+\begin{equation}
+    \label{eq:sturgesovo_pravidlo}
+    k \text{ } \dot{\mathbf{=}} \text{ } 1 + 3,22 * log_{10}(n)
+\end{equation}
+
+kde $k$ je výsledný zaokrouhlený počet skupin a $n$ je počet pozorování. Druhý parametr, který je pro tvorbu histogramu potřeba, je šířka skupiny.
+Ta by měla být ideálně stejná pro všechny skupiny. Pokud tomu tak není, histogram může být zavádějící a čtenář mu nemusí plně rozumět.
+Po vypočtení počtu skupin má šířka skupiny následující tvar:
+
+\begin{equation}
+    \label{eq:sirka_histogramu}
+    w = \ceil[\bigg]{ \frac{max(x) - min(x)}{k} }
+\end{equation}
+
+kde $x$ je zobrazovaná proměnná, $k$ je počet skupin a $w$ je výsledná šířka intervalu, která je zaokrouhlena nahoru. To je z toho důvodu, aby se
+každé pozorování promítlo právě do jedné kategorie. Pokud na stejný dataset, jako na grafu \ref{fig:histogram_porovnani}, použije toto pravidlo,
+graf vypadá následovně:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{../../analyza/plots/histogram.png}
+    \caption{Histogram s počtem skupin dle Sturgesova pravidla} 
+    \label{fig:histogram_sturges}
+\end{figure}
+
+Histogram lze samozřejmě rozepsat. Lze vytvořit tzn. tabulku četností (\ref{tab:tabulka_cetnosti_sturges}),
+která mimo jiné obsahuje spodní hranici intervalu, horní hranici intervalu a počet pozorování. Důležité je,
+aby přechody mezi intervaly byli jasné.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[t]{c|c|c}
+        \hline
+        Spodní hranice intervalu & Horní hranice intervalu & Počet pozorování \\
+        \hline
+         7.05 & 11.75 & 2\\
+        \hline
+        11.76 & 16.45 & 9\\
+        \hline
+        16.46 & 21.15 & 9\\
+        \hline
+        21.16 & 25.85 & 6\\
+        \hline
+        25.86 & 30.55 & 4\\
+        \hline
+        30.56 & 35.25 & 2\\
+        \hline
+    \end{tabular}
+    \caption{Tabulka četnostní}
+    \label{tab:tabulka_cetnosti_sturges}
+\end{table}
 
 \subsection{Boxplot}
 ... Dopsat
