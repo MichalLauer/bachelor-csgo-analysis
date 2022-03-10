@@ -10,6 +10,7 @@
 
 # Analýza
 data/
+*.png
 
 # LaTeX
 *.xmpi
