@@ -5,37 +5,44 @@ modelu je následně dán důraz na teorii, jelikož model je následně praktic
 vizualizaci dat je mnoho a grafů či souhrnných statistik je nespočet. V této práci se ovšem věnujeme vizualizacím, které jsou pro regresní model
 vhodné.
 Testovací citace: \cite{Hebak2015}, \cite{Kleinbaum2010}
-\section{Vizualizace dat}
-... Dopsat
 
+\section{Vizualizace dat}
 \subsection{Bodový graf}
 Bodový graf slouží pro zobrazení vztahu dvou numerických proměnných. Z pravidla se vysvětlovaná proměnná dává na osu Y,
-zatímco proměnná vysvětlující se nachází na ose X.  
-\newpage
+zatímco proměnná vysvětlující se nachází na ose X. Graf \ref{fig:bodovy_graf_mtcars} zobrazuje negativní vztah mezi
+váhou vozidla a mílemi ujetými za galon.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{../../analyza/plots/bodovy_graf_mtcars.png}
+    \caption{Bodový graf váhy a míly za galon z data setu mtcars} 
+    \label{fig:bodovy_graf_mtcars}
+\end{figure}
+
 \subsection{Histogram}
-Histogram je speciální typ sloupcového grafu. Je specifický tím, že zobrazuje počet jednotlivých pozorování dané kategorie či proměnné. Jeho silná stránka spočívá v tom,
-že při vhodném výběru počtu skupin se dá pozorovat rozdělení spojité proměnné.
-Zároveň histogram oproti klasickému sloupcovému grafu, který zobrazuje kategorie, nemá mezi sloupci žádné mezery. Na grafu 
-\ref{fig:sloupcovy_graf} je příklad sloupcového grafu. Na ose X se nachází kategorická vysvětlovací proměnná. Vysvětlovaná proměnná Y je průměrná hrubá
+
+Histogram je speciální typ sloupcového grafu. Je specifický tím, že zobrazuje počet jednotlivých pozorování ve skupině. Skupiny je nutné vytvořit
+v případě, že je zobrazovaná proměnná spojitá. Zároveň histogram oproti klasickému sloupcovému grafu, který zobrazuje kategorie, nemá mezi sloupci žádné mezery.
+Na grafu \ref{fig:sloupcovy_graf_mtcars} je příklad sloupcového grafu. Na ose X se nachází kategorická vysvětlovací proměnná. Vysvětlovaná proměnná Y je průměrná hrubá
 koňská síla.
 
 \begin{figure}[H]
     \centering
-    \includegraphics{../../analyza/plots/sloupcovy_graf.png}
+    \includegraphics{../../analyza/plots/sloupcovy_graf_mtcars.png}
     \caption{Sloupcový graf z data setu mtcars} 
-    \label{fig:sloupcovy_graf}
+    \label{fig:sloupcovy_graf_mtcars}
 \end{figure}
 
-Je-li histogram sestaven ze spojitých dat, je třeba data sloučit do skupin \textit{(bins)} o určité šířce. Správný výběr
-počtu skupin je kritický, jelikož může velmi ovlivnit interpretaci dat. Pokud se vybere moc malý počet skupin, data se moc seskupí a
-může se ztratit důležitý vztah. Pokud se ovšem vybere moc velký počet skupin, data se prakticky nerozdělí a nic nám to o rozdělení proměnné neřekne.
-Tento efekt je znázorněn na grafu \ref{fig:histogram_porovnani}.
+Pro histogram je třeba data sloučit do skupin \textit{(bins)} o určité šířce. Správný výběr počtu skupin je kritický, jelikož může velmi
+silně ovlivnit interpretaci dat. Pokud se vybere moc malý počet skupin, data se seskupí a může se ztratit důležitý vztah. Pokud se ovšem
+vybere moc velký počet skupin, v datech bude obtížné najít nějaký obecný vztah či trend.
+Tento efekt je znázorněn na grafu \ref{fig:histogram_porovnani_mtcars}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics{../../analyza/plots/histogram_porovnani.png}
+    \includegraphics{../../analyza/plots/histogram_porovnani_mtcars.png}
     \caption{Porovnání histogramů s různým počtem skupin} 
-    \label{fig:histogram_porovnani}
+    \label{fig:histogram_porovnani_mtcars}
 \end{figure}
 
 Pro vhodný počet skupin existuje mnoho způsobů. Nejznámější je takzvané Sturgesovo pravidlo (\ref{eq:sturgesovo_pravidlo}), které se spočítá následujícím vztahem:
@@ -47,7 +54,7 @@ Pro vhodný počet skupin existuje mnoho způsobů. Nejznámější je takzvané
 
 kde $k$ je výsledný zaokrouhlený počet skupin a $n$ je počet pozorování. Druhý parametr, který je pro tvorbu histogramu potřeba, je šířka skupiny.
 Ta by měla být ideálně stejná pro všechny skupiny. Pokud tomu tak není, histogram může být zavádějící a čtenář mu nemusí plně rozumět.
-Po vypočtení počtu skupin má šířka skupiny následující tvar:
+Pro vypočtení počtu skupin má šířka skupiny následující tvar:
 
 \begin{equation}
     \label{eq:sirka_histogramu}
@@ -55,14 +62,14 @@ Po vypočtení počtu skupin má šířka skupiny následující tvar:
 \end{equation}
 
 kde $x$ je zobrazovaná proměnná, $k$ je počet skupin a $w$ je výsledná šířka intervalu, která je zaokrouhlena nahoru. To je z toho důvodu, aby se
-každé pozorování promítlo právě do jedné kategorie. Pokud na stejný dataset, jako na grafu \ref{fig:histogram_porovnani}, použije toto pravidlo,
-graf vypadá následovně:
+každé pozorování promítlo právě do jedné kategorie. Pokud na stejný dataset, jako na grafu \ref{fig:histogram_mtcars_sturges}, použije sturgesovo
+(rovnice \ref{eq:sturgesovo_pravidlo}) pravidlo, graf vypadá následovně:
 
 \begin{figure}[H]
     \centering
-    \includegraphics{../../analyza/plots/histogram.png}
+    \includegraphics{../../analyza/plots/histogram_mtcars_sturges.png}
     \caption{Histogram s počtem skupin dle Sturgesova pravidla} 
-    \label{fig:histogram_sturges}
+    \label{fig:histogram_mtcars_sturges}
 \end{figure}
 
 Histogram lze samozřejmě rozepsat. Lze vytvořit tzn. tabulku četností (\ref{tab:tabulka_cetnosti_sturges}),
@@ -70,12 +77,13 @@ která mimo jiné obsahuje spodní hranici intervalu, horní hranici intervalu a
 aby přechody mezi intervaly byli jasné.
 
 \begin{table}[H]
-    \centering
+
+        \centering
     \begin{tabular}[t]{c|c|c}
         \hline
-        Spodní hranice intervalu & Horní hranice intervalu & Počet pozorování \\
+        Spodní hranice intervalu & Horní hranice intervalu & Počet pozorování\\
         \hline
-         7.05 & 11.75 & 2\\
+        7.05 & 11.75 & 2\\
         \hline
         11.76 & 16.45 & 9\\
         \hline
@@ -88,14 +96,58 @@ aby přechody mezi intervaly byli jasné.
         30.56 & 35.25 & 2\\
         \hline
     \end{tabular}
-    \caption{Tabulka četnostní}
-    \label{tab:tabulka_cetnosti_sturges}
+    \caption{\label{tab:tabulka_cetnosti_sturges}Tabulka četnostní}
 \end{table}
 
 \subsection{Boxplot}
-... Dopsat
+\subsubsection{Five-number summary}
+Five-number summary je číselná tabulka, která pomocí pěti různých čísel shrnuje seřazenou číselnou řadu. Základní statistický nástroj pro
+vytvoření takové tabulky jsou percentily. Hodnota $P$-tého percentilu označuje číslo, které rozděluje seřazenou číselnou řadu na dva intervaly. 
+První interval obsahuje $P*100\%$ číselné řady a druhý analogicky $(1-P)*100\%$. Různé hodnoty percentilů mohou mít specifičtější pojmenování a značí se $Q_P$.
+Percentil $P = 0.5$ se označuje jako medián a rozděluje seřazenou číselnou řadu na polovinu. Percentily, kde $P = 0.25$ nebo $P = 0.75$, se označují
+jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použité při tvorbě Five-number summary tabulky. Jako příklad je
+uvedena tabulka \ref{tab:five-number_summary}
 
-\newpage
+\begin{table}[H]
+
+    \centering
+    \begin{tabular}[t]{c|c|c|c|c}
+        \hline
+        $Q_{0} (Q_0)$ & $Q_{0.25} (Q_1) $ & $Q_{0.50}$ & $Q_{0.75} (Q_3)$ & $Q_{1.00}$\\
+        \hline
+        1.513 & 2.58125 & 3.325 & 3.61 & 5.424\\
+        \hline
+    \end{tabular}
+    \caption{\label{tab:five-number_summary}Five-number summary tabulka hmotnosti vozidla (lb/1000)}
+\end{table}
+
+$Q_{0}$ a $Q_{1.00}$ označují minimum a maximum číselné řady. Kvartily $Q_{1}$ a $Q_{3}$ jsou čísla, která rozděluji časovou řadu na na čtvrtiny. V prvním
+případě, tedy $Q_1 = Q_{0.25}$, je 25\% čísel menší než 1.513 a 75\% dat větší. Pro kvantil $Q_3 = Q_{0.75}$ je 75\% čísel menších než 3.61 a 25\% větších. $Q_{0.50}$ označuje medián.
+
+\subsubsection{Boxplot}
+Boxplot je grafické zobrazení a rozšíření Five-number summary tabulky. Krom grafické zobrazení pěti percentilů obvykle ukazuje statistiky jako průměr a extrémní hodnoty.
+V boxplotu se také nachází obdélník, který ukazuje interkvartilní rozsah \textit{(IQR)}, tedy prostředních 50\% dat. V obdélníku se také nachází černá čára, která značí medián.
+Z prostředního obdélníku vedou oběma směry čáry, které značí teoretické minimum a maximum (ne hodnoty $Q_0$ a $Q_1$). Obě dve hranice se počítají následovně
+
+\begin{align}
+    min &= Q_1 - 1.5 * IQR \\
+    max &= Q_3 + 1.5 * IQR
+\end{align}
+
+Hodnoty, které spadají do intervalu $<Q_1 - 1.5 * IQR ; Q_1>$ a $<Q_3, Q_3 + 1.5 * IQR>$ se nazývají jako odlehlé. Hodnoty které leží mimo tento vztah,
+tedy hodnoty menší než $Q_1 - 1.5 * IQR$ či větší než $Q_3 + 1.5 * IQR$, mají speciální název a označují se jako hodnoty extrémní.
+V boxplotu jsou z pravidla znázorněni nějakým speciálním znakem, např. kolečkem.
+Díky grafickém zobrazení lze lehce porovnávat distribuci jedné vysvětlované proměnné vůči několika kategoriím.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{../../analyza/plots/boxplot_mtcars.png}
+    \caption{Boxplot váhy auta pro různé počty válců} 
+    \label{fig:boxplot_mtcars}
+\end{figure}
+
+Trojúhelník v grafu \ref{fig:boxplot_mtcars} značí průměr pro danou kategorii. Černé tečky v kategorii osmi válců značí extrémní hodnoty, t. j. hodnoty
+větší než $<Q_3, Q_3 + 1.5 * IQR>$ jsou extrémní.
 
 \section{Logistický regresní model}
 ... Dopsat

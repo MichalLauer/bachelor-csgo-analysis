@@ -6,12 +6,14 @@ library(grid)
 library(gridExtra)
 library(dplyr)
 library(kableExtra)
+
+theme_set(theme_minimal())
 ```
 # Vyčištění prostředí
 ```{r }
 folder <- "plots"
-unlink(folder, recursive = T)
-dir.create(folder)
+# unlink(folder, recursive = T)
+# dir.create(folder)
 folder <- paste0(folder, "/")
 ```
 # Sloupcový graf
@@ -20,7 +22,6 @@ mtcars |>
   mutate(cyl = as.factor(cyl)) |>
   ggplot(aes(x = cyl, y = hp, fill = cyl)) +
   geom_bar(show.legend = F, stat = "summary", fun = mean) +
-  theme_minimal() +
   theme(panel.grid.major.x = element_blank()) +
   labs(
     title = "Porovnání válců s průměrbou hrubou koňskou silou",
@@ -29,7 +30,7 @@ mtcars |>
     y = "Průměrná hrubá koňská síla"
   )
 
-ggsave(paste0(folder, "sloupcovy_graf.png"), bg = "white",
+ggsave(paste0(folder, "sloupcovy_graf_mtcars.png"), bg = "white",
        width = 140, height = 105, units = 'mm')
 ```
 # Porovnání histogramů
@@ -39,7 +40,6 @@ hg <- \(bins) {
   mtcars |>
     ggplot(aes(x = mpg)) +
     geom_histogram(bins = bins, binwidth = width) +
-    theme_minimal() +
     scale_y_continuous(limits = c(0, 7)) +
     theme(panel.grid.major.x = element_blank(),
           plot.title = element_text(size = 10),
@@ -67,7 +67,7 @@ hg <- arrangeGrob(h1 + labs(caption = ""),
                   h3 + labs(caption = ""),
                   h4, nrow = 2)
 
-ggsave(paste0(folder, "histogram_porovnani.png"),
+ggsave(paste0(folder, "histogram_porovnani_mtcars.png"),
   plot = hg, bg = "white",
   width = 140, height = 105, units = "mm"
 )
@@ -79,7 +79,6 @@ width <- round((max(mtcars$mpg) - min(mtcars$mpg))/bins, 2)
 hg <- mtcars |>
   ggplot(aes(x = mpg)) +
   geom_histogram(bins = bins) +
-  theme_minimal() +
   theme(panel.grid.major.x = element_blank()) +
   labs(
       title = "Histogram míle z galon",
@@ -90,7 +89,7 @@ hg <- mtcars |>
       y = "Počet pozorování"
     )
 hg
-ggsave(paste0(folder, "histogram.png"), bg = "white",
+ggsave(paste0(folder, "histogram_mtcars_sturges.png"), bg = "white",
        width = 140, height = 105, units = 'mm')
 ```
 # Histogram dle Sturgese v tabulce
@@ -99,10 +98,64 @@ ggplot_build(hg)$data[1] |>
   as.data.frame() |>
   select(xmin, xmax, count) |>
   kbl(caption="Tabulka četnostní",
-      label = "tab:tabulka_cetnosti_sturges",
+      label = "tabulka_cetnosti_sturges",
       format="latex",
       col.names = c("Spodní hranice intervalu", "Horní hranice intervalu", "Počet pozorování"),
-      align="c") %>%
-  kable_minimal(full_width = F,  html_font = "Source Sans Pro") |>
+      align="c",
+      position = 'H') %>%
   writeLines()
+```
+# Five-number summary
+```{r, results='asis'}
+mtcars |>
+  summarise(P0   = quantile(wt, probs = 0),
+            P25  = quantile(wt, probs = 0.25),
+            P50  = quantile(wt, probs = 0.50),
+            P75  = quantile(wt, probs = 0.75),
+            P100 = quantile(wt, probs = 1)) |>
+  kbl(caption = 'Five-number summary tabulka hmotnosti vozidla (lb/1000)',
+      label = 'five-number_summary',
+      format = 'latex',
+      col.names = c('$Q_{0}$', '$Q_{0.25}$',
+                    '$Q_{0.50}$', '$Q_{0.75}$',
+                    '$Q_{1}$'),
+      align = 'c',
+      position = 'H',
+      escape = F,
+      ) |>
+  writeLines()
+```
+# Boxplot
+```{r, results='asis'}
+avgs <- mtcars |>
+  group_by(cyl) |>
+  summarise(wt = mean(wt))
+
+mtcars |>
+  ggplot(aes(x = as.factor(cyl), y = wt)) +
+  geom_boxplot() +
+  geom_point(data = avgs, shape = 2) +
+  labs(title = 'Boxplot porovnání všech kategorií počtu válců',
+       caption = "Henderson and Velleman (1981)",
+       x = 'Počet válců',
+       y = 'Hmotnost vozidla (lb/1000)')
+
+ggsave(paste0(folder, "boxplot_mtcars.png"), bg = "white",
+       width = 140, height = 105, units = 'mm')
+```
+# Bodový graf 2d
+```{r, results='asis'}
+mtcars |>
+  ggplot(aes(x = mpg, y = wt)) +
+  geom_point() +
+  labs(
+    title = 'Váha vozidla vysvětlená mílemy za galon',
+    subtitle = 'Váha je udaná v (lb/1000)',
+    caption = "Henderson and Velleman (1981)",
+    x = 'Váha (lb/1000)',
+    y = 'Míle za galon'
+  )
+
+ggsave(paste0(folder, "bodovy_graf_mtcars.png"), bg = "white",
+       width = 140, height = 105, units = 'mm')
 ```
