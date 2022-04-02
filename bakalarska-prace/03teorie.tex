@@ -231,6 +231,7 @@ největší pravděpodobnosti se počítá pravděpodobnostní funkce $L(\theta)
 Pro logistickou regresi má pravděpodobnostní funkce tvar
 
 \begin{equation}
+    \label{eq:pravdepodobnostni_fce}
     L(\theta) = \Pi_{l = 1}^{m_1} P(X_i) \Pi_{l = m_1 + 1}^{n} 1 - P(X_i) 
 \end{equation}
 
@@ -242,5 +243,37 @@ maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lz
     \frac{\partial L(\theta)}{\partial \beta_i} = 0
 \end{equation}
 
+\subsection{Waldův test}
+Waldův test je test hypotézy o tom, zda je parametr logistického regresního modelu $\beta_i$ významný či nikoliv. Definice
+testu hypotézy je tedy
+
+$H_0:$ Koeficient $\beta_i$ je rovný nule \\
+$H_A:$ Koeficient $\beta_i$ je různý od nuly
+
+Kritická hodnota $Z$ má normální rozdělení $Z ~ N(0, 1)$ a její mocnina, $Z^2$, má Chi-square rozdělení s jedním stupněm volnosti.
+$Z$ a lze vypočítat jako
+
+\begin{equation}
+    Z = \frac{\hat{\beta_i}}{S_{\hat{\beta_i}}}
+\end{equation}
+
+kde $\hat{\beta_i}$ je odhadnutý testovaný parametr logistického regresního modelu a $S_{\hat{\beta_i}}$ je směrodatná chyba koeficientu $\beta_i$
+
+\subsection{Test poměru věrohodností}
+Test poměru věrohodnosti porovnává slouží k porovnání dvou modelů. Důležitá podmínka je, aby jeden model byl zmenšený a druhý model plný.
+To v praxi znamená, že zmenšený model obsahuje stejné prediktory jako model plný, ale ne všechny. Prediktory, které v zmenšeném modelu
+nejsou jsou následně obsahem testovací hypotézy. Pokud se model plný a zmenšený liší o prediktor $X_i$, jsou hypotézy definovány následovně
+
+$H_0:$ Koeficient $\beta_i$ je rovný nule \\
+$H_A:$ Koeficient $\beta_i$ je různý od nuly
+
+Do výpočtu kritické hodnoty pak v poměru vstupují hodnoty pravděpodobnostní funkce \ref{eq:pravdepodobnostni_fce}, kde 
+$\hat{L_1}$ značí hodnotu pravděpodobnostní funkce pro plný model a $\hat{L_1}$ hodnotu pro model zmenšený.
+
+\begin{equation}
+    Z = -2ln(\frac{\hat{L_1}}{\hat{L_2}})
+\end{equation}
+
+při velké hodnotě $n$ má $Z$ zhruba Chi-square rozdělení s jedním stupněm volnosti.
+
 \subsection{Vyhodnocení modelu}
-... Dopsat
