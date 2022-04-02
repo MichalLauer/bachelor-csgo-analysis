@@ -1,16 +1,18 @@
 \chapter{Teoretická část}
 V následující části jsou popsány jak teoretické metody pro vizualizaci dat, tak i tvar, forma a vyhodnocení logistického regresního modelu. 
-Ke každé části, která se věnuje popisu dat pomocí nějakého grafu, je přidána praktická ukázka s popisem a praktickým vysvětlením. U regresního 
-modelu je následně dán důraz na teorii, jelikož model je následně prakticky použit v celé třetí části. Důležité je si uvědomit, že nástrojů pro
-vizualizaci dat je mnoho a grafů či souhrnných statistik je nespočet. V této práci se ovšem věnujeme vizualizacím, které jsou pro regresní model
+Ke každé části, která se věnuje popisu dat pomocí nějakého grafu, je přidána praktická ukázka s popisem a praktickým vysvětlením.
 vhodné.
 Testovací citace: \cite{Hebak2015}, \cite{Kleinbaum2010}
 
 \section{Vizualizace dat}
 \subsection{Bodový graf}
+{\color{red}
 Bodový graf slouží pro zobrazení vztahu dvou numerických proměnných. Z pravidla se vysvětlovaná proměnná dává na osu Y,
-zatímco proměnná vysvětlující se nachází na ose X. Graf \ref{fig:bodovy_graf_mtcars} zobrazuje negativní vztah mezi
-váhou vozidla a mílemi ujetými za galon.
+zatímco proměnná vysvětlující se nachází na ose X. Vysvětlovaná (nezávislá) proměnná je ta proměnná, která má být určitým způsobem předvídaná.
+Vysvětlující proměnná se naopak snaží vysvětlovanou proměnnou předpovědět či nějakým způsobem popsat. Propojením vysvětlované a vysvětlující proměnné
+na bodovém grafu lze vidět např. sílu korelace nebo vztah mezi proměnnými (např. lineární, kvadratický, logaritmický). Graf \ref{fig:bodovy_graf_mtcars} zobrazuje
+negativní korelaci mezi váhou vozidla a mílemi ujetými za galon.
+}
 
 \begin{figure}[H]
     \centering
@@ -19,12 +21,12 @@ váhou vozidla a mílemi ujetými za galon.
     \label{fig:bodovy_graf_mtcars}
 \end{figure}
 
-\subsection{Histogram}
-
-Histogram je speciální typ sloupcového grafu. Je specifický tím, že zobrazuje počet jednotlivých pozorování ve skupině. Skupiny je nutné vytvořit
-v případě, že je zobrazovaná proměnná spojitá. Zároveň histogram oproti klasickému sloupcovému grafu, který zobrazuje kategorie, nemá mezi sloupci žádné mezery.
-Na grafu \ref{fig:sloupcovy_graf_mtcars} je příklad sloupcového grafu. Na ose X se nachází kategorická vysvětlovací proměnná. Vysvětlovaná proměnná Y je průměrná hrubá
-koňská síla.
+{\color{red}
+\subsection{Sloupcový graf}
+Sloupcový graf slouží k porovnání kategoriální kvalitativní proměnné. Na jednu osu (z pravidla osu X) se položí možné kategorie. Na druhou osu
+se pak položí sledovaná statistika. Sledovat můžeme např. počet výskytů, průměr, nebo relativní počet výskytu. Pokud je sledovaná proměnná ordinální,
+je také možné odvodit vztah mezi kategoriemi. Příklad sloupcového grafu je zobrazen na obrázku \ref{fig:sloupcovy_graf_mtcars}, který
+porovnává průměrnou hrubou koňskou sílu s počtem válců. Je na něm také vidět vztah, kdy s vyšším počtem válců stoupá průměrná koňská síla.
 
 \begin{figure}[H]
     \centering
@@ -33,10 +35,14 @@ koňská síla.
     \label{fig:sloupcovy_graf_mtcars}
 \end{figure}
 
+\subsection{Histogram}
+
+Histogram je speciální typ sloupcového grafu. Hlavní rozdíl je v tom, že popisuje bodové rozdělení spojité proměnné a mezi sloupci není žádná mezera.
+}
 Pro histogram je třeba data sloučit do skupin \textit{(bins)} o určité šířce. Správný výběr počtu skupin je kritický, jelikož může velmi
 silně ovlivnit interpretaci dat. Pokud se vybere moc malý počet skupin, data se seskupí a může se ztratit důležitý vztah. Pokud se ovšem
 vybere moc velký počet skupin, v datech bude obtížné najít nějaký obecný vztah či trend.
-Tento efekt je znázorněn na grafu \ref{fig:histogram_porovnani_mtcars}.
+Tento efekt je znázorněn na obrázku \ref{fig:histogram_porovnani_mtcars}.
 
 \begin{figure}[H]
     \centering
@@ -45,25 +51,31 @@ Tento efekt je znázorněn na grafu \ref{fig:histogram_porovnani_mtcars}.
     \label{fig:histogram_porovnani_mtcars}
 \end{figure}
 
-Pro vhodný počet skupin existuje mnoho způsobů. Nejznámější je takzvané Sturgesovo pravidlo (\ref{eq:sturgesovo_pravidlo}), které se spočítá následujícím vztahem:
+Pro vhodný počet skupin existuje mnoho způsobů. Nejznámější je takzvané Sturgesovo pravidlo, které se spočítá následujícím vztahem:
 
 \begin{equation}
     \label{eq:sturgesovo_pravidlo}
-    k \text{ } \dot{\mathbf{=}} \text{ } 1 + 3,22 * log_{10}(n)
+    k \text{ } \dot{\mathbf{=}} \text{ } 1 + 3,3 * log_{10}(n)
 \end{equation}
 
-kde $k$ je výsledný zaokrouhlený počet skupin a $n$ je počet pozorování. Druhý parametr, který je pro tvorbu histogramu potřeba, je šířka skupiny.
+kde $k$ je výsledný zaokrouhlený počet skupin 
+{\color{red}
+nahoru
+}
+a $n$ je počet pozorování. Druhý parametr, který je pro tvorbu histogramu potřeba, je šířka skupiny.
 Ta by měla být ideálně stejná pro všechny skupiny. Pokud tomu tak není, histogram může být zavádějící a čtenář mu nemusí plně rozumět.
 Pro vypočtení počtu skupin má šířka skupiny následující tvar:
 
 \begin{equation}
     \label{eq:sirka_histogramu}
-    w = \ceil[\bigg]{ \frac{max(x) - min(x)}{k} }
+    w = \frac{max(x) - min(x)}{k}
 \end{equation}
 
-kde $x$ je zobrazovaná proměnná, $k$ je počet skupin a $w$ je výsledná šířka intervalu, která je zaokrouhlena nahoru. To je z toho důvodu, aby se
-každé pozorování promítlo právě do jedné kategorie. Pokud na stejný dataset, jako na grafu \ref{fig:histogram_mtcars_sturges}, použije sturgesovo
-(rovnice \ref{eq:sturgesovo_pravidlo}) pravidlo, graf vypadá následovně:
+{\color{red}
+kde $x$ je zobrazovaná proměnná, $k$ je počet skupin a $w$ je výsledná šířka intervalu. Pokud na stejný dataset, jako na obrázku 
+\ref{fig:histogram_porovnani_mtcars}, použije Sturgesovo pravidlo \ref{eq:sturgesovo_pravidlo} a výpočet šířky \ref{eq:sirka_histogramu},
+obrázek vypadá následovně:
+}
 
 \begin{figure}[H]
     \centering
@@ -72,28 +84,29 @@ každé pozorování promítlo právě do jedné kategorie. Pokud na stejný dat
     \label{fig:histogram_mtcars_sturges}
 \end{figure}
 
-Histogram lze samozřejmě rozepsat. Lze vytvořit tzn. tabulku četností (\ref{tab:tabulka_cetnosti_sturges}),
+Histogram lze samozřejmě rozepsat. Lze vytvořit tzn. tabulku četností ,
 která mimo jiné obsahuje spodní hranici intervalu, horní hranici intervalu a počet pozorování. Důležité je,
 aby přechody mezi intervaly byli jasné.
 
 \begin{table}[H]
-
-        \centering
+    \centering
     \begin{tabular}[t]{c|c|c}
         \hline
         Spodní hranice intervalu & Horní hranice intervalu & Počet pozorování\\
         \hline
-        7.05 & 11.75 & 2\\
+        9.791667 & 13.70833 & 3\\
         \hline
-        11.76 & 16.45 & 9\\
+        13.708334 & 17.62500 & 9\\
         \hline
-        16.46 & 21.15 & 9\\
+        17.625001 & 21.54167 & 11\\
         \hline
-        21.16 & 25.85 & 6\\
+        21.541668 & 25.45833 & 3\\
         \hline
-        25.86 & 30.55 & 4\\
+        25.458334 & 29.37500 & 2\\
         \hline
-        30.56 & 35.25 & 2\\
+        29.375001 & 33.29167 & 3\\
+        \hline
+        33.291668 & 37.20833 & 1\\
         \hline
     \end{tabular}
     \caption{\label{tab:tabulka_cetnosti_sturges}Tabulka četnostní}
@@ -102,7 +115,7 @@ aby přechody mezi intervaly byli jasné.
 \subsection{Boxplot}
 \subsubsection{Five-number summary}
 Five-number summary je číselná tabulka, která pomocí pěti různých čísel shrnuje seřazenou číselnou řadu. Základní statistický nástroj pro
-vytvoření takové tabulky jsou percentily. Hodnota $P$-tého percentilu označuje číslo, které rozděluje seřazenou číselnou řadu na dva intervaly. 
+vytvoření takové tabulky jsou kvantily. Hodnota $P$-tého percentilu označuje číslo, které rozděluje seřazenou číselnou řadu na dva intervaly. 
 První interval obsahuje $P*100\%$ číselné řady a druhý analogicky $(1-P)*100\%$. Různé hodnoty percentilů mohou mít specifičtější pojmenování a značí se $Q_P$.
 Percentil $P = 0.5$ se označuje jako medián a rozděluje seřazenou číselnou řadu na polovinu. Percentily, kde $P = 0.25$ nebo $P = 0.75$, se označují
 jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použité při tvorbě Five-number summary tabulky. Jako příklad je
@@ -125,19 +138,28 @@ $Q_{0}$ a $Q_{1.00}$ označují minimum a maximum číselné řady. Kvartily $Q_
 případě, tedy $Q_1 = Q_{0.25}$, je 25\% čísel menší než 1.513 a 75\% dat větší. Pro kvantil $Q_3 = Q_{0.75}$ je 75\% čísel menších než 3.61 a 25\% větších. $Q_{0.50}$ označuje medián.
 
 \subsubsection{Boxplot}
-Boxplot je grafické zobrazení a rozšíření Five-number summary tabulky. Krom grafické zobrazení pěti percentilů obvykle ukazuje statistiky jako průměr a extrémní hodnoty.
-V boxplotu se také nachází obdélník, který ukazuje interkvartilní rozsah \textit{(IQR)}, tedy prostředních 50\% dat. V obdélníku se také nachází černá čára, která značí medián.
-Z prostředního obdélníku vedou oběma směry čáry, které značí teoretické minimum a maximum (ne hodnoty $Q_0$ a $Q_1$). Obě dve hranice se počítají následovně
+Boxplot je grafické zobrazení a rozšíření Five-number summary tabulky. Krom grafické zobrazení 
+{\color{red}
+pěti kvantilů  ukazuje odlehlé a extrémní hodnoty.
+}
+V boxplotu se také nachází obdélník, který ukazuje mezikvartilové rozsah (IQR), tedy prostředních 50 \% dat. V obdélníku se také nachází černá čára, která značí medián.
+Z prostředního obdélníku vedou oběma směry čáry, které značí teoretické minimum a maximum
+{\color{red}
+(což mohou a nemusí být hodnoty $Q_0$ a $Q_1$).
+}
+Obě dve hranice se počítají následovně
 
 \begin{align}
     min &= Q_1 - 1.5 * IQR \\
     max &= Q_3 + 1.5 * IQR
 \end{align}
 
-Hodnoty, které spadají do intervalu $<Q_1 - 1.5 * IQR ; Q_1>$ a $<Q_3, Q_3 + 1.5 * IQR>$ se nazývají jako odlehlé. Hodnoty které leží mimo tento vztah,
-tedy hodnoty menší než $Q_1 - 1.5 * IQR$ či větší než $Q_3 + 1.5 * IQR$, mají speciální název a označují se jako hodnoty extrémní.
-V boxplotu jsou z pravidla znázorněni nějakým speciálním znakem, např. kolečkem.
-Díky grafickém zobrazení lze lehce porovnávat distribuci jedné vysvětlované proměnné vůči několika kategoriím.
+{\color{red}
+Hodnoty, které spadají do intervalu $\langle Q_1 - 1.5IQR; Q_1 - 3IQR\rangle$ a $\langle Q_3 + 1.5IQR, Q_3 + 3IQR \rangle$ se nazývají jako odlehlé.
+Hodnoty které leží mimo tento vztah, tedy hodnoty menší než $Q_1 - 3IQR$ nebo větší než $Q_3 + 3IQR$ se nazývají jako hodnoty extrémní a
+v boxplotu jsou z pravidla vyznačeny nějakým speciálním znakem, např. kolečkem.
+Díky grafickému zobrazení lze lehce porovnávat rozdělení jedné vysvětlované proměnné tříděné přes několik kategorií.
+}
 
 \begin{figure}[H]
     \centering
@@ -146,26 +168,79 @@ Díky grafickém zobrazení lze lehce porovnávat distribuci jedné vysvětlovan
     \label{fig:boxplot_mtcars}
 \end{figure}
 
-Trojúhelník v grafu \ref{fig:boxplot_mtcars} značí průměr pro danou kategorii. Černé tečky v kategorii osmi válců značí extrémní hodnoty, t. j. hodnoty
-větší než $<Q_3, Q_3 + 1.5 * IQR>$ jsou extrémní.
+{\color{red}
+Černé tečky v obrázku \ref{fig:boxplot_mtcars} v kategorii osmi válců značí odlehlé hodnoty, t. j. hodnoty
+v intervalu $\langle Q_3 + 1.5IQR, Q_3 + 3IQR \rangle$.
+}
 
-\section{Logistický regresní model}
-... Dopsat
+\newpage
+\section{Logistická regrese}
+Logistická regrese je způsob, jak popsat vztah mezi jedním či několika prediktory a jednou binární predikovanou 
+proměnnou. K tomu slouží spojovací funkce, která transformuje lineární kombinaci prediktorů na index $z$. V případě
+logistické regrese se tato funkce nazývá logistická a je definovaná jako
 
-\subsection{Jednoduchý logistický regresní model}
-... Dopsat
+\begin{equation}
+    \label{eq:logisticka_funkce}
+    f(z) = \frac{1}{1 + e^{-z}}
+\end{equation}
 
-\subsection{Vícerozměrný logistický regresní model}
-... Dopsat
+Obor hodnot funkce je interval $\langle 0, 1 \rangle$. Proměnná $z$ je lineární kombinace prediktorů  $X_1, X_2, ..., X_k$,
+jejich koeficienty $\beta_1, \beta_2, ..., \beta_k$ a parametru $\alpha$.
 
-\subsection{Optimalizace parametrů}
-... Dopsat
+\begin{equation}
+    \label{eq:linearni_kombinace_z}
+    z = \alpha + \sum_{i=1}^k \beta_i X_i
+\end{equation}
 
-\subsubsection{Metoda nejmenších čtverců}
-... Dopsat
+Mějme tedy binární predikovanou (vysvětlovanou) proměnnou $Y$, u které hodnota $1$ značí výskyt jevu. Pravděpodobnost, že jev nastane
+vzhledem k definovaným prediktorům lze zapsat jako
 
-\subsubsection{Metoda největší pravděpodobnosti}
-... Dopsat
+\begin{equation}
+    \label{eq:pravdepodobnost_y}
+    P(Y = 1 \mid X_1, X_2, ..., X_k) = \frac{1}{1 + e^{-\alpha + \sum_{i=1}^k \beta_i X_i}}
+\end{equation}
+
+kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru. 
+
+\subsection{Interpretace parametrů}
+Parametry $\alpha$ a $\beta_i$ značí logaritmus šance. $\alpha$ je  logaritmus šance, kde všechny prediktory
+jsou teoreticky rovné $0$. Parametr $\beta_i$ značí logaritmus šance pro prediktor $X_1$ při změně o jednotku. 
+Pokud je prediktor $Y$ skutečně binární, tedy značí $0$ pro nepřítomnost jevu a $1$ pro přítomnost jevu,
+lze šance vypočítat jako
+
+\begin{equation}
+\text{šance } = e^{\beta_i}    
+\end{equation}
+
+Šance je podíl dvou pravděpodobností. Pokud bychom měli šanci jevu A oproti jevu B $2 : 1$, značí to, že výskyt jevu A je dvakrát tak pravděpodobný
+jako výskyt jevu B a jev A se vyskytuje ve $2 \over 3$ případů. Šance $e^{\beta_i}$ tedy značí vztah mezi prediktorem $X_i$ a predikovanou proměnnou $Y$. Pokud je
+šance kladná, značí to, že s vyšší hodnotou prediktoru $X_i$ se zvyšuje šance že $P(Y = 1)$. Pokud je naopak nižší, pravděpodobnost se zmenšuje. Pokud je potřeba
+interpretovat pravděpodobnost jako šanci, použije se logitová funkce
+
+\begin{equation}
+    \label{eq:logitova_funkce}
+    \text{šance jevu A} = \frac{p}{1 - p}
+\end{equation}
+
+kde $p$ je pravděpodobnost výskytu jevu A.
+
+\subsection{Maximální pravděpodobnost}
+Parametry logistického modelu v rovnici \ref{eq:pravdepodobnost_y} jsou pouze teoretické a je třeba je určitým způsobem odhadnout. Již vypočtené odhady
+se proto neznačí pouze $\beta$, ale $\hat{\beta}$. Pro odhad parametrů se při logistické regresi používá metoda zvaná Největší pravděpodobnost. Pro výpočet
+největší pravděpodobnosti se počítá pravděpodobnostní funkce $L(\theta)$ kde $\theta$ jsou parametry logistického modelu $\alpha, \beta_1, ..., \beta_k$.
+Pro logistickou regresi má pravděpodobnostní funkce tvar
+
+\begin{equation}
+    L(\theta) = \Pi_{l = 1}^{m_1} P(X_i) \Pi_{l = m_1 + 1}^{n} 1 - P(X_i) 
+\end{equation}
+
+kde $n$ je počet pozorování a $m_1$ je počet příznivých ($Y = 1$) jevů. Funkce předpokládá, že datový soubor je seřazen tak, že prvních $m_1$ výskytů
+jsou jevy příznivé. $P(X_i)$ poté značí logistickou funkci \ref{eq:logisticka_funkce}. Pro vypočtení optimálního parametru $\beta_i$ je nutné vypočítat
+maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lze tedy získat derivací funkce $L(\theta)$ vzhledem k parametru $\beta_i$
+
+\begin{equation}
+    \frac{\partial L(\theta)}{\partial \beta_i} = 0
+\end{equation}
 
 \subsection{Vyhodnocení modelu}
 ... Dopsat

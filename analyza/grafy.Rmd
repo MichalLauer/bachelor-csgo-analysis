@@ -36,11 +36,10 @@ ggsave(paste0(folder, "sloupcovy_graf_mtcars.png"), bg = "white",
 # Porovnání histogramů
 ```{r}
 hg <- \(bins) {
-  width <- round((max(mtcars$mpg) - min(mtcars$mpg))/bins, 2)
+  width <- (max(mtcars$mpg) - min(mtcars$mpg))/bins
   mtcars |>
     ggplot(aes(x = mpg)) +
-    geom_histogram(bins = bins, binwidth = width) +
-    scale_y_continuous(limits = c(0, 7)) +
+    geom_histogram(binwidth = width) +
     theme(panel.grid.major.x = element_blank(),
           plot.title = element_text(size = 10),
           plot.subtitle  = element_text(size = 8),
@@ -50,7 +49,7 @@ hg <- \(bins) {
     labs(
       title = "Histogram míle z galon",
       subtitle = paste0("Počet skupin: ", bins, ", ",
-                        "Šířka skupiny: ", width),
+                        "Šířka skupiny: ", round(width, 3)),
       caption = "Henderson and Velleman (1981)",
       x = "Míle za galon",
       y = "Počet pozorování"
@@ -75,15 +74,15 @@ ggsave(paste0(folder, "histogram_porovnani_mtcars.png"),
 # Histogram dle Sturgese
 ```{r}
 bins <- ceiling(1 + 3.22*log10(nrow(mtcars)))
-width <- round((max(mtcars$mpg) - min(mtcars$mpg))/bins, 2)
+width <- (max(mtcars$mpg) - min(mtcars$mpg))/bins
 hg <- mtcars |>
   ggplot(aes(x = mpg)) +
-  geom_histogram(bins = bins) +
+  geom_histogram(binwidth = width) +
   theme(panel.grid.major.x = element_blank()) +
   labs(
       title = "Histogram míle z galon",
       subtitle = paste0("Počet skupin: ", bins, ", ",
-                        "Šířka skupiny: ", width),
+                        "Šířka skupiny: ", round(width, 3)),
       caption = "Henderson and Velleman (1981)",
       x = "Míle za galon",
       y = "Počet pozorování"
@@ -127,14 +126,10 @@ mtcars |>
 ```
 # Boxplot
 ```{r, results='asis'}
-avgs <- mtcars |>
-  group_by(cyl) |>
-  summarise(wt = mean(wt))
 
 mtcars |>
   ggplot(aes(x = as.factor(cyl), y = wt)) +
   geom_boxplot() +
-  geom_point(data = avgs, shape = 2) +
   labs(title = 'Boxplot porovnání všech kategorií počtu válců',
        caption = "Henderson and Velleman (1981)",
        x = 'Počet válců',

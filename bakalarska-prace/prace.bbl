@@ -1,0 +1,325 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.1 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nyt/global//global/global}
+    \entry{csko2021}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=2d87cafdacac86c5c66158407061da99}{%
+           family={csko},
+           familyi={c\bibinitperiod}}}%
+      }
+      \strng{namehash}{2d87cafdacac86c5c66158407061da99}
+      \strng{fullhash}{2d87cafdacac86c5c66158407061da99}
+      \strng{bibnamehash}{2d87cafdacac86c5c66158407061da99}
+      \strng{authorbibnamehash}{2d87cafdacac86c5c66158407061da99}
+      \strng{authornamehash}{2d87cafdacac86c5c66158407061da99}
+      \strng{authorfullhash}{2d87cafdacac86c5c66158407061da99}
+      \field{sortinit}{c}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{csko.cz}
+      \field{title}{základní statistiky}
+      \field{year}{2021}
+      \verb{urlraw}
+      \verb https://stats.csko.cz/statsx/hlstats.php
+      \endverb
+      \verb{url}
+      \verb https://stats.csko.cz/statsx/hlstats.php
+      \endverb
+      \keyw{ezdroj}
+    \endentry
+    \entry{Gough2021}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=06dde9197699171f74d47f5de4bec0c9}{%
+           family={Gough},
+           familyi={G\bibinitperiod},
+           given={Christina},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{06dde9197699171f74d47f5de4bec0c9}
+      \strng{fullhash}{06dde9197699171f74d47f5de4bec0c9}
+      \strng{bibnamehash}{06dde9197699171f74d47f5de4bec0c9}
+      \strng{authorbibnamehash}{06dde9197699171f74d47f5de4bec0c9}
+      \strng{authornamehash}{06dde9197699171f74d47f5de4bec0c9}
+      \strng{authorfullhash}{06dde9197699171f74d47f5de4bec0c9}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{statista}
+      \field{month}{8}
+      \field{title}{esports market revenue worldwide from 2019 to 2024}
+      \field{year}{2021}
+      \verb{urlraw}
+      \verb https://www.statista.com/statistics/490522/global-esports-market-revenue/
+      \endverb
+      \verb{url}
+      \verb https://www.statista.com/statistics/490522/global-esports-market-revenue/
+      \endverb
+      \keyw{ezdroj}
+    \endentry
+    \entry{Hebak2015}{book}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=191f8014e54b21020155dc057a955e7b}{%
+           family={Hebák},
+           familyi={H\bibinitperiod},
+           given={Petr},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Informatorium}%
+      }
+      \strng{namehash}{191f8014e54b21020155dc057a955e7b}
+      \strng{fullhash}{191f8014e54b21020155dc057a955e7b}
+      \strng{bibnamehash}{191f8014e54b21020155dc057a955e7b}
+      \strng{authorbibnamehash}{191f8014e54b21020155dc057a955e7b}
+      \strng{authornamehash}{191f8014e54b21020155dc057a955e7b}
+      \strng{authorfullhash}{191f8014e54b21020155dc057a955e7b}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2}
+      \field{isbn}{978-80-7333-118-4}
+      \field{title}{Statistické myšlení a nástroje analýzy dat}
+      \field{year}{2015}
+    \endentry
+    \entry{Henningson2020}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=900b61a21647151e18b92d42a7bacaa9}{%
+           family={Henningson},
+           familyi={H\bibinitperiod},
+           given={Joakim},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{900b61a21647151e18b92d42a7bacaa9}
+      \strng{fullhash}{900b61a21647151e18b92d42a7bacaa9}
+      \strng{bibnamehash}{900b61a21647151e18b92d42a7bacaa9}
+      \strng{authorbibnamehash}{900b61a21647151e18b92d42a7bacaa9}
+      \strng{authornamehash}{900b61a21647151e18b92d42a7bacaa9}
+      \strng{authorfullhash}{900b61a21647151e18b92d42a7bacaa9}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{redbull}
+      \field{title}{the history of counter-strike}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://www.redbull.com/se-en/history-of-counterstrike
+      \endverb
+      \verb{url}
+      \verb https://www.redbull.com/se-en/history-of-counterstrike
+      \endverb
+      \keyw{ezdroj}
+    \endentry
+    \entry{hltv.org2015}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=dcdd7aa38e4c7baeeb248bfa5aaa7177}{%
+           family={hltv.org},
+           familyi={h\bibinitperiod}}}%
+      }
+      \strng{namehash}{dcdd7aa38e4c7baeeb248bfa5aaa7177}
+      \strng{fullhash}{dcdd7aa38e4c7baeeb248bfa5aaa7177}
+      \strng{bibnamehash}{dcdd7aa38e4c7baeeb248bfa5aaa7177}
+      \strng{authorbibnamehash}{dcdd7aa38e4c7baeeb248bfa5aaa7177}
+      \strng{authornamehash}{dcdd7aa38e4c7baeeb248bfa5aaa7177}
+      \strng{authorfullhash}{dcdd7aa38e4c7baeeb248bfa5aaa7177}
+      \field{sortinit}{h}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{hltv.org}
+      \field{title}{xenex vs. excel at esl uk premiership season 1}
+      \field{year}{2015}
+      \verb{urlraw}
+      \verb https://www.hltv.org/matches/2295340/xenex-vs-excel-esl-uk-premiership-season-1?__cf_chl_jschl_tk__=82S_Uc_dNU8PM7leUY1VKzNUZkp5_ArTb69qteh2wBI-1641459294-0-gaNycGzNChE
+      \endverb
+      \verb{url}
+      \verb https://www.hltv.org/matches/2295340/xenex-vs-excel-esl-uk-premiership-season-1?__cf_chl_jschl_tk__=82S_Uc_dNU8PM7leUY1VKzNUZkp5_ArTb69qteh2wBI-1641459294-0-gaNycGzNChE
+      \endverb
+      \keyw{ezdroj}
+    \endentry
+    \entry{Kleinbaum2010}{book}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=917dc2fcbf87d2c6ee12084b5c097902}{%
+           family={Kleinbaum},
+           familyi={K\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{917dc2fcbf87d2c6ee12084b5c097902}
+      \strng{fullhash}{917dc2fcbf87d2c6ee12084b5c097902}
+      \strng{bibnamehash}{917dc2fcbf87d2c6ee12084b5c097902}
+      \strng{authorbibnamehash}{917dc2fcbf87d2c6ee12084b5c097902}
+      \strng{authornamehash}{917dc2fcbf87d2c6ee12084b5c097902}
+      \strng{authorfullhash}{917dc2fcbf87d2c6ee12084b5c097902}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{3}
+      \field{isbn}{978-1-4939-3697-7}
+      \field{title}{Logistic regression : a self-learning text}
+      \field{year}{2010}
+    \endentry
+    \entry{Larch2019}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=66ddf3ed24f49a0dca94e782755323a6}{%
+           family={Larch},
+           familyi={L\bibinitperiod},
+           given={Florian},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{66ddf3ed24f49a0dca94e782755323a6}
+      \strng{fullhash}{66ddf3ed24f49a0dca94e782755323a6}
+      \strng{bibnamehash}{66ddf3ed24f49a0dca94e782755323a6}
+      \strng{authorbibnamehash}{66ddf3ed24f49a0dca94e782755323a6}
+      \strng{authornamehash}{66ddf3ed24f49a0dca94e782755323a6}
+      \strng{authorfullhash}{66ddf3ed24f49a0dca94e782755323a6}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ispo}
+      \field{month}{1}
+      \field{title}{the history of the origin of esports}
+      \field{year}{2019}
+      \verb{urlraw}
+      \verb https://www.ispo.com/en/markets/history-origin-esports
+      \endverb
+      \verb{url}
+      \verb https://www.ispo.com/en/markets/history-origin-esports
+      \endverb
+      \keyw{ezdroj}
+    \endentry
+    \entry{liquipedia2021}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=a252873b884439b97f6b18d7f838e1ce}{%
+           family={liquipedia},
+           familyi={l\bibinitperiod}}}%
+      }
+      \strng{namehash}{a252873b884439b97f6b18d7f838e1ce}
+      \strng{fullhash}{a252873b884439b97f6b18d7f838e1ce}
+      \strng{bibnamehash}{a252873b884439b97f6b18d7f838e1ce}
+      \strng{authorbibnamehash}{a252873b884439b97f6b18d7f838e1ce}
+      \strng{authornamehash}{a252873b884439b97f6b18d7f838e1ce}
+      \strng{authorfullhash}{a252873b884439b97f6b18d7f838e1ce}
+      \field{sortinit}{l}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{liquipedia}
+      \field{title}{pgl major stockholm 2021}
+      \field{year}{2021}
+      \verb{urlraw}
+      \verb https://liquipedia.net/counterstrike/PGL/2021/Stockholm
+      \endverb
+      \verb{url}
+      \verb https://liquipedia.net/counterstrike/PGL/2021/Stockholm
+      \endverb
+      \keyw{ezdroj}
+    \endentry
+    \entry{Professeur2021}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=6fca1443beac276347fb53a1a030f587}{%
+           family={Professeur},
+           familyi={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{6fca1443beac276347fb53a1a030f587}
+      \strng{fullhash}{6fca1443beac276347fb53a1a030f587}
+      \strng{bibnamehash}{6fca1443beac276347fb53a1a030f587}
+      \strng{authorbibnamehash}{6fca1443beac276347fb53a1a030f587}
+      \strng{authornamehash}{6fca1443beac276347fb53a1a030f587}
+      \strng{authorfullhash}{6fca1443beac276347fb53a1a030f587}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{hltv}
+      \field{title}{esea increase prize pool and number of seasons for 2021; simplify path to pro league}
+      \field{year}{2021}
+      \verb{urlraw}
+      \verb https://www.hltv.org/news/30926/esea-increase-prize-pool-and-number-of-seasons-for-2021-simplify-path-to-pro-league
+      \endverb
+      \verb{url}
+      \verb https://www.hltv.org/news/30926/esea-increase-prize-pool-and-number-of-seasons-for-2021-simplify-path-to-pro-league
+      \endverb
+      \keyw{ezdroj}
+    \endentry
+    \entry{Valve2013}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=104400e7d4632e6a82bf0b206b9c32dd}{%
+           family={Valve},
+           familyi={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{104400e7d4632e6a82bf0b206b9c32dd}
+      \strng{fullhash}{104400e7d4632e6a82bf0b206b9c32dd}
+      \strng{bibnamehash}{104400e7d4632e6a82bf0b206b9c32dd}
+      \strng{authorbibnamehash}{104400e7d4632e6a82bf0b206b9c32dd}
+      \strng{authornamehash}{104400e7d4632e6a82bf0b206b9c32dd}
+      \strng{authorfullhash}{104400e7d4632e6a82bf0b206b9c32dd}
+      \field{sortinit}{V}
+      \field{sortinithash}{afb52128e5b4dc4b843768c0113d673b}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{counter-strike: the arms deal update}
+      \field{year}{2013}
+      \verb{urlraw}
+      \verb http://counter-strike.net/armsdeal
+      \endverb
+      \verb{url}
+      \verb http://counter-strike.net/armsdeal
+      \endverb
+      \keyw{ezdroj}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
