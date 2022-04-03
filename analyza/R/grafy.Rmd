@@ -11,9 +11,8 @@ theme_set(theme_minimal())
 ```
 # Vyčištění prostředí
 ```{r }
-folder <- "plots"
-# unlink(folder, recursive = T)
-# dir.create(folder)
+folder <- "../plots"
+unlink(folder, recursive = T)
 folder <- paste0(folder, "/")
 ```
 # Sloupcový graf

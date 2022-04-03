@@ -1,49 +1,283 @@
 ---
-title: "Modely logistické regrese v oblasti esportových dat"
+title: "Analýza dat pro Bakalářskou práci"
 author: "Michal Lauer"
-date: "19 11 2021"
+date: '2022-04-03'
 output:
   html_document:
+    css: style.css
     toc: true
-    toc_depth: 3
     toc_float:
       collapsed: false
       smooth_scroll: true
-    df_print: paged
-    code_folding: hide
-    number_sections: true
-    highlight: tango
-  
-params:
-  dataset_url: https://www.kaggle.com/mateusdmachado/csgo-professional-matches
-  bachelor_url: https://www.placeholder.com/
+    df_print: tibble
+    highlight: pygments
 ---
-```{r global-setup, include = F}
-knitr::opts_chunk$set(echo = T)
-set.seed(112233)
-# Libraries
-library(tidyverse)
-library(skimr)
+# Funkce a globální nastavení
+
+## Metody
+```{r global-setup, message=F}
+library(readr)
+library(dplyr)
+library(stringr)
+library(tidyr)
+library(fastDummies)
+
+knitr::opts_chunk$set(message = F)
 ```
-# Představení
-Tato analýza slouží jako dokumentace a postup zpracování dat pro mou [bakalářskou práce](`r params$bachelor_url`). Dokument je zaměřený více na praktickou část zpracování než na teorii. K teoretickému rozboru slouží právě vypracovaná bakalářská práce.
 
-Dataset, s kterým se v analýze pracuje, se nachází na serveru [kaggle.com](`r params$dataset_url`) a obsahuje data popisující esportové zápasy ve hře Counter-Strike: Global Offensive. Dataset obsahuje čtyři datové soubory soubory
-
-- **results.csv** - výsledky zápasů
-- **picks.csv** - detaily o hlasování, na jakých mapách se bude hrát
-- **players.csv** - statistiky hráčů
-- **economy.csv** - data, týkající se herní ekonomiky v každém kole
-
-Prvním části analýzy jsou zpracovány datové soubory a jejich obsah V dalším kroku jsou vybráný proměnné, které jsou vhoné právě k tvorbě logistického regresního modelu. Následuje tvorba modelu a jeho vyhodnocení. V předposlední části je celý model slovně interpretován. Na konci analýzy je vytvořena interaktivní aplikace, která již není součástí bakalářské práce, kde bude možné různé zápasy simulovat.
-
-Pro práci s daty bude také potřeba využít několik vytvořených funkcí, které jsou pro přehlednost definovány na jednom místě.
-```{r functions, file = 'funkce.R'}
-source('funkce.R')
+# Objekty a funkce
+## maps
+Mapy pro které se počítají statistiky
+```{r maps}
+maps <- c("Dust2", "Inferno", "Vertigo", "Overpass", "Nuke",
+          "Mirage", "Train", "Cache", "Cobblestone")
 ```
+
+## clear_player_map
+Funkce slouží k extrakci statistik hráčů pro dané pořadové číslo
+mapy v herním formátu *BoX*
+```{r clear_player_map}
+#' Získání statistik dle čísla mapy
+#'
+#' @param tbl Tibble hráču
+#' @param map Pořadí mapy
+#'
+#' @return Tibble se statistikamy za dané pořadá
+clear_player_map <- function(tbl, map) {
+  m_ <- sprintf("m%i_", map)
+  tbl |>
+    select(match_id, player_name, team,
+      map = sprintf("map_%i", map),
+      matches(sprintf("^m%i_", map))
+    ) |>
+    # matches only aggregated statistics for specified map
+    # e.g. excludes m1_kills_ct, m1_kills_t and keeps only m1_kills
+    select(!matches("_c?t$")) |>
+    drop_na(map) |>
+    rename_with(
+      .cols = starts_with(m_),
+      .fn = ~ str_replace(.x, m_, "")
+    ) |>
+    # remove columns that are only calculated from other columns
+    # or are roublesome because of the website history tracking
+    select(-c(kddiff, flash_assists, kast, adr)) |>
+    # make Hs relative and not absolute
+    mutate(hs = ifelse(kills == 0, 0, hs / kills))
+}
+```
+
+## clear_results_team
+Funkce pro získání $i$-tého týmy z tabulky výsledků
+```{r clear_results_team}
+#' Získání výsledků pr i-tý tým z tabulky teamů
+#'
+#' @param tbl Tibble s výsledky
+#' @param i Číslo teamu
+#'
+#' @return Tibble se výsledky pro i-tý tým 
+clear_results_team <- function(tbl, i) {
+    tbl |>
+        select(match_id, team = matches(sprintf("team_%i", i)), map,
+               map_winner, starting_ct, rank = matches(sprintf("rank_%i", i))) |>
+        filter(map %in% maps) |>
+        mutate(map_winner = as.numeric(map_winner == i),
+               starting_ct = as.numeric(starting_ct == i))
+}
+```
+
+## geom_mean
+Funkce pro vypočtení geometrického průměru dle https://en.wikipedia.org/wiki/Geometric_mean
+```{r geom_mean}
+#' Vypočtení geometrické průměru
+#'
+#' @param x Vektor hodnot
+#'
+#' @return Geometrický průměr
+geom_mean <- function(x) {
+    exp(sum(log(x))/length(x))
+}
+```
+
+## weighted_geom_mean
+Funkce pro vypočtení geometrického průměru dle https://en.wikipedia.org/wiki/Weighted_geometric_mean
+```{r weighted_geom_mean}
+#' Vypočtení váženého geometrického průměru
+#'
+#' @param x Vektor hodnot
+#' @param w Vektor vah
+#'
+#' @return Vážený geometrický průměr
+weighted_geom_mean <- function(x, w) {
+    exp(sum(w * log(x))/sum(w))
+}
+
+```
+
 # Nahrání dat
-```{r child = 'nahrani-dat.Rmd'}
+
+## economy.csv
+Jelikož se predikce soustředí na předpovídání výsledku ještě než zápas začal,
+informace o vývoji ekonomiky jednotlivého teamu v zápasu není potřeba a soubor
+*economy.csv* se nevyužije.
+
+## players.csv
+Načtení souboru *players.csv*
+```{r players.raw}
+players.raw <- read_csv("data/players.csv", show_col_types = F)
 ```
-# EDA pro logistickou regresy
-```{r child = 'eda-regrese.Rmd'}
+
+Jelikož historicky každý team mohl hrát s více či méně hráči než je nutné (např. stand-in,
+změny soupisky atp.), je nutné pro každý team zvolit 5 hráčů, které do teamu tím pádem přiřadíme.
+Hřáči jsou vybrání podle toho, jak dlouho za daný team hrají, poté podle nejdřívějšího zápasu.
+Pokud se najdou hráči, co mají tyto dva údaje identické, vybere se hráč dle jména, abecedně.
+```{r players}
+### Calculate top 5 players per team by how long have they been playing for
+### this specific team
+players.per_team <- players.raw |>
+    # Calculate how long has been the player playing for a specific team
+    group_by(team, player_name) |>
+    summarise(first_match = min(date),
+              last_match = max(date),
+              length = last_match - first_match,
+              length = as.numeric(length) + 1) |>
+    # Filter out teams with only 4 players
+    group_by(team) |>
+    mutate(n = n()) |>
+    filter(n >= 5) |>
+    # Select top 5 players by length, last match played. If these are the same,
+    # pick one by name
+    arrange(desc(length), desc(last_match), .by_group = T) |>
+    slice_head(n = 5) |>
+    ungroup()
+
+players <- players.raw |>
+    semi_join(players.per_team, by = c("team", "player_name")) |>
+    filter(map_1 %in% maps | map_2 %in% maps | map_3 %in% maps)
 ```
+
+Data set se musí transformovat do formátu, který je pro logistickou regresi použitelný.
+```{r players.clear}
+players.clear <- clear_player_map(players, 1) |>
+    rbind(clear_player_map(players, 2)) |>
+    rbind(clear_player_map(players, 3)) |>
+    left_join(players.per_team |>
+                  select(player_name, team, length),
+              by = c('team', 'player_name'))
+
+players.clear
+```
+
+Jelikžo se jedná o logistickou regresy pro teamy, statistiky se musí vytvořit přes team a
+mapu. Statistiky jsou vážené průměry s vahami podle toho, jak dlouho daný hráč za team hrál
+```{r players.per_match}
+players.per_match <- players.clear |>
+  group_by(match_id, team, map) |>
+  summarise(
+    across(
+      .cols = c(kills, assists, deaths, fkdiff, rating),
+      .fns = ~ weighted.mean(.x, length)
+    ),
+    across(
+      .cols = hs,
+      .fns = ~ weighted_geom_mean(.x, length)
+    )
+  ) |>
+  ungroup()
+
+players.per_match
+```
+
+## results.csv
+Načtení souboru *results.csv*
+```{r results.raw}
+results.raw <- read_csv("data/results.csv", show_col_types = F,
+                        col_select = c(team_1, team_2, map = "_map", map_winner,
+                                       starting_ct, rank_1, rank_2, match_id)) |>
+  # Incorrect data when team played against itself
+  filter(team_1 != team_2)
+```
+
+Pro další výpočty je důležité data transormovat a vypočítat jak jednoduché pravděpodobnosti,
+tak pravděpodobnosti podmíněnné. Prve se pravděpodobnosti vypočítají pro jednotlivé teampy a 
+jejich mapy
+```{r results.per_match}
+results.per_match <- clear_results_team(results.raw, 1) |>
+  rbind(clear_results_team(results.raw, 2))
+
+results.per_match
+```
+
+# Model
+## Tvorba dat pro model
+```{r data-model}
+data.prep_model <- results.per_match |>
+  inner_join(players.per_match, by = c("match_id", "team", "map")) |>
+  drop_na()
+```
+
+## Jeden model pro všechny týmy
+```{r global-model}
+set.seed(12345)
+model.data <- data.prep_model |>
+  select(-match_id, -team) |>
+  dummy_columns(select_columns = "map",
+                remove_most_frequent_dummy = T,
+                remove_selected_columns = T)
+
+
+model <- glm(map_winner ~ ., data = model.data, family = binomial)
+model |> summary()
+```
+
+## Optimalizovaný model pro všechny týmy
+```{r global-model-optimized}
+set.seed(12345)
+model.data <- data.prep_model |>
+  select(-match_id, -team) |>
+  dummy_columns(select_columns = "map",
+                remove_most_frequent_dummy = T,
+                remove_selected_columns = T) |>
+  select(-map_Cache, -map_Train, -map_Vertigo)
+
+
+model <- glm(map_winner ~ ., data = model.data, family = binomial)
+model |> summary()
+```
+
+## Model pro specifický team
+```{r team-model}
+set.seed(12345)
+model.data <- data.prep_model |>
+  filter(team == 'Liquid') |>
+  select(-match_id, -team) |>
+  dummy_columns(select_columns = "map",
+                remove_most_frequent_dummy = T,
+                remove_selected_columns = T) |>
+  select(-map_Cache, -map_Train, -map_Vertigo)
+
+
+model <- glm(map_winner ~ ., data = model.data, family = binomial)
+model |> summary()
+```
+
+## Optimalizovaný model pro specifický team
+```{r team-model-optimized}
+set.seed(12345)
+model.data <- data.prep_model |>
+  filter(team == 'Liquid') |>
+  select(-match_id, -team) |>
+  dummy_columns(select_columns = "map",
+                remove_most_frequent_dummy = T,
+                remove_selected_columns = T) |>
+  select(map_winner, kills, assists, deaths, rating)
+
+
+model <- glm(map_winner ~ ., data = model.data, family = binomial)
+model |> summary()
+```
+
+
+
+
+
+
