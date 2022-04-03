@@ -7,10 +7,10 @@ Testovací citace: \cite{Hebak2015}, \cite{Kleinbaum2010}
 \section{Vizualizace dat}
 \subsection{Bodový graf}
 {\color{red}
-Bodový graf slouží pro zobrazení vztahu dvou numerických proměnných. Z pravidla se vysvětlovaná proměnná dává na osu Y,
+Bodový graf slouží pro zobrazení vztahu dvou kvantitativních proměnných. Z pravidla se vysvětlovaná proměnná dává na osu Y,
 zatímco proměnná vysvětlující se nachází na ose X. Vysvětlovaná (nezávislá) proměnná je ta proměnná, která má být určitým způsobem předvídaná.
 Vysvětlující proměnná se naopak snaží vysvětlovanou proměnnou předpovědět či nějakým způsobem popsat. Propojením vysvětlované a vysvětlující proměnné
-na bodovém grafu lze vidět např. sílu korelace nebo vztah mezi proměnnými (např. lineární, kvadratický, logaritmický). Graf \ref{fig:bodovy_graf_mtcars} zobrazuje
+na bodovém grafu lze vidět např. sílu korelace nebo vztah mezi proměnnými (např. lineární, kvadratický, logaritmický). Obrázek \ref{fig:bodovy_graf_mtcars} zobrazuje
 negativní korelaci mezi váhou vozidla a mílemi ujetými za galon.
 }
 
@@ -23,8 +23,8 @@ negativní korelaci mezi váhou vozidla a mílemi ujetými za galon.
 
 {\color{red}
 \subsection{Sloupcový graf}
-Sloupcový graf slouží k porovnání kategoriální kvalitativní proměnné. Na jednu osu (z pravidla osu X) se položí možné kategorie. Na druhou osu
-se pak položí sledovaná statistika. Sledovat můžeme např. počet výskytů, průměr, nebo relativní počet výskytu. Pokud je sledovaná proměnná ordinální,
+Sloupcový graf slouží k porovnání kategoriální. Na jednu osu (z pravidla osu X) se položí možné kategorie. Na druhou osu
+se pak položí sledovaná statistika. Sledovat můžeme např. počet výskytů, nebo relativní počet výskytu či průměr. Pokud je sledovaná proměnná ordinální,
 je také možné odvodit vztah mezi kategoriemi. Příklad sloupcového grafu je zobrazen na obrázku \ref{fig:sloupcovy_graf_mtcars}, který
 porovnává průměrnou hrubou koňskou sílu s počtem válců. Je na něm také vidět vztah, kdy s vyšším počtem válců stoupá průměrná koňská síla.
 
@@ -184,12 +184,15 @@ logistické regrese se tato funkce nazývá logistická a je definovaná jako
     f(z) = \frac{1}{1 + e^{-z}}
 \end{equation}
 
-Obor hodnot funkce je interval $\langle 0, 1 \rangle$. Proměnná $z$ je lineární kombinace prediktorů  $X_1, X_2, ..., X_k$,
-jejich koeficienty $\beta_1, \beta_2, ..., \beta_k$ a parametru $\alpha$.
+Obor hodnot funkce je interval $\langle 0, 1 \rangle$. Proměnná $z$ je lineární kombinace prediktorů  $X_1, X_2, ..., X_k$, 
+jejich koeficientů $\beta_1, \beta_2, ..., \beta_k$ a parametru $\alpha$.
 
 \begin{equation}
     \label{eq:linearni_kombinace_z}
-    z = \alpha + \sum_{i=1}^k \beta_i X_i
+    \begin{split}
+        z &= \alpha + \beta_1 X_1 + ... + \beta_2 X_2 +\beta_k X_k \\
+          &= \alpha + \sum_{i=1}^k \beta_i X_i
+    \end{split}
 \end{equation}
 
 Mějme tedy binární predikovanou (vysvětlovanou) proměnnou $Y$, u které hodnota $1$ značí výskyt jevu. Pravděpodobnost, že jev nastane
@@ -203,8 +206,10 @@ vzhledem k definovaným prediktorům lze zapsat jako
 kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru. 
 
 \subsection{Interpretace parametrů}
-Parametry $\alpha$ a $\beta_i$ značí logaritmus šance. $\alpha$ je  logaritmus šance, kde všechny prediktory
-jsou teoreticky rovné $0$. Parametr $\beta_i$ značí logaritmus šance pro prediktor $X_1$ při změně o jednotku. 
+Parametry $\alpha$ a $\beta_i$ značí logaritmus šance. $\alpha$ je logaritmus šance v případě, že všechny prediktory
+jsou teoreticky rovné $0$. Parametr $\beta_i$ značí logaritmus šance pro prediktor $X_i$
+V případě, že všechny prediktory jsou konstantní a prediktor $X_i$ zvýší, resp. sníží, o jednotku, šance že $P(Y = 1 | X_1, ..., X_k)$ se
+zvýší, resp. sníží, o logaritmus šance $\beta_i$.
 Pokud je prediktor $Y$ skutečně binární, tedy značí $0$ pro nepřítomnost jevu a $1$ pro přítomnost jevu,
 lze šance vypočítat jako
 
@@ -260,7 +265,7 @@ $Z$ a lze vypočítat jako
 kde $\hat{\beta_i}$ je odhadnutý testovaný parametr logistického regresního modelu a $S_{\hat{\beta_i}}$ je směrodatná chyba koeficientu $\beta_i$
 
 \subsection{Test poměru věrohodností}
-Test poměru věrohodnosti porovnává slouží k porovnání dvou modelů. Důležitá podmínka je, aby jeden model byl zmenšený a druhý model plný.
+Test poměru věrohodnosti slouží k porovnání dvou modelů. Důležitá podmínka je, aby jeden model byl zmenšený a druhý model plný.
 To v praxi znamená, že zmenšený model obsahuje stejné prediktory jako model plný, ale ne všechny. Prediktory, které v zmenšeném modelu
 nejsou jsou následně obsahem testovací hypotézy. Pokud se model plný a zmenšený liší o prediktor $X_i$, jsou hypotézy definovány následovně
 
@@ -268,7 +273,7 @@ $H_0:$ Koeficient $\beta_i$ je rovný nule \\
 $H_A:$ Koeficient $\beta_i$ je různý od nuly
 
 Do výpočtu kritické hodnoty pak v poměru vstupují hodnoty pravděpodobnostní funkce \ref{eq:pravdepodobnostni_fce}, kde 
-$\hat{L_1}$ značí hodnotu pravděpodobnostní funkce pro plný model a $\hat{L_1}$ hodnotu pro model zmenšený.
+$\hat{L_1}$ značí hodnotu pravděpodobnostní funkce pro plný model a $\hat{L_2}$ hodnotu pro model zmenšený.
 
 \begin{equation}
     Z = -2ln(\frac{\hat{L_1}}{\hat{L_2}})
@@ -277,3 +282,4 @@ $\hat{L_1}$ značí hodnotu pravděpodobnostní funkce pro plný model a $\hat{L
 při velké hodnotě $n$ má $Z$ zhruba Chi-square rozdělení s jedním stupněm volnosti.
 
 \subsection{Vyhodnocení modelu}
+... Dopsat
