@@ -14,6 +14,7 @@ theme_set(theme_minimal())
 folder <- "../plots"
 unlink(folder, recursive = T)
 folder <- paste0(folder, "/")
+dir.create(folder)
 ```
 # Sloupcový graf
 ```{r }
@@ -36,6 +37,7 @@ ggsave(paste0(folder, "sloupcovy_graf_mtcars.png"), bg = "white",
 ```{r}
 hg <- \(bins) {
   width <- (max(mtcars$mpg) - min(mtcars$mpg))/bins
+  width <- ceiling(width)
   mtcars |>
     ggplot(aes(x = mpg)) +
     geom_histogram(binwidth = width) +
@@ -51,14 +53,14 @@ hg <- \(bins) {
                         "Šířka skupiny: ", round(width, 3)),
       caption = "Henderson and Velleman (1981)",
       x = "Míle za galon",
-      y = "Počet pozorování"
+      y = "Absolutní četnost"
     )
 }
 
-h1 <- hg(10)
-h2 <- hg(20)
-h3 <- hg(30)
-h4 <- hg(40)
+h1 <- hg(5)
+h2 <- hg(10)
+h3 <- hg(15)
+h4 <- hg(25)
 
 hg <- arrangeGrob(h1 + labs(caption = ""),
                   h2 + labs(caption = ""),
@@ -74,6 +76,7 @@ ggsave(paste0(folder, "histogram_porovnani_mtcars.png"),
 ```{r}
 bins <- ceiling(1 + 3.22*log10(nrow(mtcars)))
 width <- (max(mtcars$mpg) - min(mtcars$mpg))/bins
+width <- ceiling(width)
 hg <- mtcars |>
   ggplot(aes(x = mpg)) +
   geom_histogram(binwidth = width) +
@@ -84,7 +87,7 @@ hg <- mtcars |>
                         "Šířka skupiny: ", round(width, 3)),
       caption = "Henderson and Velleman (1981)",
       x = "Míle za galon",
-      y = "Počet pozorování"
+      y = "Absolutní četnost"
     )
 hg
 ggsave(paste0(folder, "histogram_mtcars_sturges.png"), bg = "white",
@@ -143,10 +146,10 @@ mtcars |>
   ggplot(aes(x = mpg, y = wt)) +
   geom_point() +
   labs(
-    title = 'Váha vozidla vysvětlená mílemy za galon',
-    subtitle = 'Váha je udaná v (lb/1000)',
+    title = 'Hmotnost vozidla vysvětlená mílemy za galon',
+    subtitle = 'Hmotnost je udaná v (lb/1000)',
     caption = "Henderson and Velleman (1981)",
-    x = 'Váha (lb/1000)',
+    x = 'Hmotnost (lb/1000)',
     y = 'Míle za galon'
   )
 
