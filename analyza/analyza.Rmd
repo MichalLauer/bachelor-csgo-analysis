@@ -17,6 +17,11 @@ editor_options:
 ---
 # Funkce a globální nastavení
 
+## Nastavení
+```{r global-options, message=F}
+knitr::opts_chunk$set(message = F)
+```
+
 ## Knihovny
 ```{r libraries}
 library(readr)
@@ -28,12 +33,25 @@ library(ggplot2)
 library(GGally)
 library(kableExtra)
 library(paletteer)
+library(markdown)
+library(knitr)
+library(scales)
+library(caret)
+library(broom)
+library(xtable)
+
+theme_set(theme_minimal() +
+            theme(
+              plot.caption = element_text(face = "italic")
+            ))
 ```
 
-## Nastavení
-```{r global-options, message=F}
-knitr::opts_chunk$set(message = F)
-theme_set(theme_minimal())
+## Vygenerování pomocních grafů
+Pro bakalářskou práci jsou potřeba další podpůrné grafy. Ty jsou
+generovány na stránce [grafy](grafy.html)
+```{r grafy.Rmd, include=F}
+rmarkdown::render("grafy.Rmd",
+                   quiet = T)
 ```
 
 ## globální proměnná maps
@@ -46,12 +64,7 @@ maps <- c(
 ```
 
 ## Ukládání pro bakalářskou ráci
-```{r bc}
-bc.code_dir <- "../bakalarska-prace/kod/"
-if (!dir.exists(bc.code_dir)) dir.create(bc.code_dir)
-
-bc.pictures_dir <- "../bakalarska-prace/obrazky/"
-if (!dir.exists(bc.pictures_dir)) dir.create(bc.pictures_dir)
+```{r bc, file="R/_GLOBAL.R"}
 ```
 
 ## funkce clear_player_map
@@ -141,41 +154,12 @@ geom_mean <- function(x) {
 
 ## funkce save_bc_code
 Pro uložení mezivýpočtů a textu pro účely bakalářské práce
-```{r save_bc_code}
-save_bc_code <- function(tbl, f, cap, lab) {
-  f <- file(paste0(bc.code_dir, f),
-    encoding = "UTF-8"
-  )
-  
-  tbl |>
-    kbl(
-      format = "latex",
-      caption = cap,
-      label = lab,
-      align = "c",
-      valign = "t",
-      position = "H",
-      centering = T
-    ) |>
-    kable_styling(latex_options = "scale_down") |> 
-    writeLines(con = f)
-  close(f)
-}
+```{r save_bc_code, file="R/save_bc_code.R"}
 ```
 
 ## funkce save_bc_picture
 Pro uložení obrázků z balíčku ggplot2
-```{r save_bc_picture}
-save_bc_picture <- function(g, f) {
-  ggsave(
-    paste0(bc.pictures_dir, f),
-    plot = g,
-    bg = "white",
-    width = 140,
-    height = 105,
-    units = 'mm'
-    )
-}
+```{r save_bc_picture, file="R/save_bc_picture.R"}
 ```
 
 # Nahrání dat
@@ -342,6 +326,8 @@ kvantitativní proměnné, je nejrozumnější použít sloupcový graf.
 ```{r ggplot-matches-per-map}
 g <- players |> 
   count(map) |> 
+  # Every map has 10 records (10 players), dividing normalizes
+  # the count
   mutate(n = n/10) |> 
   ggplot(aes(x = reorder(map, n), y = n, fill = map)) +
   geom_col(show.legend = F) +
@@ -353,7 +339,8 @@ g <- players |>
   labs(
     title = "Počet zápasu na každé mapě",
     x = "Mapa",
-    y = "Počet zápasů"
+    y = "Počet zápasů",
+    caption = "Datový soubor: players.csv"
   )
 
 save_bc_picture(g, "zapasy_pres_mapu.png")
@@ -405,14 +392,18 @@ g <- players |>
   scale_x_continuous(breaks = seq(0, 80, by = 4)) +
   theme(
     panel.grid.minor.x = element_blank(),
+    panel.grid.major.x = element_blank(),
     panel.grid.minor.y = element_blank(),
     axis.line.x = element_blank(),
-    legend.position = "bottom"
+    legend.position = "bottom",
+    legend.box.background = element_rect(colour = "black")
   ) +
   labs(
-    title = "Distribuce zabití v každém zápase",
+    title = "Distribuce zabití v zápasech",
     subtitle = sprintf("Průměr: %.2f, Medián: %.2f", mean, median),
     x = "Počet zabití",
+    y = "Absolutní čestnost",
+    caption = "Datový soubor: players.csv",
     linetype = "Statistika",
     colour = "Statistika"
   )
@@ -453,7 +444,8 @@ g <- players |>
     title = "Distribuce ratingu ve vítězných zápasech přes kategorii mapy",
     subtitle = "Seřazeno dle mediánu každé kategorie",
     x = "Mapa",
-    y = "Rating"
+    y = "Rating",
+    caption = "Datový soubor: players.csv, results.csv"
   )
   
 save_bc_picture(g, f = "boxplot_ratingu.png")
@@ -470,7 +462,12 @@ lze u kvantitativních prediktorů zjistit pomocí korelační tabulky.
 ```{r ggplot-correlation}
 g <- players |> 
   select(kills:rating) |> 
-  ggcorr(label = T)
+  ggcorr(label = T) +
+  labs(
+    title = "Korelační matice prediktorů",
+    subtitle = "Prediktory: kills, assists, deaths, hs, fkdiff, rating",
+    caption = "Datový soubor: players.csv"
+  )
 save_bc_picture(g, f = "prediktory_korelace.png")
 g
 ```
@@ -503,19 +500,23 @@ model.data.per_player <- players |>
   select(-c(match_id, player_id, team, date, rating))
 ```
 
-### Mapa de_vertigo
+### Mapa de_dust2
 Pro mapu Vertigo je vytvořen následující model
 ```{r model.per_player.dust2}
-model.data.per_player.dust <- model.data.per_player |> 
+set.seed(1234)
+model.data.per_player.dust2 <- model.data.per_player |> 
   filter(map == "Dust2") |> 
   select(-map)
 
 model.per_player.dust2 <- glm(
   map_winner ~ kills + assists + deaths + hs + fkdiff + 
-    starting_ct + team_rank + run_mean_3_months,
+    team_rank + run_mean_3_months,
   data = model.data.per_player.dust2,
   family = binomial
 )
+
+save_bc_model(model.per_player.dust2,
+              "model.per_player.dust2.tex")
 
 model.per_player.dust2 |> 
   summary()
@@ -533,15 +534,20 @@ potvrzuje hypotézu, že je mapa lepší pro nezkušené týmy.
 Mapa inferno je více týmová. Je zde důležitá sehranost a zkušenosti.
 Zde se dá očekávat, že budou signifikantní všechny statistiky.
 ```{r model.per_player.inferno}
+set.seed(8754)
 model.data.per_player.inferno <- model.data.per_player |> 
   filter(map == "Inferno") |> 
   select(-map)
 
 model.per_player.inferno <- glm(
-  map_winner ~ .,
+  map_winner ~ kills + assists + deaths + hs + fkdiff + 
+    team_rank + run_mean_3_months,
   data = model.data.per_player.inferno,
   family = binomial
 )
+
+save_bc_model(model.per_player.inferno,
+              "model.per_player.inferno.tex")
 
 model.per_player.inferno |> 
   summary()
@@ -551,8 +557,114 @@ Je vidět, že na rozdíl od mapy Vertigo je zde statistika fkdiff velmi
 významná. To znamená, že je důležité hrát jako tým a snažit se 
 strategicky získat první zabití v daném kole.
 
-### Porovnání modelů
-...
+### Matice záměn
+Pro první vyhodnocení se použíje matice záměn
+```{r model.per_player.conf}
+model.per_player.dust2.conf <- confusionMatrix(
+  data = predict(model.per_player.dust2, type = "response") |> 
+    round() |> 
+    as.factor(),
+  reference = model.data.per_player.dust2$map_winner |> 
+    as.factor(),
+  positive = "1"
+) |>
+  tidy(by_class = TRUE) |> 
+  filter(term %in% c("accuracy", "sensitivity")) |> 
+  select(term, estimate, conf.low, conf.high) |> 
+  mutate(map = "Dust2")
+
+model.per_player.inferno.conf <- confusionMatrix(
+  data = predict(model.per_player.inferno, type = "response") |> 
+    round() |> 
+    as.factor(),
+  reference = model.data.per_player.inferno$map_winner |> 
+    as.factor(),
+  positive = "1"
+) |>
+  tidy(by_class = TRUE) |> 
+  filter(term %in% c("accuracy", "sensitivity")) |> 
+  select(term, estimate, conf.low, conf.high) |> 
+  mutate(map = "Inferno")
+
+g <- bind_rows(
+  model.per_player.dust2.conf,
+  model.per_player.inferno.conf
+) |> 
+  ggplot(aes(x = map, y = estimate, color = term)) +
+  geom_point() +
+  geom_text(aes(x = map, y = estimate, label = round(estimate, 3)),
+            nudge_x = 0.1) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
+  scale_y_continuous(breaks = seq(0.770, 0.810, by = 0.005),
+                     limits = c(0.77, 0.810)) +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "bottom",
+    legend.box.background = element_rect(colour = "black")
+    
+  ) +
+  scale_color_discrete(
+    labels = c("accuracy" = "Přesnost", "sensitivity" = "Citlivost")
+  ) +
+  labs(
+    title = "Odhadované statistiky z matice záměn",
+    subtitle = "Osa Y je přiblížena pro lepší vyobrazení",
+    x = "Modelovaná mapa",
+    y = "Hodnota statistiky",
+    color = "Statistika",
+    caption = "Modely pro předpověd výhry na základě statistik hráčů"
+  )
+
+save_bc_picture(g, f = "model.per_player.conf.png")
+g
+```
+
+### Waldův test
+```{r model.per_player.wald}
+model.per_player.dust2.wald <- model.per_player.dust2 |> 
+  tidy() |> 
+  filter(term != "(Intercept)") |> 
+  select(term, p.value) |> 
+  mutate(map = "Dust2")
+
+model.per_player.inferno.wald <- model.per_player.inferno |> 
+  tidy() |> 
+  filter(term != "(Intercept)") |> 
+  select(term, p.value) |> 
+  mutate(map = "Inferno")
+
+g <- bind_rows(
+  model.per_player.dust2.wald,
+  model.per_player.inferno.wald
+) |>
+  mutate(p.value = round(p.value, 5)) |> 
+  group_by(term) |> 
+  filter(any(p.value >= 0.05)) |> 
+  ungroup() |> 
+  ggplot(aes(x = map, y = p.value, color = term)) +
+  geom_point() +
+  geom_text(aes(x = map, y = p.value, label = round(p.value, 4)),
+            nudge_x = 0.2) +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "bottom",
+    legend.box.background = element_rect(colour = "black")
+    
+  ) +
+  labs(
+    title = "Prediktory, které se pro modely liší",
+    subtitle = "Osa Y je přiblížena pro lepší vyobrazení. Hodnoty p jsou zaokrouhlené.",
+    x = "Modelovaná mapa",
+    y = "Hodnota p",
+    color = "Prediktor",
+    caption = "Modely pro předpověd výhry na základě statistik hráčů"
+  ) 
+
+save_bc_picture(g, f = "model.per_player.wald.png")
+g
+```
 
 ## Týmové modely
 Modely pro daný tým slouží k přepovědi, zda daný tým vyhraje zápas

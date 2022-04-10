@@ -131,12 +131,58 @@ Korelační matice \ref{fig:korelacni_matice} ukazuje, že korelace mezi predikt
 Jelikož je rating hodnocení hráče v daném zápase, dává smysl, že je pozitivně korelované s počtem zabití, statistikou fkdiff a záporně korelované s počtem úmrtí.
 Z tohoto důvodu je statistika z modelů odebrána.
 
-\section{Sestavení modelu}
-... Slovní popis modelu a jeho proměnných, rovnice
+\newpage
+\section{Model pro hráče na určité mapě}
+První model, který je vytvořen, předpovídá pravděpodobnost výhry zápasu pouze na základě statistik jednoho hráče. Agregace dat je tedy na úrovni jednotlivých hráčů.
+Jsou vytvořeny dva modely se stejnými prediktory. První model je vytvořen pro mapu Dust 2 a druhý pro mapu Inferno. Prediktory, které jsou pro modely použité, jsou:
+kills, assists, deaths, hs, fkdiff, team\_rank a run\_mean\_3\_months.
 
-\subsection{Interpretace}
-... Matematická interpretace modelu a výstupu z Rka (koeficienty, odchylky, významnost...)
+\subsection{model pro mapu Dust 2}
+První model je vytvořený pro mapu Dust 2. Mapa je zaměřená spíše na individuální výkon hráče než na strategie či týmové taktiky.
+\input{kod/model.per_player.dust2.tex}
 
-\section{Vyhodnocení modelu}
-\subsection{Statistika 1}
-... Různé statistiky, které ještě musím vybrat
+Pro model jsou signifikantní všechny prediktory s výjimkou fkdiff a run\_mean\_3\_months. Zajímavé je, že na pravděpodobnost výhry nejvíce zvyšuje statistika assists
+má větší pozitivní vliv statistika assists než kills. Nejvíce pravděpodobnost výhry snižuje prediktor deaths. Nevýznamné prediktory fkdiff a run\_mean\_3\_months naznačují,
+že pravděpodobnost výhry hráče není daná jeho týmem (run\_mean\_3\_months) ani jeho výkonem v prvních vteřinách mapy (fkdiff) 
+
+\subsection{model pro mapu Inferno} \label{sec:model_pro_mapu_inferno}
+Druhý model se zaměřuje na mapu Inferno. Ta je oproti mapě Dust 2 více taktická. Je zde důležité, jak tým začne kolo a jak spolu tým hraje strategicky.
+\input{kod/model.per_player.inferno.tex}
+
+Pro mapu jsou významné ($\alpha = 0.05$) všechny prediktory. Oproti modelu pro mapu Dust 2 jsou významné i statistiky fkdiff a run\_mean\_3\_months. To značí, že je 
+kladen větší důraz na týmovou souhru a sehranost hráčů. Čím větší mají klouzavý průměr za poslední tři měsíce, tím se očekává větší sehranost a zkušenosti.
+Důležitost týmové sehranosti též značí významnost prediktoru fkdiff. Čím je prediktor větší, tím více tým hraje spolu a získává první zabití nepřítele bez opětování smrti. 
+
+\newpage
+\subsection{Vyhodnocení matice záměn}
+Díky vytvořeným maticím záměn je možné pro modely vytvořit statistiky Přesnost a Citlivost. Ty se dají mezi modely vzájemně porovnat.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{../obrazky/model.per_player.conf.png}
+    \caption{Korelace} 
+    \label{fig:model.per_player.conf}
+\end{figure}
+
+První porovnávaná statistika je přesnost. Ta je pro model na mapě Inferno větší o zhruba 0.05 jednotek. Zároveň je pro přesnost zobrazen intervalový odhad, který je pro
+mapu Inferno výrazně užší. Druhá sledovaná statistika je citlivost. Ta je pro mapu Inferno větší o zhruba jeden procentní bod. Z obrázku \ref{fig:model.per_player.conf}
+lze usoudit, že model pro mapu Inferno je pro předpověď výsledku spolehlivější.
+
+\newpage
+\subsection{Vyhodnocení Waldova testu}
+Druhý test pro posouzení kvality modelu je použít takzvaný Waldův test. Ten je vypočten pro všechny prediktory a v případě rozdílu jsou dané statistiky
+zobrazeny na obrázku.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{../obrazky/model.per_player.wald.png}
+    \caption{Korelace} 
+    \label{fig:model.per_player.wald}
+\end{figure}
+
+Na obrázku \ref{fig:model.per_player.wald} je vidět, že prediktory fkdiff a run\_mean\_3\_months jsou významné pouze pro model mapy Inferno. Pro model
+mapu Dust 2 jsou oba ba dva prediktory nesignifikantní, Jak bylo zmíněno v sekci \ref{sec:model_pro_mapu_inferno}, toto může být z důvodu rozdílných
+hracích stylů na mapách.
+
+\section{Stejná struktura pro ostatní modely...}
+...
