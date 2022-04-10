@@ -1,15 +1,135 @@
 \chapter{Praktická část}
-\section{Metodika}
-... Proč jsem si vybral právě vybrané metody a statistiky
+V následující části je popis dat, transformace dat, a tvorba logistického regresního modelu. Prve jsou představené datové soubory,
+se kterými se pracuje. Následně jsou požité grafy, které jsou představené v sekci \ref{sec:vizualizace_dat}. Následně jsou vytvořené
+logistické regresní modely, jejich výstup je interpretován a různé modelu jsou mezi sebou porovnány. V závěru se nachází každé podsekce
+se nachází zamyšlení, jak by daný model mohl být vylepšen a jaké je jeho použití v reálném životě.
 
-\section{Představení data setu}
-... Popis dat a struktury
+\section{Datové soubory}
+Dataset\footnote{https://www.kaggle.com/datasets/mateusdmachado/csgo-professional-matches} obsahuje čtyři souboru, které popisují zápasy ve hře
+\ac{CSGO}. K potřebám této bakalářské práce budou použity pouze soubory \textit{players.csv} a \textit{results.csv}. Soubor \textit{economy.csv} obsahuje
+informace o vývoji ekonomiky v daném zápase. Tato informace by byla velmi užitečná v případě, že se snažíme předpovídat výsledek zápasu, který aktuálně probíhá.
+Tato informace není dostupná před začátkem zápasu a tudíž je tento dataset pro tuto bakalářskou práci nepoužitelný. Druhý soubor, \textit{picks.csv}, obsahuje
+postup výběr map mezi dvěma týmy v daném zápase. Tato práce je omezená na zápasy, které jsou typu Bo1 nebo Bo3. Bo1 znamená, že první tým co vyhraje mapu vyhrál i zápas.
+Bo3 značí, že se hrají celkem tři mapy Kdo první vyhraje dvě mapy, vyhrál celý zápas. Tento postup by se dal využít v případě simulace zápasu mezi dvěma týmy. Dalo by 
+se předpovědět, vzhledem k historickým postupům, jaká mapa má jakou procentní šanci být vybrána či zabanována\footnote{tým ji v zápasu zakáže a nemůže si ji vybrat druhý tým}.
+Jelikož je práce zaměřená pouze na předpověď zápasu s již známou mapou, není příležitost dataset využít.
 
-\section{Příprava data setu}
-... Popis PROČ a jak byl data set transformován, žádný kód, pouze slovně
+\subsection{soubor players.csv}
+Soubory \textit{players.csv} obsahuje statistiky jednotlivých hráčů v daném zápase. Původní dataset obsahuje 101 sloupců a 379 680 záznamů.
+Názvy všech sloupců je možné vidět v přiložené tabulce \ref{tab:players.csv_puvodni}. Pro potřeby logistické regrese je nutné datový soubor transformovat do stavu,
+kdy se jeden řádek rovná statistikám jednoho hráče na jedné mapě. Transformovaný dataset má 10 sloupců a 643 620 řádků. Příklad záznamu v transformovaném
+datasetu je v přiložené tabulce \ref{tab:players_csv_transformovano}.
 
-\section{Omezení dat}
-... Restrikce data, výběr jednoho konkrétního teamu
+\newpage
+Transformovaný dataset má 10 sloupců, které unikátně identifikují statistiky každého hráče na určité mapě v jednom zápase. Interpretace je následující:
+\begin{itemize}
+    \item \textbf{match\_id} - identifikátor zápasu
+    \item \textbf{player\_id} - identifikátor hráče
+    \item \textbf{team} - jméno týmu
+    \item \textbf{map} - název hrané mapy
+    \item \textbf{kills} - počet zabití hráče v zápase na dané mapě
+    \item \textbf{assists} - počet asistencí hráče v zápase na dané mapě
+    \item \textbf{deaths} - počet smrtí hráče v zápase na dané mapě
+    \item \textbf{hs} - procento zabití, které lze označit jako headshot\footnote{hráč zabil nepřítele střelou do hlavy}
+    \item \textbf{fkdiff} - rozdíl, kolikrát hráč zabil jako první nepřítele versus kolikrát byl jako první zabit
+    \item \textbf{rating} - shrnutí mnoha statistik za zápas, díky kterým lze hráč ohodnotit\footnote{\url{https://www.hltv.org/news/20695/introducing-rating-20}}
+\end{itemize}
+
+\subsection{soubor results.csv}
+Druhý datový soubor, který je pro analýzu použit, obsahuje výsledky daných zápasů. Dataset se původně skládá z 45 773 řádků a 19 sloupců. Dataset obsahuje na rozdíl
+od datového souboru \textit{players.csv} chybné záznamy, které značí, že tým hrál sám proti sobě. Také jsou zde uvedené názvy týmu jako \uv{?}, které nelze interpretovat.
+Tyto záznamy jsou proto odstraněny. Po transformacích vznikne tabulka o 8 sloupcích a 91 436 řádcích. Každý záznam identifikuje výsledek jednoho týmu v jednom zápasu
+na jedné mapě. Příklad je zobrazen v přiložené tabulce \ref{tab:results_csv_transformovano}. Jednotlivé sloupce lze interpretovat následovně:
+\begin{itemize}
+    \item \textbf{date} - datum, kdy se hrál zápas
+    \item \textbf{match\_id} - identifikátor zápasu
+    \item \textbf{team} - jméno týmu
+    \item \textbf{map} - název hrané mapy
+    \item \textbf{map\_winner} - binární značení, zda tým vyhrál (1) či prohrál (0)
+    \item \textbf{starting\_ct} - binární značení, zda tým začal zápas na straně Counter-Teroristů (1) či Teroristů (0)
+    \item \textbf{team\_rank} - rank týmu v okamžik, kdy se zápas hrál\footnote{\url{https://www.hltv.org/news/16061/introducing-csgo-team-ranking}}
+    \item \textbf{run\_mean\_3\_months} - klouzavý průměr týmu za poslední tři měsíce
+\end{itemize}
+
+\subsection{Omezení datasetu}
+Dataset obsahuje záznamy o zápasech a statistikách od konce roku 2015 do začátku roku 2020. Jelikož máme mnoho záznamu, není problém se takovýchto
+záznamu zbavit a odstranit je. Dále jsou ze souboru smazány polo vyplněné statistiky, kde máme např. statistiku kills, ale ne statistiku deaths. Toto je z důvodu
+vývoje stránky\footnote{\url{https://www.hltv.org/}}, která data sbírá, a vývoje hry samotné. Ne vždy je možné data získat ať už kvůli jiným verzím či retrospektivní
+kompatibilitě.
+
+Jak již bylo zmíněno, z datového souboru \textit{results.csv} jsou odstraněné záznamy, kde tým hrál sám proti sobě, nebo je název týmu \uv{?}. Z datového souboru  
+\textit{players.csv} jsou pak odstraněné záznamy o zápasech, kde nemáme údaje o všech deseti hráčích. Občas se může stát, že tým hrál pouze ve čtyřech, např. z důvodu
+nedochvilnosti. Při finálním spojení obou souborů se pak může stát, že jsou specifické záznamy pouze v jednom datovém souboru. Může se tedy stát, že existují
+záznamy o statistikách pro zápas, pro který nemáme finální výsledek. Opačně také může nastat situace, kdy existuje záznam o výsledku zápasu, ale nejsou záznamy o statistikách,
+nebo jsou statistiky nekompletní. V obou těchto případech se záznamů zbavíme, jelikož i po kombinaci existuje velké množství záznamů.
+
+\newpage
+\section{Explorační analýza dat}
+Explorační analýza dat je část, kdy se datasety vizualizují, hledají se různé vztahy, závislosti a zajímavé interpretace. K exploraci datasetu
+jsou použité nástroje představené v sekci \ref{sec:vizualizace_dat}. 
+
+\subsection{Počet zápasů přes kategorie map}
+První zajímavý údaj může být, kolikrát se daná mapa hrála. Z výsledného grafu lze zjistit, zda je nějaká mapa výrazně preferovanější než jiná, nebo se mapy
+hrají v přibližně stejném poměru.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{../obrazky/zapasy_pres_mapu.png}
+    \caption{Počet zápasů na každé mapě} 
+    \label{fig:zapasy_pres_mapu}
+\end{figure}
+
+Z obrázku \ref{fig:zapasy_pres_mapu} lze odvodit, že mapy se ve stejném poměru nehrají. Nejhranější mapa je mapa s názvem Mirage. Ta je v map
+poolu\footnote{množina map, které se hrají} nejdéle bez žádné velké aktualizace vzhledu mapy, struktury mapy či rozložení. Naopak nejméně hraná mapa
+je Vertigo. Ta byla do map poolu přidán relativně nedávno\footnote{\url{https://www.hltv.org/news/26418/vertigo-added-to-active-duty-map-pool-in-new-update}} a 
+mezi stálice se teprv dostává. Za svou existenci prošla mnoha aktualizacemi, které se implementují ze zpětné vazby hráčů. Jelikož je mapa nová, hráči stále objevují 
+nové způsoby a strategie, jak mapu hrát. Druhý důvod proč je mapa méně preferovaná je částečně spojený s tím faktem, že je mapa nová. Pro nezkušené týmy je na mapě
+lehké porazit týmy, které jsou lepší. To je z toho důvodu, že na klasických mapách (jako např. mapa Mirage či Inferno), mají zkušené týmy velikou výhodu - hráli mapu již
+mnohokrát. Na nové mapě tato výhoda mizí a díky tomu mají nezkušené týmy určitou výhodu překvapení.
+
+\subsection{Histogram zabití}
+Statistika zabití na úrovni hráčů značí, kolik zabili v daném kole nepřátel. Obecně se dá říct, že čím víc hráč zabije nepřátel, tím více pomohl svému týmu.
+Samozřejmě že existuje mnoho faktorů, které malý počet zabitých nepřátel vysvětli. Může to být například role. Pokud je hráč velitel týmu nebo podpora týmu a má malý
+počet zabitých nepřátel, neznamená to nutně, že zhoršují šanci týmu vyhrát.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{../obrazky/histogram_zabiti.png}
+    \caption{Počet zápasů na každé mapě} 
+    \label{fig:histogram_zabiti}
+\end{figure}
+
+Obrázek histogramu počtu zabití naznačuje, že počet zabití v zápase má normální rozdělení s malým sklonem doprava. Průměrný počet zabití za zápas a mediánový
+počet zabití za zápas se tedy pohybuje kolem hodnoty 17 zabití za zápas.
+
+\subsection{Boxplot ratingu přes kategorie map}
+Pro statistiku rating se lze podívat na její distribuci přes různé kategorie mapy. Pokud je medián ratingu na nějaké mapě výrazně vyšší, lze usoudit,
+že je mapa strukturovaná pro individuální hráče. Takový typ mapy bude odměňovat spíše individuální výkon než souhru týmu a strategický plán. Obrázek níže
+zobrazuje boxploty hráčů přes mapy \textbf{pouze v případě, že zápas vyhráli.}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{../obrazky/boxplot_ratingu.png}
+    \caption{Počet zápasů na každé mapě} 
+    \label{fig:boxplot_ratingu_pres_mapu}
+\end{figure}
+
+Z obrázku boxplotů \ref{fig:boxplot_ratingu_pres_mapu} lze usoudit, že se mezikvartilové rozpětí a medián ratingu je na všech mapách podobný. Obrázek tedy naznačuje,
+že na žádné mapě není výrazná výhoda pro individuální rating hráče. Lze udělat závěr, že na výhru v zápase mají jiné statistiky větší vliv.
+
+\subsection{Korelace mezi statistikami}
+Pro logistickou regresi je důležité, aby prediktory nebyli korelované. Toto lze zjistit z korelační matice. Ta vyobrazí korelaci mezi individuálními prediktory.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{../obrazky/prediktory_korelace.png}
+    \caption{Korelace} 
+    \label{fig:korelacni_matice}
+\end{figure}
+
+Korelační matice \ref{fig:korelacni_matice} ukazuje, že korelace mezi prediktorem rating a prediktory kills, fkdiff a deaths existuje relativně vysoká korelace.
+Jelikož je rating hodnocení hráče v daném zápase, dává smysl, že je pozitivně korelované s počtem zabití, statistikou fkdiff a záporně korelované s počtem úmrtí.
+Z tohoto důvodu je statistika z modelů odebrána.
 
 \section{Sestavení modelu}
 ... Slovní popis modelu a jeho proměnných, rovnice

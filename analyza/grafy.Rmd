@@ -1,3 +1,17 @@
+---
+output:
+  html_document:
+    css: style.css
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    df_print: paged
+    theme: cosmo
+    highlight: haddock
+editor_options: 
+  chunk_output_type: console
+---
 # Globální nastavení
 ```{r }
 data("mtcars")
@@ -6,22 +20,20 @@ library(grid)
 library(gridExtra)
 library(dplyr)
 library(kableExtra)
-
+library(GGally)
 theme_set(theme_minimal())
 ```
 # Vyčištění prostředí
 ```{r }
-folder <- "../plots"
-unlink(folder, recursive = T)
-folder <- paste0(folder, "/")
-dir.create(folder)
+bc.pictures_dir <- "../bakalarska-prace/obrazky/"
+if (!dir.exists(bc.pictures_dir)) dir.create(bc.pictures_dir)
 ```
 # Sloupcový graf
 ```{r }
 mtcars |>
   mutate(cyl = as.factor(cyl)) |>
   ggplot(aes(x = cyl, y = hp, fill = cyl)) +
-  geom_bar(show.legend = F, stat = "summary", fun = mean) +
+  geom_bar(show.legend = F, stat = "summary", fun = base::mean) +
   theme(panel.grid.major.x = element_blank()) +
   labs(
     title = "Porovnání válců s průměrbou hrubou koňskou silou",
@@ -30,7 +42,7 @@ mtcars |>
     y = "Průměrná hrubá koňská síla"
   )
 
-ggsave(paste0(folder, "sloupcovy_graf_mtcars.png"), bg = "white",
+ggsave(paste0(bc.pictures_dir, "sloupcovy_graf_mtcars.png"), bg = "white",
        width = 140, height = 105, units = 'mm')
 ```
 # Porovnání histogramů
@@ -40,7 +52,9 @@ hg <- \(bins) {
   width <- ceiling(width)
   mtcars |>
     ggplot(aes(x = mpg)) +
-    geom_histogram(binwidth = width) +
+    geom_histogram(binwidth = width,
+                 fill = "grey",
+                 color = "black") +
     theme(panel.grid.major.x = element_blank(),
           plot.title = element_text(size = 10),
           plot.subtitle  = element_text(size = 8),
@@ -67,7 +81,7 @@ hg <- arrangeGrob(h1 + labs(caption = ""),
                   h3 + labs(caption = ""),
                   h4, nrow = 2)
 
-ggsave(paste0(folder, "histogram_porovnani_mtcars.png"),
+ggsave(paste0(bc.pictures_dir, "histogram_porovnani_mtcars.png"),
   plot = hg, bg = "white",
   width = 140, height = 105, units = "mm"
 )
@@ -79,8 +93,11 @@ width <- (max(mtcars$mpg) - min(mtcars$mpg))/bins
 width <- ceiling(width)
 hg <- mtcars |>
   ggplot(aes(x = mpg)) +
-  geom_histogram(binwidth = width) +
-  theme(panel.grid.major.x = element_blank()) +
+  geom_histogram(binwidth = width,
+                 fill = "grey",
+                 color = "black") +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank()) +
   labs(
       title = "Histogram míle z galon",
       subtitle = paste0("Počet skupin: ", bins, ", ",
@@ -90,7 +107,7 @@ hg <- mtcars |>
       y = "Absolutní četnost"
     )
 hg
-ggsave(paste0(folder, "histogram_mtcars_sturges.png"), bg = "white",
+ggsave(paste0(bc.pictures_dir, "histogram_mtcars_sturges.png"), bg = "white",
        width = 140, height = 105, units = 'mm')
 ```
 # Histogram dle Sturgese v tabulce
@@ -98,11 +115,11 @@ ggsave(paste0(folder, "histogram_mtcars_sturges.png"), bg = "white",
 ggplot_build(hg)$data[1] |>
   as.data.frame() |>
   select(xmin, xmax, count) |>
-  kbl(caption="Tabulka četnostní",
+  kbl(caption = "Tabulka četnostní",
       label = "tabulka_cetnosti_sturges",
-      format="latex",
+      format = "latex",
       col.names = c("Spodní hranice intervalu", "Horní hranice intervalu", "Počet pozorování"),
-      align="c",
+      align = "c",
       position = 'H') %>%
   writeLines()
 ```
@@ -126,20 +143,25 @@ mtcars |>
       ) |>
   writeLines()
 ```
+
 # Boxplot
 ```{r, results='asis'}
 
 mtcars |>
   ggplot(aes(x = as.factor(cyl), y = wt)) +
-  geom_boxplot() +
+  geom_boxplot(outlier.shape = 1) +
+  theme(
+    panel.grid.major.x = element_blank()
+  ) +
   labs(title = 'Boxplot porovnání všech kategorií počtu válců',
        caption = "Henderson and Velleman (1981)",
        x = 'Počet válců',
        y = 'Hmotnost vozidla (lb/1000)')
 
-ggsave(paste0(folder, "boxplot_mtcars.png"), bg = "white",
+ggsave(paste0(bc.pictures_dir, "boxplot_mtcars.png"), bg = "white",
        width = 140, height = 105, units = 'mm')
 ```
+
 # Bodový graf 2d
 ```{r, results='asis'}
 mtcars |>
@@ -153,6 +175,20 @@ mtcars |>
     y = 'Míle za galon'
   )
 
-ggsave(paste0(folder, "bodovy_graf_mtcars.png"), bg = "white",
+ggsave(paste0(bc.pictures_dir, "bodovy_graf_mtcars.png"), bg = "white",
+       width = 140, height = 105, units = 'mm')
+```
+
+# Korelační matice
+```{r, results='asis'}
+mtcars |> 
+  select(where(is.numeric)) |> 
+  ggcorr(label = T) +
+  labs(
+    title = "Korelace mezi kvantitativními proměnnými",
+    caption = "Dataset: mtcars"
+  )
+
+ggsave(paste0(bc.pictures_dir, "mtcars_korelace.png"), bg = "white",
        width = 140, height = 105, units = 'mm')
 ```

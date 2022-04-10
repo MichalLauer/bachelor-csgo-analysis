@@ -4,7 +4,7 @@ Ke každé části, která se věnuje popisu dat pomocí nějakého grafu, je p�
 vhodné.
 Testovací citace: \cite{Hebak2015}, \cite{Kleinbaum2010}
 
-\section{Vizualizace dat}
+\section{Vizualizace dat} \label{sec:vizualizace_dat}
 \subsection{Bodový graf}
 Bodový graf slouží pro zobrazení vztahu dvou kvantitativních proměnných. Z pravidla se vysvětlovaná proměnná dává na osu Y,
 zatímco proměnná vysvětlující se nachází na ose X. Vysvětlovaná (nezávislá) proměnná je ta proměnná, která má být předvídaná.
@@ -14,7 +14,7 @@ negativní korelaci mezi hmotností vozidla a mílemi ujetými za galon.
 
 \begin{figure}[H]
     \centering
-    \includegraphics{../../analyza/plots/bodovy_graf_mtcars.png}
+    \includegraphics{../obrazky/bodovy_graf_mtcars.png}
     \caption{Bodový graf hmotnosti a míly za galon z datasetu mtcars} 
     \label{fig:bodovy_graf_mtcars}
 \end{figure}
@@ -33,7 +33,7 @@ Je na něm také vidět vztah, kdy s vyšším počtem válců stoupá průměrn
 
 \begin{figure}[H]
     \centering
-    \includegraphics{../../analyza/plots/sloupcovy_graf_mtcars.png}
+    \includegraphics{../obrazky/sloupcovy_graf_mtcars.png}
     \caption{Sloupcový graf z datasetu mtcars} 
     \label{fig:sloupcovy_graf_mtcars}
 \end{figure}
@@ -48,7 +48,7 @@ Tento efekt je znázorněn na obrázku \ref{fig:histogram_porovnani_mtcars}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics{../../analyza/plots/histogram_porovnani_mtcars.png}
+    \includegraphics{../obrazky/histogram_porovnani_mtcars.png}
     \caption{Porovnání histogramů s různým počtem skupin} 
     \label{fig:histogram_porovnani_mtcars}
 \end{figure}
@@ -78,7 +78,7 @@ sloupcový graf je nutné přizpůsobit jednotlivým datům.
 }
 \begin{figure}[H]
     \centering
-    \includegraphics{../../analyza/plots/histogram_mtcars_sturges.png}
+    \includegraphics{../obrazky/histogram_mtcars_sturges.png}
     \caption{Histogram s počtem skupin dle Sturgesova pravidla} 
     \label{fig:histogram_mtcars_sturges}
 \end{figure}
@@ -157,13 +157,30 @@ Díky grafickému zobrazení lze lehce porovnávat rozdělení jedné vysvětlov
 
 \begin{figure}[H]
     \centering
-    \includegraphics{../../analyza/plots/boxplot_mtcars.png}
+    \includegraphics{../obrazky/boxplot_mtcars.png}
     \caption{Boxplot hmotnosti auta pro různé počty válců} 
     \label{fig:boxplot_mtcars}
 \end{figure}
 
-Černé tečky v obrázku \ref{fig:boxplot_mtcars} v kategorii osmi válců značí odlehlé hodnoty, t.j. hodnoty
+Prúhledná kolečka v obrázku \ref{fig:boxplot_mtcars} v kategorii osmi válců značí odlehlé hodnoty, t.j. hodnoty
 v intervalu $\langle Q_3 + 1,5IQR, Q_3 + 3IQR \rangle$.
+
+{\color{red}
+\subsection{Korelační matice}
+Korelační matice je způsob, jak zobrazit korelaci mezi více jak dvěma proměnnými. Matice může být zobrazená jako tabulka nebo
+graf. Korelační matice je velmi užitečná v regresní analýze kvůli předpokladu nezávislosti. Pokud jsou dvě hodnoty vysoce korelované,
+musí se na to při tvorbě regresního modelu brát ohled.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{../obrazky/mtcars_korelace.png}
+    \caption{Korelace} 
+    \label{fig:mtcars_korelace}
+\end{figure}
+
+Graf korelační matice může mít mnoho podob. V příkladu obrázku \ref{fig:mtcars_korelace} je zobrazená korelační matice jako teplotní mapa. Z obrázku je možné pozorovat vysokou
+pozitivní korelaci mezi proměnnými cyl, disp a hp. naopak skoro žádná korelace není mezi proměnnou qsec a proměnnou drat.
+}
 
 \newpage
 \section{Logistická regrese}
@@ -212,7 +229,7 @@ Pro přechod z přirozeného logaritmu šance na šanci lze využít vztahu
 \end{equation}
 
 Šance je podíl dvou pravděpodobností. Pokud bychom měli šanci jevu A oproti jevu B $2 : 1$, značí to, že výskyt jevu A je dvakrát tak pravděpodobný
-jako výskyt jevu B a jev A se vyskytuje ve $2 \over 3$ případů. Šance $e^{\beta_i}$ tedy značí vztah mezi prediktorem $X_i$ a vysvětlovanou proměnnou $Y$. Pokud je
+jako výskyt jevu B a jev A se vyskytuje ve $\frac{2}{3}$ případů. Šance $e^{\beta_i}$ tedy značí vztah mezi prediktorem $X_i$ a vysvětlovanou proměnnou $Y$. Pokud je
 šance kladná, značí to, že s vyšší hodnotou prediktoru $X_i$ se zvyšuje šance že $P(Y = 1)$. Pokud je naopak nižší, pravděpodobnost se zmenšuje. Pokud je potřeba
 interpretovat pravděpodobnost jako šanci, použije se logitová funkce
 
@@ -242,8 +259,17 @@ maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lz
     \frac{\partial L(\theta)}{\partial \beta_i} = 0
 \end{equation}
 
+{\color{red}
+\subsection{Matice záměn}
+Matice záměn je nástroj pro vyhodnocení predikcí modelu. Matice záměn je o velikosti $2x2$. Řádky značí původní hodnoty a sloupce hodnoty predikované.
+
+
+aaa
+
+{\color{red}
 \subsection{Testování hypotéz}
 ...
+}
 
 \subsection{Waldův test}
 {\text{red}
@@ -286,6 +312,3 @@ prediktoru $X_i$
 \end{equation}
 
 při velké hodnotě $n$ má $Z$ zhruba chi-kvadrát rozdělení s jedním stupněm volnosti.
-
-\subsection{Vyhodnocení modelu}
-... Dopsat
