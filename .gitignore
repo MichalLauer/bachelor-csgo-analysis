@@ -14,6 +14,10 @@ analyza_cache/html
 *.png
 *.html
 
+# Bakalářská práce
+bakalarska-prace/img
+bakalarska-prace/kod
+
 # LaTeX
 *.xmpi
 *.bcf
