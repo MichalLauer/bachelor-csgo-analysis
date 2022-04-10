@@ -15,8 +15,7 @@ analyza_cache/html
 *.html
 
 # Bakalářská práce
-bakalarska-prace/img
-bakalarska-prace/kod
+bakalarska-prace/kod/
 
 # LaTeX
 *.xmpi
