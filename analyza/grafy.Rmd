@@ -1,4 +1,7 @@
 ---
+title: "Pomocné grafy pro bakalářskou práci"
+author: "Michal Lauer"
+date: '2022-04-10'
 output:
   html_document:
     css: style.css
@@ -12,8 +15,11 @@ output:
 editor_options: 
   chunk_output_type: console
 ---
+# Analýza
+Přejít [zpět](analyza.html) na analýzu
+
 # Globální nastavení
-```{r }
+```{r global-settings}
 data("mtcars")
 library(ggplot2)
 library(grid)
@@ -23,14 +29,16 @@ library(kableExtra)
 library(GGally)
 theme_set(theme_minimal())
 ```
-# Vyčištění prostředí
-```{r }
-bc.pictures_dir <- "../bakalarska-prace/obrazky/"
-if (!dir.exists(bc.pictures_dir)) dir.create(bc.pictures_dir)
+
+# Načtení funkcí a dat
+```{r data-load}
+sapply(list.files("R", pattern = ".R$",full.names = T), source) |>
+  invisible()
 ```
+
 # Sloupcový graf
-```{r }
-mtcars |>
+```{r sloupcovy_graf_mtcars.png}
+g <- mtcars |>
   mutate(cyl = as.factor(cyl)) |>
   ggplot(aes(x = cyl, y = hp, fill = cyl)) +
   geom_bar(show.legend = F, stat = "summary", fun = base::mean) +
@@ -42,11 +50,12 @@ mtcars |>
     y = "Průměrná hrubá koňská síla"
   )
 
-ggsave(paste0(bc.pictures_dir, "sloupcovy_graf_mtcars.png"), bg = "white",
-       width = 140, height = 105, units = 'mm')
+save_bc_picture(g, f = "sloupcovy_graf_mtcars.png")
+g
 ```
+
 # Porovnání histogramů
-```{r}
+```{r histogram_porovnani_mtcars.png}
 hg <- \(bins) {
   width <- (max(mtcars$mpg) - min(mtcars$mpg))/bins
   width <- ceiling(width)
@@ -76,22 +85,21 @@ h2 <- hg(10)
 h3 <- hg(15)
 h4 <- hg(25)
 
-hg <- arrangeGrob(h1 + labs(caption = ""),
+g <- arrangeGrob(h1 + labs(caption = ""),
                   h2 + labs(caption = ""),
                   h3 + labs(caption = ""),
                   h4, nrow = 2)
 
-ggsave(paste0(bc.pictures_dir, "histogram_porovnani_mtcars.png"),
-  plot = hg, bg = "white",
-  width = 140, height = 105, units = "mm"
-)
+save_bc_picture(g, "histogram_porovnani_mtcars.png")
+grid.draw(g)
 ```
+
 # Histogram dle Sturgese
-```{r}
+```{r histogram_mtcars_sturges.png}
 bins <- ceiling(1 + 3.22*log10(nrow(mtcars)))
 width <- (max(mtcars$mpg) - min(mtcars$mpg))/bins
 width <- ceiling(width)
-hg <- mtcars |>
+g <- mtcars |>
   ggplot(aes(x = mpg)) +
   geom_histogram(binwidth = width,
                  fill = "grey",
@@ -106,25 +114,12 @@ hg <- mtcars |>
       x = "Míle za galon",
       y = "Absolutní četnost"
     )
-hg
-ggsave(paste0(bc.pictures_dir, "histogram_mtcars_sturges.png"), bg = "white",
-       width = 140, height = 105, units = 'mm')
+
+save_bc_picture(g, "histogram_mtcars_sturges.png")
 ```
-# Histogram dle Sturgese v tabulce
-```{r, results='asis'}
-ggplot_build(hg)$data[1] |>
-  as.data.frame() |>
-  select(xmin, xmax, count) |>
-  kbl(caption = "Tabulka četnostní",
-      label = "tabulka_cetnosti_sturges",
-      format = "latex",
-      col.names = c("Spodní hranice intervalu", "Horní hranice intervalu", "Počet pozorování"),
-      align = "c",
-      position = 'H') %>%
-  writeLines()
-```
+
 # Five-number summary
-```{r, results='asis'}
+```{r five-number_summary, results='asis'}
 mtcars |>
   summarise(P0   = quantile(wt, probs = 0),
             P25  = quantile(wt, probs = 0.25),
@@ -145,9 +140,8 @@ mtcars |>
 ```
 
 # Boxplot
-```{r, results='asis'}
-
-mtcars |>
+```{r boxplot_mtcars.png}
+g <-  mtcars |>
   ggplot(aes(x = as.factor(cyl), y = wt)) +
   geom_boxplot(outlier.shape = 1) +
   theme(
@@ -158,13 +152,13 @@ mtcars |>
        x = 'Počet válců',
        y = 'Hmotnost vozidla (lb/1000)')
 
-ggsave(paste0(bc.pictures_dir, "boxplot_mtcars.png"), bg = "white",
-       width = 140, height = 105, units = 'mm')
+save_bc_picture(g, "boxplot_mtcars.png")
+g
 ```
 
 # Bodový graf 2d
-```{r, results='asis'}
-mtcars |>
+```{r bodovy_graf_mtcars.png}
+g <- mtcars |>
   ggplot(aes(x = mpg, y = wt)) +
   geom_point() +
   labs(
@@ -175,13 +169,13 @@ mtcars |>
     y = 'Míle za galon'
   )
 
-ggsave(paste0(bc.pictures_dir, "bodovy_graf_mtcars.png"), bg = "white",
-       width = 140, height = 105, units = 'mm')
+save_bc_picture(g, "bodovy_graf_mtcars.png")
+g
 ```
 
 # Korelační matice
-```{r, results='asis'}
-mtcars |> 
+```{r mtcars_korelace.png}
+g <- mtcars |> 
   select(where(is.numeric)) |> 
   ggcorr(label = T) +
   labs(
@@ -189,6 +183,6 @@ mtcars |>
     caption = "Dataset: mtcars"
   )
 
-ggsave(paste0(bc.pictures_dir, "mtcars_korelace.png"), bg = "white",
-       width = 140, height = 105, units = 'mm')
+save_bc_picture(g, "mtcars_korelace.png")
+g
 ```
