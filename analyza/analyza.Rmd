@@ -1,7 +1,7 @@
 ---
 title: "Analýza dat pro Bakalářskou práci"
 author: "Michal Lauer"
-date: '2022-04-03'
+date: '2022-04-10'
 output:
   html_document:
     css: style.css
@@ -9,44 +9,61 @@ output:
     toc_float:
       collapsed: false
       smooth_scroll: true
-    df_print: tibble
-    highlight: pygments
+    df_print: paged
+    theme: cosmo
+    highlight: haddock
+editor_options: 
+  chunk_output_type: console
 ---
 # Funkce a globální nastavení
 
-## Metody
-```{r global-setup, message=F}
+## Knihovny
+```{r libraries}
 library(readr)
 library(dplyr)
 library(stringr)
 library(tidyr)
-library(fastDummies)
+library(runner)
+library(ggplot2)
+library(GGally)
 
+```
+
+## Nastavení
+```{r global-options, message=F}
 knitr::opts_chunk$set(message = F)
+theme_set(theme_minimal())
 ```
 
-# Objekty a funkce
-## maps
-Mapy pro které se počítají statistiky
+## globální proměnná maps
+Mapy, pro které se počítají statistiky
 ```{r maps}
-maps <- c("Dust2", "Inferno", "Vertigo", "Overpass", "Nuke",
-          "Mirage", "Train", "Cache", "Cobblestone")
+maps <- c(
+  "Dust2", "Inferno", "Vertigo", "Overpass", "Nuke", "Mirage",
+  "Train", "Cache", "Cobblestone"
+)
 ```
 
-## clear_player_map
+## funkce clear_player_map
 Funkce slouží k extrakci statistik hráčů pro dané pořadové číslo
-mapy v herním formátu *BoX*
+mapy v zápase
 ```{r clear_player_map}
-#' Získání statistik dle čísla mapy
+#' Dataset contains statistics for all maps in one row.
+#' Function recieves players tibble and a number of a map. The output
+#' is a tibble that splits the statistics and each row contains 
+#' stats for a given map, no matter the number.
 #'
-#' @param tbl Tibble hráču
-#' @param map Pořadí mapy
+#' @param tbl Tibble of players
+#' @param map Number of a map. Can be one, two, or three
 #'
-#' @return Tibble se statistikamy za dané pořadá
+#' @return Tibble with statistics for a given map
 clear_player_map <- function(tbl, map) {
   m_ <- sprintf("m%i_", map)
   tbl |>
-    select(match_id, player_name, team,
+    select(match_id,
+      player_id,
+      team,
+      # Select statistics regarding specified map
       map = sprintf("map_%i", map),
       matches(sprintf("^m%i_", map))
     ) |>
@@ -54,63 +71,62 @@ clear_player_map <- function(tbl, map) {
     # e.g. excludes m1_kills_ct, m1_kills_t and keeps only m1_kills
     select(!matches("_c?t$")) |>
     drop_na(map) |>
+    # Unify names, e.g. m1_kills -> kills
     rename_with(
       .cols = starts_with(m_),
-      .fn = ~ str_replace(.x, m_, "")
+      .fn = ~ str_remove_all(.x, m_)
     ) |>
     # remove columns that are only calculated from other columns
-    # or are roublesome because of the website history tracking
+    # or are troublesome because of the website history tracking
     select(-c(kddiff, flash_assists, kast, adr)) |>
-    # make Hs relative and not absolute
+    # make HS relative and not absolute
     mutate(hs = ifelse(kills == 0, 0, hs / kills))
 }
 ```
 
-## clear_results_team
-Funkce pro získání $i$-tého týmy z tabulky výsledků
+## funkce clear_results_team
+Funkce pro získání $i$-tého týmu z tabulky výsledků
 ```{r clear_results_team}
-#' Získání výsledků pr i-tý tým z tabulky teamů
+#' The source data frame contains team_1 and team_2 in results.
+#' This method returns a tibble with data for team_1 or team_2
+#' with the correct match results
 #'
-#' @param tbl Tibble s výsledky
-#' @param i Číslo teamu
+#' @param tbl Tibble with results
+#' @param i Team number, can be either one or two
 #'
-#' @return Tibble se výsledky pro i-tý tým 
+#' @return Tibble with results for i-th team
 clear_results_team <- function(tbl, i) {
-    tbl |>
-        select(match_id, team = matches(sprintf("team_%i", i)), map,
-               map_winner, starting_ct, rank = matches(sprintf("rank_%i", i))) |>
-        filter(map %in% maps) |>
-        mutate(map_winner = as.numeric(map_winner == i),
-               starting_ct = as.numeric(starting_ct == i))
+  tbl |>
+    select(
+      date,
+      match_id,
+      team = matches(sprintf("team_%i", i)),
+      map,
+      map_winner,
+      starting_ct,
+      team_rank = matches(sprintf("rank_%i", i))
+    ) |>
+    filter(map %in% maps) |>
+    mutate(
+      map_winner = as.numeric(map_winner == i),
+      starting_ct = as.numeric(starting_ct == i)
+    )
 }
 ```
 
-## geom_mean
+## funkce geom_mean
 Funkce pro vypočtení geometrického průměru dle https://en.wikipedia.org/wiki/Geometric_mean
 ```{r geom_mean}
-#' Vypočtení geometrické průměru
+#' Compute geometric mean. Helps with statistics such as HS or Rating
+#' Funstion uses log transformation because the ongoing calculations
+#' were small and R couldn't handle them.
+#' 
+#' @param x Number vector
 #'
-#' @param x Vektor hodnot
-#'
-#' @return Geometrický průměr
+#' @return Geometric mean
 geom_mean <- function(x) {
-    exp(sum(log(x))/length(x))
+  exp(sum(log(x)) / length(x))
 }
-```
-
-## weighted_geom_mean
-Funkce pro vypočtení geometrického průměru dle https://en.wikipedia.org/wiki/Weighted_geometric_mean
-```{r weighted_geom_mean}
-#' Vypočtení váženého geometrického průměru
-#'
-#' @param x Vektor hodnot
-#' @param w Vektor vah
-#'
-#' @return Vážený geometrický průměr
-weighted_geom_mean <- function(x, w) {
-    exp(sum(w * log(x))/sum(w))
-}
-
 ```
 
 # Nahrání dat
@@ -120,164 +136,422 @@ Jelikož se predikce soustředí na předpovídání výsledku ještě než záp
 informace o vývoji ekonomiky jednotlivého teamu v zápasu není potřeba a soubor
 *economy.csv* se nevyužije.
 
+## picks.csv
+Dataset *picks.csv* obrahuje pořadí, v jakých týmy proti sobě banovali či vybírali
+mapy. Tato informace by byla podstatná v případě simulace zápasu
+mezi dvěma tými. Jelikož se ovšem jedná pouze o předpověd výsledku
+zápasů, dataset není použít.
+
 ## players.csv
-Načtení souboru *players.csv*
+Soubor *players.csv* obsahuje detailní statistiky hráčů v jednotlivých zápasech.
+Jeden řádek obsahuje statistiky pro jeden zápas, ale pro všechny mapy
+(resp. jednu, dvě, nebo tři).
 ```{r players.raw}
 players.raw <- read_csv("data/players.csv", show_col_types = F)
+
+# Get only matches where we have data for all 10 players
+players.raw <- players.raw |>
+  group_by(match_id) |> 
+  filter(n() == 10)
+
+players.raw |>
+  slice_sample(n = 10) |>
+  print()
 ```
 
-Jelikož historicky každý team mohl hrát s více či méně hráči než je nutné (např. stand-in,
-změny soupisky atp.), je nutné pro každý team zvolit 5 hráčů, které do teamu tím pádem přiřadíme.
-Hřáči jsou vybrání podle toho, jak dlouho za daný team hrají, poté podle nejdřívějšího zápasu.
-Pokud se najdou hráči, co mají tyto dva údaje identické, vybere se hráč dle jména, abecedně.
+Pro potřeby logistické statistiky za zápas a mapy musí sjednotit.
+Model nebude brát v potaz, zda se mapa hraje jako první, druhá, či
+třetí. Proto se data transformují do formátu, kde jeden řádek popisuje
+statistiky jednoho hráče na jedné mapě. Reprezentace statistik
+jednoho hráče v jednom zápase je tedy rozdělena na více řádků. Z 
+datasetu se následně vyloučí nepotřebné mapy a použijí se pouze
+zápasy, ve kterých máme statistiky pro všech 10 hráčů.
 ```{r players}
-### Calculate top 5 players per team by how long have they been playing for
-### this specific team
-players.per_team <- players.raw |>
-    # Calculate how long has been the player playing for a specific team
-    group_by(team, player_name) |>
-    summarise(first_match = min(date),
-              last_match = max(date),
-              length = last_match - first_match,
-              length = as.numeric(length) + 1) |>
-    # Filter out teams with only 4 players
-    group_by(team) |>
-    mutate(n = n()) |>
-    filter(n >= 5) |>
-    # Select top 5 players by length, last match played. If these are the same,
-    # pick one by name
-    arrange(desc(length), desc(last_match), .by_group = T) |>
-    slice_head(n = 5) |>
-    ungroup()
-
-players <- players.raw |>
-    semi_join(players.per_team, by = c("team", "player_name")) |>
-    filter(map_1 %in% maps | map_2 %in% maps | map_3 %in% maps)
-```
-
-Data set se musí transformovat do formátu, který je pro logistickou regresi použitelný.
-```{r players.clear}
-players.clear <- clear_player_map(players, 1) |>
-    rbind(clear_player_map(players, 2)) |>
-    rbind(clear_player_map(players, 3)) |>
-    left_join(players.per_team |>
-                  select(player_name, team, length),
-              by = c('team', 'player_name'))
-
-players.clear
-```
-
-Jelikžo se jedná o logistickou regresy pro teamy, statistiky se musí vytvořit přes team a
-mapu. Statistiky jsou vážené průměry s vahami podle toho, jak dlouho daný hráč za team hrál
-```{r players.per_match}
-players.per_match <- players.clear |>
-  group_by(match_id, team, map) |>
-  summarise(
-    across(
-      .cols = c(kills, assists, deaths, fkdiff, rating),
-      .fns = ~ weighted.mean(.x, length)
-    ),
-    across(
-      .cols = hs,
-      .fns = ~ weighted_geom_mean(.x, length)
-    )
-  ) |>
+players <- clear_player_map(players.raw, 1) |>
+  rbind(clear_player_map(players.raw, 2)) |>
+  rbind(clear_player_map(players.raw, 3)) |>
+  filter(map %in% maps) |>
+  drop_na() |> 
+  group_by(match_id) |>
+  # Delete matches which do not contain 10 players in total
+  # A propper match_id can have 10 (Bo1), 20 (Bo2), or 30 (Bo3) rows
+  filter(n() %% 10 == 0) |>
   ungroup()
-
-players.per_match
 ```
+
+Pro interpretaci dat použijeme první řádek z transformovaného
+datasetu
+```{r players-interpretation}
+players[1, ]
+```
+
+
+- **match_id** - Identifikátor zápasu
+- **player_id** - Identifikátor hráče
+- **team** - Jméno týmu, za které hráč v zápase hrál
+- **map** - Mapa, na které se zápas odehrál
+- **kills** - počet zabití daného hráče na mapě
+- **assists** - počet asistencí daného hráče na mapě
+  - hráč nepřítele nezabil, ale udělil mu velké poškození
+- **deaths** - počet smrtí daného hráče na mapě
+- **hs** - procento, kolik zabití bylo tzn. headshotem
+  - v případě že hráč zabije nepřítele střelou do hlavy
+- **fkdiff** - rozdíl mezi prvním zabitím a první smrtí
+  - pokud hráč jako první zabil nepřítele, pričte se jedna. Pokud
+  hráč jako první umřel, odečte se jedna
+- **rating** - rating hráče v daném zápasu
+  - rating je vypočítán stránkou [hltv.org](https://www.hltv.org/)
 
 ## results.csv
-Načtení souboru *results.csv*
+Poslední datový soubor *results.csv* obsahuje tu nejdůležitější
+proměnou, a to výsledek daného zápasu. Z datasetu je nutné
+vyloučit chybné záznamy, kde team hrál sám proti sobě. Zároveň je
+zde smazaný tým s otazníčkem.
 ```{r results.raw}
-results.raw <- read_csv("data/results.csv", show_col_types = F,
-                        col_select = c(team_1, team_2, map = "_map", map_winner,
-                                       starting_ct, rank_1, rank_2, match_id)) |>
+results.raw <- read_csv("data/results.csv",
+  show_col_types = F,
+  col_select = c(date, team_1, team_2,
+    map = "_map", map_winner,
+    starting_ct, rank_1, rank_2, match_id
+  )
+) |>
   # Incorrect data when team played against itself
-  filter(team_1 != team_2)
+  filter(team_1 != team_2,
+         team_1 != "?", team_2 != "?")
 ```
 
-Pro další výpočty je důležité data transormovat a vypočítat jak jednoduché pravděpodobnosti,
-tak pravděpodobnosti podmíněnné. Prve se pravděpodobnosti vypočítají pro jednotlivé teampy a 
-jejich mapy
-```{r results.per_match}
-results.per_match <- clear_results_team(results.raw, 1) |>
-  rbind(clear_results_team(results.raw, 2))
+Podobně jako se souborem *players.csv*, i zde každý řádek reprezentuje
+více statistik. Zde to je výhra, resp. prohra, daného teamu. Je nutné
+proto dataset transformovat do formátu, kde každý zápas bude mít dva 
+řádky. Jeden pro výherní tým (**map_winner = 1**) a druhý pro
+tým co prohrál (**map_winner = 0**). Jelikož team mohl mít
+v zápase jiný rank, výsledný rank, je spočítán průměrný rank týmu
+za poslední 3 měsíce.
+```{r results, cache=TRUE}
+results <- clear_results_team(results.raw, 1) |>
+  rbind(clear_results_team(results.raw, 2)) |> 
+  group_by(team) |> 
+  arrange(date, .by_group = T)
 
-results.per_match
+# Takes approx. 3,5 mins
+results <- results |>
+  mutate(run_mean_3_months = runner(
+    x = results,
+    k = "3 months",
+    f = function(tbl) {
+      mean(tbl$team_rank)
+    },
+    idx = "date"
+  )) |>  
+  ungroup()
+
+results[1,  ]
 ```
 
-# Model
-## Tvorba dat pro model
-```{r data-model}
-data.prep_model <- results.per_match |>
-  inner_join(players.per_match, by = c("match_id", "team", "map")) |>
-  drop_na()
+Interpretace je následující:
+
+- **date** - Datum zápasu
+- **match_id** - Identifikátor zápasu
+- **team** - Jméno týmu
+- **map** - Hraná mapa
+- **map_winner** - Ukazuje, zda tým zápas vyhrál
+- **starting_ct** - Ukazuje, zda tým začal za CT (Counter-Terrorists) 
+nebo T (Terrorists)
+- **team_rank** - Rank týmu v dobu, kdy se zápas odehrál
+- **run_mean_3_months** - Průměrný rank týmu za poslední 3 měsíce
+
+# Explorační analýza dat
+Explorační analýza dat slouží ke grafickému zobrazení datasetu.
+
+## Statistiky hráčů v zápasech
+Může být zajímavé, jaká mapa se hraje nejčastěji, a která je naopak
+mezi hráči není oblíbená. Jelikož se jedná a porovnání kvalitativní a
+kvantitativní proměnné, je nejrozumnější použít sloupcový graf.
+```{r ggplot-matches-per-map}
+players |> 
+  count(map) |> 
+  mutate(n = n/10) |> 
+  ggplot(aes(x = reorder(map, n), y = n, fill = map)) +
+  geom_col(show.legend = F) +
+  scale_y_continuous(labels = scales::comma) +
+  theme(
+    panel.grid.major.x = element_blank()
+  ) +
+  labs(
+    title = "Počet zápasu na každé mapě",
+    x = "Mapa",
+    y = "Počet zápasů"
+  )
+  
 ```
 
-## Jeden model pro všechny týmy
-```{r global-model}
-set.seed(12345)
-model.data <- data.prep_model |>
-  select(-match_id, -team) |>
-  dummy_columns(select_columns = "map",
-                remove_most_frequent_dummy = T,
-                remove_selected_columns = T)
+Z grau jde pozorovat, že s velkým náskokem je nejoblíbenější mapa
+Mirage. Je to mapa, která nejdelší dobu nedostala velký update a mezi
+hráči je i přes to stále na prvním místě. Na druhé straně je mapa 
+Vertigo, která je v map poolu krátký čas. Je to úplně nová mapa a
+hráči na ni nejsou ještě tolik zvyklí, nemají naučeno mnoho strategií
+a nejsou zde oběveny ještě všechny triky. Je to oblíbená mapa na 
+upsety (horší tým porazí lepší), proto se mapě můžou zkušenější týmy
+vyhýbat.
 
+## Distribuce zabití
+Pro zobrazení distribuce zabití lze použít histogram. Data jsou zde
+na úrovni jednotlivých hráču, takže se jedná o data za hráče.
+```{r ggplot-kills}
+bins <- (1 + 3.3*log10(nrow(players))) |> floor()
+mean <- mean(players$kills)
+median <- median(players$kills)
 
-model <- glm(map_winner ~ ., data = model.data, family = binomial)
-model |> summary()
+players |> 
+  ggplot(aes(x = kills)) +
+  geom_histogram(bins = floor(bins)) +
+  geom_vline(aes(xintercept = mean, color = "průměr"),
+             linetype = "dashed", size = 1) +
+  geom_vline(aes(xintercept = median, color = "medián"),
+             linetype = "dashed", size = 1) +
+  scale_color_manual(name = "Statistiky",
+                     values = c(medián = "blue", průměr = "red")) +
+  scale_y_continuous(labels = scales::comma,
+                     breaks = seq(0, 175000, by = 25000)) +
+  scale_x_continuous(breaks = seq(0, 80, by = 4)) +
+  theme(
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank()
+    ) +
+  labs(
+    title = "Distribuce zabití v každém zápase",
+    x = "Počet zabití",
+    y = ""
+  )
+  
 ```
 
-## Optimalizovaný model pro všechny týmy
-```{r global-model-optimized}
-set.seed(12345)
-model.data <- data.prep_model |>
-  select(-match_id, -team) |>
-  dummy_columns(select_columns = "map",
-                remove_most_frequent_dummy = T,
-                remove_selected_columns = T) |>
-  select(-map_Cache, -map_Train, -map_Vertigo)
+Hostogram má normání rozdělení s dlouhým skloněním doprava. To je z
+toho důvodu, že existují speciální případy s 44+ zabitími za zápas.
+To může nastat např. v prodloužní, kdy se hraje více kol než v
+základním čase.
 
-
-model <- glm(map_winner ~ ., data = model.data, family = binomial)
-model |> summary()
+## Boxplot ratingu hráče
+Rating hráčů je statistika zprostředkovaná portálem
+[hltv.org](https://www.hltv.org/news/20695/introducing-rating-20).
+Jedná se kombinaci mnoha statistik do jedné metriky, díky které
+se dá ohodnit výkon hráče v daném zápase.
+```{r ggplot-kills}
+players |> 
+  ggplot(aes(x = map, y = rating, color = map)) +
+  geom_boxplot(show.legend = F, outlier.shape = 1,
+               alpha = 0.4) +
+  scale_y_continuous(breaks = seq(0, 4, by = 0.5),
+                     limits = c(0, 3.5)) +
+  theme(
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.y = element_blank()
+  ) +
+  labs(
+    title = "Distribuce zabití v každém zápase",
+    x = "Mapa",
+    y = "Distribuce zabití"
+  )
+  
 ```
 
-## Model pro specifický team
-```{r team-model}
-set.seed(12345)
-model.data <- data.prep_model |>
-  filter(team == 'Liquid') |>
-  select(-match_id, -team) |>
-  dummy_columns(select_columns = "map",
-                remove_most_frequent_dummy = T,
-                remove_selected_columns = T) |>
-  select(-map_Cache, -map_Train, -map_Vertigo)
+Z box plotů nelze usoudit, že by se rozdělení nějak zásadně lišlio
+ať v mediánu, tak v mezikvartilové šírce. Jednotlivé mapy jsou
+pak charakterizováný delšími ocasy vpravo.
 
-
-model <- glm(map_winner ~ ., data = model.data, family = binomial)
-model |> summary()
+## Korelace mezi prediktory
+Pro regresy je důležité zjistit, zda nejsou prediktory korelované. To
+lze u kvantitativních prediktorů zjistit pomocí korelační tabulky.
+```{r ggplot-correlation}
+players |> 
+  select(kills:rating) |> 
+  ggcorr(label = T)
 ```
 
-## Optimalizovaný model pro specifický team
-```{r team-model-optimized}
-set.seed(12345)
-model.data <- data.prep_model |>
-  filter(team == 'Liquid') |>
-  select(-match_id, -team) |>
-  dummy_columns(select_columns = "map",
-                remove_most_frequent_dummy = T,
-                remove_selected_columns = T) |>
-  select(map_winner, kills, assists, deaths, rating)
+Z obrázku jde zjistit, že proměnná rating je silně korelovaná se 
+statistikou kills a fkdiff. Z tohoto důvodu je prediktor z dalších
+analýz vyloučen.
 
+# Modelování
+V modelovací části je porovnáno více druhů modelů. První typ předpovídá
+to, zda hráč vyhraje či prohraje zápas dle jeho statistik na určité
+mapě. V druhém modelu se pak porovnává pravděpodovnost výhry
+jednotlivých týmu s interakcí mezi mapou a začínající stranou.
+Na konci je představen model jednoho týmu proti nejlepším třiceti
+týmum z celého datasetu.
 
-model <- glm(map_winner ~ ., data = model.data, family = binomial)
-model |> summary()
+## Model pro individuální hráče
+Model pro individuální hráče slouží k popisu pravděpodovnosti, zda
+hráč zápas vyhraje či nikoliv. Pravděpodovnost je porovnána na dvou
+mapách - Vertigo a Dust2.
+
+### Příprava dat
+Prve je nutné dataset se statistikami hráču spojit s výsledky
+daných zápasů. Následně jsou odstraněny nepotřebné prediktory i s
+korelovaným prediktorem rating.
+```{r model.data_per_player}
+model.data.per_player <- players |> 
+  inner_join(results,
+            by = c("match_id", "team", "map")) |>
+  select(-c(match_id, player_id, team, date, rating))
+```
+
+### Mapa de_vertigo
+Pro mapu Vertigo je vytvořen následující model
+```{r model.per_player.dust2}
+model.data.per_player.dust2 <- model.data.per_player |> 
+  filter(map == "Dust2") |> 
+  select(-map)
+
+model.per_player.dust2 <- glm(
+  map_winner ~ .,
+  data = model.data.per_player.dust2,
+  family = binomial
+)
+
+model.per_player.dust2 |> 
+  summary()
+```
+
+Pro model jsou nevýznamné statistiky fkidff a run_3_mean_months. Z modelu
+vyplívá, že mapa je více soustředěna na týmovou sehranost než na 
+individuální výkon. Jelikož je statistika fkdiff nesignifikantní,
+není důležité, zda hráč jako první umře či zabije - jeho tým se se
+situací dokáže vypořádat. Druhý nesignifikantní statistika naznačuje,
+že na vítězství nemá vliv to, jaký je průměrný rank týmu. Toto 
+potvrzuje hypotézu, že je mapa lepší pro nezkušené týmy.
+
+### Mapa de_inferno
+Mapa inferno je více týmová. Je zde důležitá sehranost
+```{r model.per_player.inferno}
+model.data.per_player.inferno <- model.data.per_player |> 
+  filter(map == "Inferno") |> 
+  select(-map)
+
+model.per_player.inferno <- glm(
+  map_winner ~ .,
+  data = model.data.per_player.inferno,
+  family = binomial
+)
+
+model.per_player.inferno |> 
+  summary()
 ```
 
 
+### Porovnání modelů
+...
+
+## Týmové modely
+
+### Tvorba dat
+```{r model.data.per_match}
+model.data.per_match <- players |>
+  # Calculate summary statistics for players per match, team and map
+  group_by(match_id, team, map) |>
+  summarise(
+    mean_kills = mean(kills),
+    mean_assists = mean(assists),
+    mean_deaths = mean(deaths),
+    mean_hs = geom_mean(hs),
+    mean_fkdiff = mean(fkdiff),
+  ) |>
+  ungroup() |>
+  # Join match results
+  inner_join(results,
+    by = c("match_id", "team", "map")
+  )
+```
+
+### Globální model
+```{r model.per_match}
+model.per_match <- 
+  glm(map_winner ~ mean_kills + mean_assists + mean_deaths + 
+        mean_hs + mean_fkdiff + run_mean_3_months +
+        starting_ct:map,
+      data = model.data.per_match,
+      family = binomial)
+
+model.per_match |> 
+  summary()
+```
+
+### Model pro tým Liquid
+```{r model.data.per_match.liquid}
+model.data.per_match.liquid <- 
+  model.data.per_match |> 
+  filter(team == "Liquid")
+
+model.per_match.liquid <- 
+  glm(map_winner ~ mean_kills + mean_assists + mean_deaths + 
+        mean_hs + mean_fkdiff + run_mean_3_months +
+        starting_ct:map,
+      data = model.data.per_match.liquid,
+      family = binomial)
+
+model.per_match.liquid |> 
+  summary()
+```
+
+### Model pro tým eXtatus
+```{r model.data.per_match.extatus}
+model.data.per_match.extatus <- 
+  model.data.per_match |> 
+  filter(team == "eXtatus")
+
+model.per_match.extatus <- 
+  glm(map_winner ~ mean_kills + mean_assists + mean_deaths + 
+        mean_hs + mean_fkdiff + run_mean_3_months +
+        starting_ct:map,
+      data = model.data.per_match.extatus,
+      family = binomial)
+
+model.per_match.extatus |> 
+  summary()
+```
+
+### Porovnání modelů
+...
+
+## Tým FaZe vs. top30
+
+### Vytvoření dat
+```{r model.versus.data}
+reference_team <- "FaZe"
+top_30 <- results |> 
+  filter(team != reference_team) |> 
+  group_by(team) |>
+  summarise(mr = median(team_rank, na.rm = T)) |> 
+  filter(n() >= 100) |> 
+  slice_min(order_by = mr, n = 30) |> 
+  pull(team)
+
+versus_match_id <- results.raw |> 
+  filter(
+    (team_1 == reference_team & team_2 %in% top_30) |
+    (team_1 %in% top_30 & team_2 %in% reference_team)
+    ) |> 
+  distinct(match_id) |> 
+  pull(match_id)
 
 
+model.versus.data <- 
+  model.data.per_match |> 
+  filter(match_id %in% versus_match_id) |> 
+  mutate(faze_win = (map_winner == 1 & team == reference_team))
+```
 
+### Model
+```{r model.versus}
+model.versus <- 
+  glm(faze_win ~ mean_kills + mean_assists + mean_deaths + 
+        mean_hs + mean_fkdiff +  
+        map,
+      data = model.versus.data,
+      family = binomial)
+
+model.versus |> 
+  summary()
+```
 
