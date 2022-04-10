@@ -259,20 +259,57 @@ maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lz
     \frac{\partial L(\theta)}{\partial \beta_i} = 0
 \end{equation}
 
+\newpage
 {\color{red}
 \subsection{Matice záměn}
-Matice záměn je nástroj pro vyhodnocení predikcí modelu. Matice záměn je o velikosti $2x2$. Řádky značí původní hodnoty a sloupce hodnoty predikované.
+Matice záměn je nástroj pro vyhodnocení predikcí modelu. Matice je o velikosti $n x n$. Pro potřeby logistické regrese se matice skládá ze dvou řádku a dvou sloupců.
+V řádkách se nachází původní hodnoty, tedy hodnoty, které chceme předpovídat. Ve sloupcích se pak nachází předpovědi.  
 
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+                        &   & Pozitivní predikce & Negativní predikce \\ \hline
+                        &   & 1                  & 0                  \\ \hline
+        Původní pozitivní & 1 & True Positive      & False Negative     \\ \hline
+        Původní negativní & 0 & False Positive     & True Negative      \\ \hline
+    \end{tabular}
+    \caption{\label{tab:matice_zamen}Matice záměn}
+\end{table}
 
-aaa
+Pro sestavení matice je potřeba množina dat, u kterých známe predikovanou proměnnou. Na datech pak provedeme predikci, díky čemuž získáme predikované hodnoty. Porovnáním
+původním a predikovaných hodnot vznikne matice \ref{tab:matice_zamen}. Každá ze čtyř vnitřních buněk má vlastní označení a interpretaci
+
+\begin{itemize}
+    \item \textbf{True Positive} - počet správných predikcí, které byli rovné jedné
+    \item \textbf{False Positive} - počet predikcí rovných jedné, kde byla původní hodnota rovná nule
+    \item \textbf{True Negative} - počet správných predikcí, které byli rovné nule
+    \item \textbf{False Negative} - počet predikcí rovných nule, kde byla původní hodnota rovná jedné
+\end{itemize}
+
+Z matice lze následně vypočítat mnoho statistik. Pro vyhodnocení regresního modelu lze použít např. přesnost, která se vypočítá jako počet všech správných predikcí nad
+počtem všech provedených predikcí $n$.
+
+\begin{equation}
+    \textit{Přesnost = } \frac{\text{TP} + \text{TN}}{n}
+\end{equation}
+
+Může se stát, že je logistický model použít na predikce, kde je kritické předpovídat pozitivní výsledek (např. predikce nemoci). V tomto případě lze
+použít statistika zvaná citlivost. Ta se rovná poměru správných pozitivních predikcí a úhrnu všech pozitivních predikcí
+
+\begin{equation}
+    \textit{Citlivost = } \frac{\text{TP}}{\text{TP} + \text{FP}}
+\end{equation}
+
+}
 
 {\color{red}
 \subsection{Testování hypotéz}
-...
+... Dopsat
 }
 
 \subsection{Waldův test}
-{\text{red}
+{\color{red}
 Waldův test ověřuje, zda je parametr
 populaci
 }
@@ -282,7 +319,7 @@ testu hypotézy je tedy
 $H_0:$ Koeficient $\beta_i$ je rovný nule \\
 $H_A:$ Koeficient $\beta_i$ je různý od nuly.
 
-{\text{red}
+{\color{red}
 Pro vyhodnocení hypotézy se používá kritická hodnota $Z$, který se vypočítá jako poměr testovaného parametru $S_{\hat{\beta_i}}$
 a směrodatné chyby koeficientu $\beta_i$
 }
@@ -294,7 +331,7 @@ Kritická hodnota $Z$ má normální rozdělení $Z ~ N(0, 1)$ a její mocnina, 
 
 \subsection{Test poměru věrohodností}
 Test poměru věrohodnosti 
-{\text{red}
+{\color{red}
 slouží jako alternativa k Waldovu testu. K vypočtení $Z$ indexu slouží přirozený logaritmus poměru parciálních věrohodnostních funkcí.
 V praxi to znamená, že věrohodnostní funkce ve jmenovateli obsahuje méně prediktorů, než věrohodnostní funkce v čitateli.
 Pokud se tedy věrohodnostní funkce liší o prediktor $X_i$, jsou hypotézy definovány následovně

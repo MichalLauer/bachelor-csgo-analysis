@@ -10,7 +10,9 @@
 
 # Analýza
 data/
+analyza_cache/html
 *.png
+*.html
 
 # LaTeX
 *.xmpi
