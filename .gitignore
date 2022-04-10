@@ -10,7 +10,7 @@
 
 # Analýza
 data/
-analyza_cache/html
+analyza/analyza_cache/
 *.png
 *.html
 
