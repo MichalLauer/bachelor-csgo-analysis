@@ -32,10 +32,7 @@ library(runner)
 library(ggplot2)
 library(GGally)
 library(kableExtra)
-library(paletteer)
-library(markdown)
 library(knitr)
-library(scales)
 library(caret)
 library(broom)
 library(xtable)
@@ -379,7 +376,7 @@ g <- players |>
                  size = 1) +
   scale_color_manual(
     values = setNames(
-      paletteer_d("ggthemes::wsj_red_green"),
+      paletteer::paletteer_d("ggthemes::wsj_red_green"),
       c("průměr", "medián")
       )
     ) +
@@ -645,7 +642,7 @@ g <- bind_rows(
   ggplot(aes(x = map, y = p.value, color = term)) +
   geom_point() +
   geom_text(aes(x = map, y = p.value, label = round(p.value, 4)),
-            nudge_x = 0.2) +
+            nudge_x = 0.15) +
   theme(
     panel.grid.major.x = element_blank(),
     panel.grid.minor.y = element_blank(),

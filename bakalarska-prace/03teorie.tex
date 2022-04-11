@@ -9,18 +9,19 @@ Testovací citace: \cite{Hebak2015}, \cite{Kleinbaum2010}
 Bodový graf slouží pro zobrazení vztahu dvou kvantitativních proměnných. Z pravidla se vysvětlovaná proměnná dává na osu Y,
 zatímco proměnná vysvětlující se nachází na ose X. Vysvětlovaná (nezávislá) proměnná je ta proměnná, která má být předvídaná.
 Vysvětlující proměnná se naopak snaží vysvětlovanou proměnnou předpovědět či popsat. Propojením vysvětlované a vysvětlující proměnné
-na bodovém grafu lze vidět např. sílu korelace nebo vztah mezi proměnnými (např. lineární, kvadratický, logaritmický). Obrázek \ref{fig:bodovy_graf_mtcars} zobrazuje
-negativní korelaci mezi hmotností vozidla a mílemi ujetými za galon.
+na bodovém grafu lze vidět např. sílu korelace nebo vztah mezi proměnnými (např. lineární, kvadratický, logaritmický).
 
 \begin{figure}[H]
     \centering
     \includegraphics{../obrazky/bodovy_graf_mtcars.png}
-    \caption{Bodový graf hmotnosti a míly za galon z datasetu mtcars} 
+    \caption{Bodový graf hmotnosti a míly za galon} 
     \label{fig:bodovy_graf_mtcars}
 \end{figure}
 
+Obrázek \ref{fig:bodovy_graf_mtcars} zobrazuje negativní korelaci mezi hmotností vozidla a mílemi ujetými za galon.
+
 \subsection{Sloupcový graf}
-Sloupcový graf slouží k porovnání četnosti kategorií. Na jednu osu (z pravidla osu X) se položí možné kategorie. Na druhou osu
+Sloupcový graf slouží k zobrazení četnosti kategorií. Na jednu osu (z pravidla osu X) se položí možné kategorie. Na druhou osu
 se pak položí sledovaná statistika.
 {\color{red}
 Sledovat můžeme nejen četnost, ale i průměr či kteroukoli jinou statistika, kterou bude možné na ose zobrazit.
@@ -34,7 +35,7 @@ Je na něm také vidět vztah, kdy s vyšším počtem válců stoupá průměrn
 \begin{figure}[H]
     \centering
     \includegraphics{../obrazky/sloupcovy_graf_mtcars.png}
-    \caption{Sloupcový graf z datasetu mtcars} 
+    \caption{Sloupcový graf počtu válců a průměrné hrubé koňské síly} 
     \label{fig:sloupcovy_graf_mtcars}
 \end{figure}
 
@@ -44,7 +45,6 @@ Histogram je speciální typ sloupcového grafu. Hlavní rozdíl je v tom, že p
 Pro histogram je třeba data sloučit do skupin \textit{(bins)} o určité šířce. Správný výběr počtu skupin je kritický, jelikož může velmi
 silně ovlivnit interpretaci dat. Pokud se vybere příliš malý počet skupin, data se seskupí a může se ztratit důležitý vztah. Pokud se ovšem
 vybere moc velký počet skupin, v datech bude obtížné najít nějaký obecný vztah či trend.
-Tento efekt je znázorněn na obrázku \ref{fig:histogram_porovnani_mtcars}.
 
 \begin{figure}[H]
     \centering
@@ -60,7 +60,7 @@ Pro vhodný počet skupin existuje mnoho způsobů. Nejznámější je takzvané
     k \text{ } \dot{\mathbf{=}} \text{ } 1 + 3,3 * log_{10}(n)
 \end{equation}
 
-kde $k$ je výsledný zaokrouhlený počet skupin nahoru, 
+kde $k$ je výsledný zaokrouhlený počet skupin 
 a $n$ je počet pozorování. Druhý parametr, který je pro tvorbu histogramu potřeba, je šířka skupiny.
 Ta by měla být ideálně stejná pro všechny skupiny. Pokud tomu tak není, histogram může být zavádějící a čtenář mu nemusí plně rozumět.
 Pro vypočtení počtu skupin má šířka skupiny následující tvar:
@@ -72,7 +72,7 @@ Pro vypočtení počtu skupin má šířka skupiny následující tvar:
 
 kde $x$ je zobrazovaná proměnná, $k$ je počet skupin a $w$ je výsledná šířka intervalu. 
 {\color{red}
-Uplatněním rovnic \ref{eq:sturgesovo_pravidlo} a \ref{eq:sirka_histogramu} na dataset z obrázku \ref{fig:histogram_porovnani_mtcars}
+Uplatněním rovnic \ref{eq:sturgesovo_pravidlo} a \ref{eq:sirka_histogramu} na datový soubor z obrázku \ref{fig:histogram_porovnani_mtcars}
 lze zobrazit representativnější sloupcový graf. Nutné je však podotknout, že není pravidlem se danými výpočty řídit a výsledný
 sloupcový graf je nutné přizpůsobit jednotlivým datům.
 }
@@ -140,8 +140,8 @@ případě, tedy $Q_1 = Q_{0,25}$, je 25\% čísel menší než 1,513 a 75\% dat
 Boxplot je grafické zobrazení a rozšíření Five-number summary tabulky. Kromě grafického zobrazení 
 pěti kvantilů  ukazuje odlehlé a extrémní hodnoty.
 V boxplotu se také nachází obdélník, který ukazuje mezikvartilové rozpětí (IQR), tedy prostředních 50 \% dat. V obdélníku se také nachází černá čára, která značí medián.
-Z prostředního obdélníku vedou oběma směry čáry, jejichž konce značí hranici pro odlehlá pozorování.
 {\color{red}
+Z prostředního obdélníku vedou oběma směry čáry, jejichž konce značí hranici pro odlehlá pozorování.
 Pozorování, která jsou buď větší než horní hranice, nebo menší než spodní hranice, označujeme jako odlehlé nebo extrémní. 
 }
 
@@ -158,7 +158,7 @@ Díky grafickému zobrazení lze lehce porovnávat rozdělení jedné vysvětlov
 \begin{figure}[H]
     \centering
     \includegraphics{../obrazky/boxplot_mtcars.png}
-    \caption{Boxplot hmotnosti auta pro různé počty válců} 
+    \caption{Boxplot hmotnosti auta pro různý počet válců} 
     \label{fig:boxplot_mtcars}
 \end{figure}
 
@@ -174,7 +174,7 @@ musí se na to při tvorbě regresního modelu brát ohled.
 \begin{figure}[H]
     \centering
     \includegraphics{../obrazky/mtcars_korelace.png}
-    \caption{Korelace} 
+    \caption{Korelační matice} 
     \label{fig:mtcars_korelace}
 \end{figure}
 
@@ -209,7 +209,7 @@ vzhledem k definovaným prediktorům lze zapsat jako
 
 \begin{equation}
     \label{eq:pravdepodobnost_y}
-    P(Y = 1 \mid X_1, X_2, ..., X_k) = \frac{1}{1 + e^{- \left( \alpha + \sum_{i=1}^k \beta_i X_i \right) }}
+    P(Y = 1 \mid X_1, X_2, ..., X_k) = \frac{1}{1 + e^{- \left( \alpha + \sum_{i=1}^k \beta_i X_i \right) }},
 \end{equation}
 
 kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru. 
@@ -240,10 +240,10 @@ interpretovat pravděpodobnost jako šanci, použije se logitová funkce
 
 kde $p$ je pravděpodobnost výskytu jevu A.
 
-\subsection{Maximální pravděpodobnost}
+\subsection{Největší pravděpodobnost}
 Parametry logistického modelu v rovnici \ref{eq:pravdepodobnost_y} jsou pouze teoretické a je třeba je odhadnout. Již vypočtené odhady
 se proto neznačí pouze $\beta$, ale $\hat{\beta}$. Pro odhad parametrů se při logistické regresi používá metoda maximální věrohodnosti. Pro výpočet
-maximální věrohodnosti se počítá pravděpodobnostní funkce $L(\theta)$ kde $\theta$ jsou parametry logistického modelu $\alpha, \beta_1, ..., \beta_k$.
+maximální věrohodnosti se počítá věrohodnostní funkce $L(\theta)$ kde $\theta$ jsou parametry logistického modelu $\alpha, \beta_1, ..., \beta_k$.
 Pro logistickou regresi má věrohodnostní funkce tvar
 
 \begin{equation}
@@ -277,7 +277,7 @@ V řádkách se nachází původní hodnoty, tedy hodnoty, které chceme předpo
     \caption{\label{tab:matice_zamen}Matice záměn}
 \end{table}
 
-Pro sestavení matice je potřeba množina dat, u kterých známe predikovanou proměnnou. Na datech pak provedeme predikci, díky čemuž získáme predikované hodnoty. Porovnáním
+Pro sestavení matice je potřeba množina dat, u kterých známe vysvětlovanou proměnnou. Na datech pak provedeme predikci, díky čemuž získáme predikované hodnoty. Porovnáním
 původním a predikovaných hodnot vznikne matice \ref{tab:matice_zamen}. Každá ze čtyř vnitřních buněk má vlastní označení a interpretaci
 
 \begin{itemize}
@@ -310,11 +310,8 @@ použít statistika zvaná citlivost. Ta se rovná poměru správných pozitivn�
 
 \subsection{Waldův test}
 {\color{red}
-Waldův test ověřuje, zda je parametr
-populaci
+Waldův test ověřuje, zda je parametr $\beta_i$ v populaci významný či nikoliv. Definice testu hypotézy je tedy
 }
- $\beta_i$ významný či nikoliv. Definice
-testu hypotézy je tedy
 
 $H_0:$ Koeficient $\beta_i$ je rovný nule \\
 $H_A:$ Koeficient $\beta_i$ je různý od nuly.
@@ -322,30 +319,32 @@ $H_A:$ Koeficient $\beta_i$ je různý od nuly.
 {\color{red}
 Pro vyhodnocení hypotézy se používá kritická hodnota $Z$, který se vypočítá jako poměr testovaného parametru $S_{\hat{\beta_i}}$
 a směrodatné chyby koeficientu $\beta_i$
-}
+
+
 \begin{equation}
     Z = \frac{\hat{\beta_i}}{S_{\hat{\beta_i}}}
 \end{equation}
 
 Kritická hodnota $Z$ má normální rozdělení $Z ~ N(0, 1)$ a její mocnina, $Z^2$, má chi-kvadrát rozdělení s jedním stupněm volnosti.
-
-\subsection{Test poměru věrohodností}
-Test poměru věrohodnosti 
-{\color{red}
-slouží jako alternativa k Waldovu testu. K vypočtení $Z$ indexu slouží přirozený logaritmus poměru parciálních věrohodnostních funkcí.
-V praxi to znamená, že věrohodnostní funkce ve jmenovateli obsahuje méně prediktorů, než věrohodnostní funkce v čitateli.
-Pokud se tedy věrohodnostní funkce liší o prediktor $X_i$, jsou hypotézy definovány následovně
-
-$H_0:$ Koeficient $\beta_i$ je rovný nule \\
-$H_A:$ Koeficient $\beta_i$ je různý od nuly.
-
-Do výpočtu kritické hodnoty pak v poměru vstupují hodnoty věrohodnostní funkce \ref{eq:pravdepodobnostni_fce}, kde 
-$\hat{L_1}$ značí hodnotu věrohodnostní funkce pro model se všemi prediktory a $\hat{L_2}$ hodnotu věrohodnostní funkce pro model bez 
-prediktoru $X_i$
 }
 
-\begin{equation}
-    Z = -2ln(\frac{\hat{L_1}}{\hat{L_2}})
-\end{equation}
+% \subsection{Test poměru věrohodností}
+% Test poměru věrohodnosti 
+% {\color{red}
+% slouží jako alternativa k Waldovu testu. K vypočtení $Z$ indexu slouží přirozený logaritmus poměru parciálních věrohodnostních funkcí.
+% V praxi to znamená, že věrohodnostní funkce ve jmenovateli obsahuje méně prediktorů, než věrohodnostní funkce v čitateli.
+% Pokud se tedy věrohodnostní funkce liší o prediktor $X_i$, jsou hypotézy definovány následovně
 
-při velké hodnotě $n$ má $Z$ zhruba chi-kvadrát rozdělení s jedním stupněm volnosti.
+% $H_0:$ Koeficient $\beta_i$ je rovný nule \\
+% $H_A:$ Koeficient $\beta_i$ je různý od nuly.
+
+% Do výpočtu kritické hodnoty pak v poměru vstupují hodnoty věrohodnostní funkce \ref{eq:pravdepodobnostni_fce}, kde 
+% $\hat{L_1}$ značí hodnotu věrohodnostní funkce pro model se všemi prediktory a $\hat{L_2}$ hodnotu věrohodnostní funkce pro model bez 
+% prediktoru $X_i$
+% }
+
+% \begin{equation}
+%     Z = -2ln(\frac{\hat{L_1}}{\hat{L_2}})
+% \end{equation}
+
+% při velké hodnotě $n$ má $Z$ zhruba chi-kvadrát rozdělení s jedním stupněm volnosti.

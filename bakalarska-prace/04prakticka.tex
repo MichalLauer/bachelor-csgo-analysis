@@ -95,7 +95,7 @@ počet zabitých nepřátel, neznamená to nutně, že zhoršují šanci týmu v
 \begin{figure}[H]
     \centering
     \includegraphics{../obrazky/histogram_zabiti.png}
-    \caption{Počet zápasů na každé mapě} 
+    \caption{Histogram statistiky kills na úrovni hráčů} 
     \label{fig:histogram_zabiti}
 \end{figure}
 
@@ -110,7 +110,7 @@ zobrazuje boxploty hráčů přes mapy \textbf{pouze v případě, že zápas vy
 \begin{figure}[H]
     \centering
     \includegraphics{../obrazky/boxplot_ratingu.png}
-    \caption{Počet zápasů na každé mapě} 
+    \caption{Boxplot statistiky rating přes každou mapu} 
     \label{fig:boxplot_ratingu_pres_mapu}
 \end{figure}
 
@@ -123,7 +123,7 @@ Pro logistickou regresi je důležité, aby prediktory nebyli korelované. Toto 
 \begin{figure}[H]
     \centering
     \includegraphics{../obrazky/prediktory_korelace.png}
-    \caption{Korelace} 
+    \caption{Korelační matice pro kvantitativní prediktory} 
     \label{fig:korelacni_matice}
 \end{figure}
 
@@ -149,7 +149,7 @@ má větší pozitivní vliv statistika assists než kills. Nejvíce pravděpodo
 Druhý model se zaměřuje na mapu Inferno. Ta je oproti mapě Dust 2 více taktická. Je zde důležité, jak tým začne kolo a jak spolu tým hraje strategicky.
 \input{kod/model.per_player.inferno.tex}
 
-Pro mapu jsou významné ($\alpha = 0.05$) všechny prediktory. Oproti modelu pro mapu Dust 2 jsou významné i statistiky fkdiff a run\_mean\_3\_months. To značí, že je 
+Pro mapu jsou významné ($\alpha = 0,05$) všechny prediktory. Oproti modelu pro mapu Dust 2 jsou významné i statistiky fkdiff a run\_mean\_3\_months. To značí, že je 
 kladen větší důraz na týmovou souhru a sehranost hráčů. Čím větší mají klouzavý průměr za poslední tři měsíce, tím se očekává větší sehranost a zkušenosti.
 Důležitost týmové sehranosti též značí významnost prediktoru fkdiff. Čím je prediktor větší, tím více tým hraje spolu a získává první zabití nepřítele bez opětování smrti. 
 
@@ -160,11 +160,11 @@ Díky vytvořeným maticím záměn je možné pro modely vytvořit statistiky P
 \begin{figure}[H]
     \centering
     \includegraphics{../obrazky/model.per_player.conf.png}
-    \caption{Korelace} 
+    \caption{Bodové zobrazení statistik Přesnost a Citlivost pro logistické modely} 
     \label{fig:model.per_player.conf}
 \end{figure}
 
-První porovnávaná statistika je přesnost. Ta je pro model na mapě Inferno větší o zhruba 0.05 jednotek. Zároveň je pro přesnost zobrazen intervalový odhad, který je pro
+První porovnávaná statistika je přesnost. Ta je pro model na mapě Inferno větší o zhruba 0,05 jednotek. Zároveň je pro přesnost zobrazen intervalový odhad, který je pro
 mapu Inferno výrazně užší. Druhá sledovaná statistika je citlivost. Ta je pro mapu Inferno větší o zhruba jeden procentní bod. Z obrázku \ref{fig:model.per_player.conf}
 lze usoudit, že model pro mapu Inferno je pro předpověď výsledku spolehlivější.
 
@@ -176,7 +176,7 @@ zobrazeny na obrázku.
 \begin{figure}[H]
     \centering
     \includegraphics{../obrazky/model.per_player.wald.png}
-    \caption{Korelace} 
+    \caption{Porovnání výsledků Waldova testu pro prediktory logistického modelu} 
     \label{fig:model.per_player.wald}
 \end{figure}
 

@@ -14,8 +14,11 @@ a je aktuálně nejhranějším \ac{FPS} esport titulem. \ac{CSGO} vyniká nejen
 je unikátní i tím, že obsahuje mnoho různých módu\footnote{rozšíření, jak hru hrát. Každý mód má svá vlastní pravidla, mapy, či herní fanoušky}
 a hráč může strávit mnoho hodin pouze objevováním komunitních serverů, hraním klasických zápasů či trénováním na offline mapách.
 
-Finální cíl práce je vytvořit logistický regresní model, který předpovídá výsledek zápasů. Pro tvorbu kvalitního modelu bude kritické zvolit vhodné prediktory. Použitý data
-set\footnote{\url{https://www.kaggle.com/mateusdmachado/csgo-professional-matches}} obsahuje čtyři soubory, které podávají informace jak už o zápase (např. datum, 
+Finální cíl práce je vytvořit logistický regresní model, který předpovídá výsledek zápasů. Pro tvorbu kvalitního modelu bude kritické zvolit vhodné prediktory.
+{\color{red}
+Pro predikci jsou použity prediktory, které se nacházejí ve dvou samostatných datových souborech\footnote{\url{https://www.kaggle.com/mateusdmachado/csgo-professional-matches}} 
+}
+které podávají informace jak už o zápase (např. datum, 
 výsledek zápasu, výsledek jednotlivých map, typ zápasu), hráčích (např. statistiky za zápas, statistiky za mapy, statistiky za team), tak o 
 vývoji celého zápasu (především ekonomika týmu). V práci bude tedy vytvořeno více specializovaných modelů pro každý vybraný týmů a následně
 je pro každý tým vybrán nejlepší model. Výsledné modely jsou v závěru mezi sebou porovnány.

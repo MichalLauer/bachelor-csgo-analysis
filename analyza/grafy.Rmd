@@ -44,7 +44,7 @@ g <- mtcars |>
   geom_bar(show.legend = F, stat = "summary", fun = base::mean) +
   theme(panel.grid.major.x = element_blank()) +
   labs(
-    title = "Porovnání válců s průměrbou hrubou koňskou silou",
+    title = "Porovnání válců s průměrnou hrubou koňskou silou",
     caption = "Henderson and Velleman (1981)",
     x = "Počet válců",
     y = "Průměrná hrubá koňská síla"
@@ -71,7 +71,7 @@ hg <- \(bins) {
           axis.title.y = element_text(size = 8)
           ) +
     labs(
-      title = "Histogram míle z galon",
+      title = "Histogram míle za galon",
       subtitle = paste0("Počet skupin: ", bins, ", ",
                         "Šířka skupiny: ", round(width, 3)),
       caption = "Henderson and Velleman (1981)",
@@ -107,7 +107,7 @@ g <- mtcars |>
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank()) +
   labs(
-      title = "Histogram míle z galon",
+      title = "Histogram míle za galon",
       subtitle = paste0("Počet skupin: ", bins, ", ",
                         "Šířka skupiny: ", round(width, 3)),
       caption = "Henderson and Velleman (1981)",
@@ -147,7 +147,7 @@ g <-  mtcars |>
   theme(
     panel.grid.major.x = element_blank()
   ) +
-  labs(title = 'Boxplot porovnání všech kategorií počtu válců',
+  labs(title = 'Boxplot hmotnosti vozidla (lb/1000) přes kategorie válců',
        caption = "Henderson and Velleman (1981)",
        x = 'Počet válců',
        y = 'Hmotnost vozidla (lb/1000)')
@@ -165,8 +165,8 @@ g <- mtcars |>
     title = 'Hmotnost vozidla vysvětlená mílemy za galon',
     subtitle = 'Hmotnost je udaná v (lb/1000)',
     caption = "Henderson and Velleman (1981)",
-    x = 'Hmotnost (lb/1000)',
-    y = 'Míle za galon'
+    x = 'Míle za galon',
+    y = 'Hmotnost (lb/1000)',
   )
 
 save_bc_picture(g, "bodovy_graf_mtcars.png")
