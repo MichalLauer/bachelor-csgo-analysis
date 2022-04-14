@@ -140,19 +140,19 @@ mtcars |>
 ```
 
 # Boxplot
-```{r boxplot_mtcars.png}
+```{r krabickovy_graf_mtcars.png}
 g <-  mtcars |>
   ggplot(aes(x = as.factor(cyl), y = wt)) +
   geom_boxplot(outlier.shape = 1) +
   theme(
     panel.grid.major.x = element_blank()
   ) +
-  labs(title = 'Boxplot hmotnosti vozidla (lb/1000) přes kategorie válců',
+  labs(title = 'Krabičkový graf hmotnosti vozidla (lb/1000) přes kategorie válců',
        caption = "Henderson and Velleman (1981)",
        x = 'Počet válců',
        y = 'Hmotnost vozidla (lb/1000)')
 
-save_bc_picture(g, "boxplot_mtcars.png")
+save_bc_picture(g, "krabickovy_graf_mtcars.png")
 g
 ```
 

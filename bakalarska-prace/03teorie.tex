@@ -23,14 +23,16 @@ Obrázek \ref{fig:bodovy_graf_mtcars} zobrazuje negativní korelaci mezi hmotnos
 \subsection{Sloupcový graf}
 Sloupcový graf slouží k zobrazení četnosti kategorií. Na jednu osu (z pravidla osu X) se položí možné kategorie. Na druhou osu
 se pak položí sledovaná statistika.
+Sledovat můžeme nejen četnost, ale i průměr či kteroukoli jinou statistiku, kterou bude možné na ose zobrazit.
+
 {\color{red}
-Sledovat můžeme nejen četnost, ale i průměr či kteroukoli jinou statistika, kterou bude možné na ose zobrazit.
-Pokud je typ statistické proměnné nominální, tedy data pouze popisná, lze pomocí sloupcového grafu pouze porovnávat sledovanou statistiku. Lze tedy
-vnímat a porovnávat jednotlivé kategorie, ale nemůžeme z toho usoudit nějaký vztah.
-Mají-li ovšem kategorie nějaké přirozené řazení, je možné sledovat i určitý vztah mezi nimi a usoudit, že s změnou kategorie roste i sledovaná statistika.
+Nejčastější se pomocí sloupcového grafu porovnává absolutní četnost dané kategorie. Řazení kategorií se dále odvíjí podle toho, zda je
+daná proměnná ordinální či nominální. V případě nominální proměnné se sloupce řadí podle absolutní četnosti dané kategorie. V případě ordinální
+proměnné se zachovává přirozené řazení.
+}
+
 Příklad sloupcového grafu je zobrazen na obrázku, který porovnává průměrnou hrubou koňskou sílu s počtem válců.
 Je na něm také vidět vztah, kdy s vyšším počtem válců stoupá průměrná koňská síla.
-}
 
 \begin{figure}[H]
     \centering
@@ -60,8 +62,7 @@ Pro vhodný počet skupin existuje mnoho způsobů. Nejznámější je takzvané
     k \text{ } \dot{\mathbf{=}} \text{ } 1 + 3,3 * log_{10}(n)
 \end{equation}
 
-kde $k$ je výsledný zaokrouhlený počet skupin 
-a $n$ je počet pozorování. Druhý parametr, který je pro tvorbu histogramu potřeba, je šířka skupiny.
+kde $k$ je přibližný počet skupin a $n$ je počet pozorování. Druhý parametr, který je pro tvorbu histogramu potřeba, je šířka skupiny.
 Ta by měla být ideálně stejná pro všechny skupiny. Pokud tomu tak není, histogram může být zavádějící a čtenář mu nemusí plně rozumět.
 Pro vypočtení počtu skupin má šířka skupiny následující tvar:
 
@@ -71,11 +72,9 @@ Pro vypočtení počtu skupin má šířka skupiny následující tvar:
 \end{equation}
 
 kde $x$ je zobrazovaná proměnná, $k$ je počet skupin a $w$ je výsledná šířka intervalu. 
-{\color{red}
 Uplatněním rovnic \ref{eq:sturgesovo_pravidlo} a \ref{eq:sirka_histogramu} na datový soubor z obrázku \ref{fig:histogram_porovnani_mtcars}
 lze zobrazit representativnější sloupcový graf. Nutné je však podotknout, že není pravidlem se danými výpočty řídit a výsledný
 sloupcový graf je nutné přizpůsobit jednotlivým datům.
-}
 \begin{figure}[H]
     \centering
     \includegraphics{../obrazky/histogram_mtcars_sturges.png}
@@ -83,35 +82,7 @@ sloupcový graf je nutné přizpůsobit jednotlivým datům.
     \label{fig:histogram_mtcars_sturges}
 \end{figure}
 
-% Histogram lze samozřejmě rozepsat. Lze vytvořit tzn. tabulku četností,
-% která mimo jiné obsahuje spodní hranici intervalu, horní hranici intervalu a počet pozorování. Důležité je,
-% aby přechody mezi intervaly byli jasné.
-
-% \begin{table}[H]
-%     \centering
-%     \begin{tabular}[t]{c|c|c}
-%         \hline
-%         Spodní hranice intervalu & Horní hranice intervalu & Počet pozorování\\
-%         \hline
-%         9,791667 & 13,70833 & 3\\
-%         \hline
-%         13,708334 & 17,62500 & 9\\
-%         \hline
-%         17,625001 & 21,54167 & 11\\
-%         \hline
-%         21,541668 & 25,45833 & 3\\
-%         \hline
-%         25,458334 & 29,37500 & 2\\
-%         \hline
-%         29,375001 & 33,29167 & 3\\
-%         \hline
-%         33,291668 & 37,20833 & 1\\
-%         \hline
-%     \end{tabular}
-%     \caption{\label{tab:tabulka_cetnosti_sturges}Tabulka četnostní}
-% \end{table}
-
-\subsection{Boxplot}
+\subsection{Krabičkový graf}
 \subsubsection{Five-number summary}
 Five-number summary je číselná tabulka, která pomocí pěti různých čísel shrnuje seřazenou číselnou řadu. Základní statistický nástroj pro
 vytvoření takové tabulky jsou kvantily. Hodnota $P$-tého percentilu označuje číslo, které rozděluje seřazenou číselnou řadu na dva intervaly. 
@@ -121,7 +92,6 @@ jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použ
 uvedena následující tabulka
 
 \begin{table}[H]
-
     \centering
     \begin{tabular}[t]{c|c|c|c|c}
         \hline
@@ -136,14 +106,13 @@ uvedena následující tabulka
 kde $Q_{0}$ a $Q_{1,00}$ označují minimum a maximum číselné řady. Kvartily $Q_{1}$, $Q_{2}$ (medián) a $Q_{3}$ jsou čísla, která rozděluji časovou řadu na na čtvrtiny. V prvním
 případě, tedy $Q_1 = Q_{0,25}$, je 25\% čísel menší než 1,513 a 75\% dat větší. Pro kvantil $Q_3 = Q_{0,75}$ je 75\% čísel menších než 3,61 a 25\% větších. $Q_{0,50}$ označuje medián.
 
-\subsubsection{Boxplot}
-Boxplot je grafické zobrazení a rozšíření Five-number summary tabulky. Kromě grafického zobrazení 
+\subsubsection{Krabičkový graf}
+Krabičkový graf je grafické zobrazení a rozšíření Five-number summary tabulky. Kromě grafického zobrazení 
 pěti kvantilů  ukazuje odlehlé a extrémní hodnoty.
-V boxplotu se také nachází obdélník, který ukazuje mezikvartilové rozpětí (IQR), tedy prostředních 50 \% dat. V obdélníku se také nachází černá čára, která značí medián.
-{\color{red}
-Z prostředního obdélníku vedou oběma směry čáry, jejichž konce značí hranici pro odlehlá pozorování.
+V Krabičkovém grafu se také nachází obdélník, který ukazuje mezikvartilové rozpětí (IQR), tedy prostředních 50 \% dat. V obdélníku se také nachází černá čára, která značí medián.
+Z prostředního obdélníku vedou oběma směry čáry, jejichž konce značí hranici pro odlehlá pozorování. Pokud datový soubor neobsahuje žádná odlehlá pozorování, konec těchto čar
+značí minimum a maximum datového souboru.
 Pozorování, která jsou buď větší než horní hranice, nebo menší než spodní hranice, označujeme jako odlehlé nebo extrémní. 
-}
 
 \begin{align}
     \textit{Spodní hranice } &= Q_1 - 1,5 * IQR \\
@@ -152,24 +121,40 @@ Pozorování, která jsou buď větší než horní hranice, nebo menší než s
 
 Hodnoty, které spadají do intervalu $\langle Q_1 - 1,5IQR; Q_1 - 3IQR\rangle$ a $\langle Q_3 + 1,5IQR, Q_3 + 3IQR \rangle$ se nazývají jako odlehlé.
 Hodnoty které leží mimo tento vztah, tedy hodnoty menší než $Q_1 - 3IQR$ nebo větší než $Q_3 + 3IQR$ se nazývají jako hodnoty extrémní a
-v boxplotu jsou z pravidla vyznačeny nějakým speciálním znakem, např. kolečkem.
+v krabičkovém grafu jsou z pravidla vyznačeny nějakým speciálním znakem, např. kolečkem.
 Díky grafickému zobrazení lze lehce porovnávat rozdělení jedné vysvětlované kvantitativní proměnné tříděné přes několik kategorií.
 
 \begin{figure}[H]
     \centering
-    \includegraphics{../obrazky/boxplot_mtcars.png}
-    \caption{Boxplot hmotnosti auta pro různý počet válců} 
-    \label{fig:boxplot_mtcars}
+    \includegraphics{../obrazky/krabickovy_graf_mtcars.png}
+    \caption{Krabičkový graf hmotnosti auta pro různý počet válců} 
+    \label{fig:krabickovy_graf_mtcars}
 \end{figure}
 
-Prúhledná kolečka v obrázku \ref{fig:boxplot_mtcars} v kategorii osmi válců značí odlehlé hodnoty, t.j. hodnoty
+Průhledná kolečka v obrázku \ref{fig:krabickovy_graf_mtcars} v kategorii osmi válců značí odlehlé hodnoty, t.j. hodnoty
 v intervalu $\langle Q_3 + 1,5IQR, Q_3 + 3IQR \rangle$.
 
 {\color{red}
 \subsection{Korelační matice}
-Korelační matice je způsob, jak zobrazit korelaci mezi více jak dvěma proměnnými. Matice může být zobrazená jako tabulka nebo
-graf. Korelační matice je velmi užitečná v regresní analýze kvůli předpokladu nezávislosti. Pokud jsou dvě hodnoty vysoce korelované,
-musí se na to při tvorbě regresního modelu brát ohled.
+\subsubsection{Korelace}
+Korelace popisuje směr a sílu vztahu mezi dvěma proměnnými $x$ a $y$. Značí se $r$ a nabývá hodnot $\langle -1; 1 \rangle$.
+
+\begin{equation}
+r = \frac{n \sum_{i=1}^n x_i y_i - \sum_{i=1}^n x_i \sum_{i=1}^n y_i}
+{\sqrt{(\overline{x^2} - \overline{x}^2)(\overline{y^2} - \overline{y}^2)}}
+\end{equation}
+
+Čím větší je absolutní hodnota korelace mezi proměnnou $x$ a $y$, tím lépe lze pomocí jedné proměnné vysvětlit druhou proměnnou. Kladnost, případně zápornost korelace
+značí pak směr vztahu. Pokud je korelace záporná, tedy $r < 0$, s růstem jedné proměnné klesá proměnná druhá. Naopak při kladné korelace, tedy $r > 0$, s růstem
+jedné proměnné roste i druhá. Pokud by se například změřila výška žáku ve třídě, kde proměnná $x$ bude jejich naměřená výška v centimetrech
+a proměnná $y$ jejich naměřená výška v metrech, korelace mezi proměnnou $x$ a $y$ bude rovna jedné. To je z toho důvodu, že výška v centimetrech lze
+perfektně vysvětlit výškou v měřenou v metrech. To platí i naopak.  
+
+\subsubsection{Korelační matice}
+Korelační matice je nástroj, díky kterému lze zobrazit korelaci mezi více jak dvěma páry proměnných. Matice může být zobrazená jako tabulka nebo
+graf. Korelační matice je velmi užitečná v regresní analýze kvůli předpokladu nezávislosti proměnných. Pokud jsou při tvorbě modelu prediktory korelované,
+vzniká problém tzn. multikolinearity. Pokud jsou prediktory vysoce korelované, zhoršuje to přesnost a vypovídací hodnotu koeficientů. \cite{Kleinbaum2010}
+V takovém případě je např zvýšit počet pozorování nebo z modelu určité modelované prediktory odebrat. 
 
 \begin{figure}[H]
     \centering
@@ -179,7 +164,8 @@ musí se na to při tvorbě regresního modelu brát ohled.
 \end{figure}
 
 Graf korelační matice může mít mnoho podob. V příkladu obrázku \ref{fig:mtcars_korelace} je zobrazená korelační matice jako teplotní mapa. Z obrázku je možné pozorovat vysokou
-pozitivní korelaci mezi proměnnými cyl, disp a hp. naopak skoro žádná korelace není mezi proměnnou qsec a proměnnou drat.
+pozitivní korelaci mezi páry proměnných cyl, disp a hp. naopak skoro žádná korelace není mezi proměnnou qsec a proměnnou drat. Korelační matice je zároveň symetrická, jelikož
+korelace mezi $x$ a $y$ je stejná jako korelace mezi $y$ a $x$. Díky této vlastnosti je možné zobrazit pouze část korelační matice pod úhlopříčkou bez ztráty jakékoliv informace.
 }
 
 \newpage
@@ -217,12 +203,10 @@ kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru.
 \subsection{Interpretace parametrů}
 Parametry $\alpha$ a $\beta_i$ značí logaritmus šance. $\alpha$ je logaritmus šance v případě, že všechny prediktory
 jsou teoreticky rovné $0$. Parametr $\beta_i$ značí logaritmus šance pro prediktor $X_i$
-{\color{red}
 V případě, že všechny prediktory jsou konstantní a prediktor $X_i$ se změní o jednotku, přirozený logaritmus
 šance se změní o $B_i$. Toto lze pozorovat například u binárních prediktorů, kdy typicky přítomnost
-daného prediktoru, značená jedničkou, změní výslednou šanci právě o odhadnutý parameter $\beta$.
+daného prediktoru, značená jedničkou, změní výslednou šanci právě o odhadnutý parametr $\beta$.
 Pro přechod z přirozeného logaritmu šance na šanci lze využít vztahu
-}
 
 \begin{equation}
 \textit{šance } = e^{\beta_i}.
@@ -260,47 +244,59 @@ maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lz
 \end{equation}
 
 \newpage
-{\color{red}
 \subsection{Matice záměn}
-Matice záměn je nástroj pro vyhodnocení predikcí modelu. Matice je o velikosti $n x n$. Pro potřeby logistické regrese se matice skládá ze dvou řádku a dvou sloupců.
-V řádkách se nachází původní hodnoty, tedy hodnoty, které chceme předpovídat. Ve sloupcích se pak nachází předpovědi.  
+Matice záměn je nástroj pro vyhodnocení predikcí modelu. Matice je o velikosti $n \times n$. Pro potřeby logistické regrese se matice skládá ze dvou řádku a dvou sloupců.
+V řádcích se nachází původní hodnoty, tedy hodnoty, které chceme předpovídat. Ve sloupcích se pak nachází předpovědi.  
 
 \begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|c|}
         \hline
-                        &   & Pozitivní predikce & Negativní predikce \\ \hline
-                        &   & 1                  & 0                  \\ \hline
-        Původní pozitivní & 1 & True Positive      & False Negative     \\ \hline
-        Původní negativní & 0 & False Positive     & True Negative      \\ \hline
+                          &   & Pozitivní predikce & Negativní predikce \\ \hline
+                          &   & 1                  & 0                  \\ \hline
+        Původní pozitivní & 1 & Skutečně pozitivní & Falešně negativní  \\ \hline
+        Původní negativní & 0 & Falešně pozitivní  & Skutečně negativní \\ \hline
     \end{tabular}
     \caption{\label{tab:matice_zamen}Matice záměn}
 \end{table}
 
 Pro sestavení matice je potřeba množina dat, u kterých známe vysvětlovanou proměnnou. Na datech pak provedeme predikci, díky čemuž získáme predikované hodnoty. Porovnáním
-původním a predikovaných hodnot vznikne matice \ref{tab:matice_zamen}. Každá ze čtyř vnitřních buněk má vlastní označení a interpretaci
+původních a predikovaných hodnot vznikne matice \ref{tab:matice_zamen}. Každá ze čtyř vnitřních buněk má vlastní označení a interpretaci:
 
 \begin{itemize}
-    \item \textbf{True Positive} - počet správných predikcí, které byli rovné jedné
-    \item \textbf{False Positive} - počet predikcí rovných jedné, kde byla původní hodnota rovná nule
-    \item \textbf{True Negative} - počet správných predikcí, které byli rovné nule
-    \item \textbf{False Negative} - počet predikcí rovných nule, kde byla původní hodnota rovná jedné
+    \item \textbf{Skutečně pozitivní} - počet správných predikcí, které byly rovné jedné
+    \item \textbf{Falešně pozitivní} - počet predikcí rovných jedné, kde byla původní hodnota rovná nule
+    \item \textbf{Skutečně negativní} - počet správných predikcí, které byly rovné nule
+    \item \textbf{Falešně negativní} - počet predikcí rovných nule, kde byla původní hodnota rovná jedné
 \end{itemize}
 
 Z matice lze následně vypočítat mnoho statistik. Pro vyhodnocení regresního modelu lze použít např. přesnost, která se vypočítá jako počet všech správných predikcí nad
 počtem všech provedených predikcí $n$.
 
 \begin{equation}
-    \textit{Přesnost = } \frac{\text{TP} + \text{TN}}{n}
+    \textit{Přesnost = } \frac{\text{Skutečně pozitivní} + \text{Skutečně negativní}}{n}
 \end{equation}
 
-Může se stát, že je logistický model použít na predikce, kde je kritické předpovídat pozitivní výsledek (např. predikce nemoci). V tomto případě lze
-použít statistika zvaná citlivost. Ta se rovná poměru správných pozitivních predikcí a úhrnu všech pozitivních predikcí
+{\color{red}
+Přesnost říká, kolik predikcí bylo klasifikováno správně. Pokud je ovšem poměr původních pozitivních a negativních hodnot velmi nevyrovnaný, tato statistika
+není vhodná. Toto se může stát například v lékařství při identifikaci nemocného pacienta. Zde je důležitější úspěšně predikovat výskyt nemoci, který se ovšem v datovém
+souboru často objevuje v menším poměru. V tomto případě lze použít statistiku zvanou senzitivita. Ta se rovná poměru správných pozitivních predikcí a
+úhrnu všech pozitivních predikcí
 
 \begin{equation}
-    \textit{Citlivost = } \frac{\text{TP}}{\text{TP} + \text{FP}}
+    \label{eq:senzitivita}
+    \textit{Senzitivita = } \frac{\text{Skutečně pozitivní}}{\text{Skutečně pozitivní} + \text{Falešně pozitivní}}
 \end{equation}
 
+Senzitivita tedy určuje poměr správně klasifikovaných pozitivních případů a všech pozitivně klasifikovaných případů. Pokud by bylo vhodné preferovat
+spíše negativní klasifikace, lze použit statistiku zvanou specificita.
+
+\begin{equation}
+    \label{eq:specificita}
+    \textit{Specificita = } \frac{\text{Skutečně negativní}}{\text{Skutečně negativní} + \text{Falešně negativní}}
+\end{equation}
+
+Nanesením sensitivity \ref{eq:senzitivita} a specificity \ref{eq:specificita} lze vytvořit tzn. ROC křivku.
 }
 
 {\color{red}
@@ -309,42 +305,16 @@ použít statistika zvaná citlivost. Ta se rovná poměru správných pozitivn�
 }
 
 \subsection{Waldův test}
-{\color{red}
 Waldův test ověřuje, zda je parametr $\beta_i$ v populaci významný či nikoliv. Definice testu hypotézy je tedy
-}
 
 $H_0:$ Koeficient $\beta_i$ je rovný nule \\
 $H_A:$ Koeficient $\beta_i$ je různý od nuly.
 
-{\color{red}
 Pro vyhodnocení hypotézy se používá kritická hodnota $Z$, který se vypočítá jako poměr testovaného parametru $S_{\hat{\beta_i}}$
 a směrodatné chyby koeficientu $\beta_i$
 
-
 \begin{equation}
-    Z = \frac{\hat{\beta_i}}{S_{\hat{\beta_i}}}
+    Z = \frac{\hat{\beta_i}}{S_{\hat{\beta_i}}}.
 \end{equation}
 
-Kritická hodnota $Z$ má normální rozdělení $Z ~ N(0, 1)$ a její mocnina, $Z^2$, má chi-kvadrát rozdělení s jedním stupněm volnosti.
-}
-
-% \subsection{Test poměru věrohodností}
-% Test poměru věrohodnosti 
-% {\color{red}
-% slouží jako alternativa k Waldovu testu. K vypočtení $Z$ indexu slouží přirozený logaritmus poměru parciálních věrohodnostních funkcí.
-% V praxi to znamená, že věrohodnostní funkce ve jmenovateli obsahuje méně prediktorů, než věrohodnostní funkce v čitateli.
-% Pokud se tedy věrohodnostní funkce liší o prediktor $X_i$, jsou hypotézy definovány následovně
-
-% $H_0:$ Koeficient $\beta_i$ je rovný nule \\
-% $H_A:$ Koeficient $\beta_i$ je různý od nuly.
-
-% Do výpočtu kritické hodnoty pak v poměru vstupují hodnoty věrohodnostní funkce \ref{eq:pravdepodobnostni_fce}, kde 
-% $\hat{L_1}$ značí hodnotu věrohodnostní funkce pro model se všemi prediktory a $\hat{L_2}$ hodnotu věrohodnostní funkce pro model bez 
-% prediktoru $X_i$
-% }
-
-% \begin{equation}
-%     Z = -2ln(\frac{\hat{L_1}}{\hat{L_2}})
-% \end{equation}
-
-% při velké hodnotě $n$ má $Z$ zhruba chi-kvadrát rozdělení s jedním stupněm volnosti.
+Kritická hodnota $Z$ má za platnosti nulové hypotézy normální $N(0, 1)$ a její mocnina, $Z^2$, má chi-kvadrát rozdělení s jedním stupněm volnosti.
