@@ -159,6 +159,14 @@ Pro uložení obrázků z balíčku ggplot2
 ```{r save_bc_picture, file="R/save_bc_picture.R"}
 ```
 
+# Cíl analýzy
+Cílem analýzy je vytvořit logistické regresní modely, které
+předpovíjí výsledky zápasů. Jako prediktory budou sloužit statistiky
+kills, assists, deaths, hs, fkdiff, rating, team_rank a 
+run_mean_3_months. V průzkumové analýze jsou nejprve zobrazeny 
+kvalitativní a kvantitativní proměnné. Následně jsou vytvořené
+modely přes různé kategorie.
+
 # Nahrání dat
 
 ## economy.csv
@@ -251,8 +259,9 @@ r
 ## results.csv
 Poslední datový soubor *results.csv* obsahuje tu nejdůležitější
 proměnou, a to výsledek daného zápasu. Z datasetu je nutné
-vyloučit chybné záznamy, kde team hrál sám proti sobě. Zároveň je
-zde smazaný tým s otazníčkem.
+vyloučit chybný záznam, kde tým hrál sám proti sobě. Nejspíše se stala
+chyba při exportu dat, jelikož zápas je na webu zadán ve správném
+formátu.
 ```{r results.raw}
 results.raw <- read_csv("data/results.csv",
   show_col_types = F,
@@ -262,8 +271,7 @@ results.raw <- read_csv("data/results.csv",
   )
 ) |>
   # Incorrect data when team played against itself
-  filter(team_1 != team_2,
-         team_1 != "?", team_2 != "?")
+  filter(match_id != 2314674)
 ```
 
 Podobně jako se souborem *players.csv*, i zde každý řádek reprezentuje
@@ -313,497 +321,138 @@ nebo T (Terrorists)
 - **team_rank** - Rank týmu v dobu, kdy se zápas odehrál
 - **run_mean_3_months** - Průměrný rank týmu za poslední 3 měsíce
 
-# Explorační analýza dat
+# Průzkumová analýza dat
 Explorační analýza dat slouží ke grafickému zobrazení datasetu.
+```{r data}
+data <- players |> 
+  inner_join(results,
+            by = c("match_id", "map", "team"))
 
-## Statistiky hráčů v zápasech
-Může být zajímavé, jaká mapa se hraje nejčastěji, a která je naopak
-mezi hráči není oblíbená. Jelikož se jedná a porovnání kvalitativní a
-kvantitativní proměnné, je nejrozumnější použít sloupcový graf.
-```{r ggplot-matches-per-map}
-g <- players |> 
-  count(map) |> 
-  # Every map has 10 records (10 players), dividing normalizes
-  # the count
-  mutate(n = n/10) |> 
-  ggplot(aes(x = reorder(map, n), y = n, fill = map)) +
-  geom_col(show.legend = F) +
-  scale_y_continuous(labels = scales::comma) +
-  coord_flip() +
-  theme(
-    panel.grid.major.y = element_blank()
-  ) +
+```
+
+## Kvantitativní proměnné
+```{r quantitative}
+g <- data |> 
+  select(kills, assists, deaths, hs, fkdiff, rating,
+         run_mean_3_months ) |> 
+  ggcorr(label = T, hjust = 0.8, size = 4) +
   labs(
-    title = "Počet zápasu na každé mapě",
-    x = "Mapa",
-    y = "Počet zápasů",
-    caption = "Datový soubor: players.csv"
+    title = "Korelační matice kvantitativních prediktorů",
+    caption = "Spojení souboru players.csv a results.csv"
   )
 
-save_bc_picture(g, "zapasy_pres_mapu.png")
+save_bc_picture(g, "prediktory_corr_matice.png")
 g
 ```
 
-Z grau jde pozorovat, že s velkým náskokem je nejoblíbenější mapa
-Mirage. Je to mapa, která nejdelší dobu nedostala velký update a mezi
-hráči je i přes to stále na prvním místě. Na druhé straně je mapa 
-Vertigo, která je v map poolu krátký čas. Je to úplně nová mapa a
-hráči na ni nejsou ještě tolik zvyklí, nemají naučeno mnoho strategií
-a nejsou zde oběveny ještě všechny triky. Je to oblíbená mapa na 
-upsety (horší tým porazí lepší), proto se mapě můžou zkušenější týmy
-vyhýbat.
-
-## Distribuce zabití
-Pro zobrazení distribuce zabití l |> ze použít histogram. Data jsou zde
-na úrovni jednotlivých hráču, takže se jedná o data za hráče.
-```{r ggplot-kills}
-bins <- (1 + 3.3 * log10(nrow(players))) |> floor()
-mean <- mean(players$kills)
-median <- median(players$kills)
-
-g <- players |>
-  ggplot(aes(x = kills)) +
-  geom_histogram(bins = floor(bins),
-                 fill = "grey",
-                 color = "black") +
-  geom_vline(aes(xintercept = median,
-                 color = "medián",
-                 linetype = "medián"),
-                 size = 1) +
-  geom_vline(aes(xintercept = mean,
-                 color = "průměr",
-                 linetype = "průměr"),
-                 size = 1) +
-  scale_color_manual(
-    values = setNames(
-      paletteer::paletteer_d("ggthemes::wsj_red_green"),
-      c("průměr", "medián")
-      )
-    ) +
-  scale_linetype_manual(
-    values = c("průměr" = "dotted",
-               "medián" = "dotdash")
-  ) +
-  scale_y_continuous(labels = scales::comma,
-                     breaks = seq(0, 175000, by = 25000)) +
-  scale_x_continuous(breaks = seq(0, 80, by = 4)) +
-  theme(
-    panel.grid.minor.x = element_blank(),
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    axis.line.x = element_blank(),
-    legend.position = "bottom",
-    legend.box.background = element_rect(colour = "black")
-  ) +
-  labs(
-    title = "Distribuce zabití v zápasech",
-    subtitle = sprintf("Průměr: %.2f, Medián: %.2f", mean, median),
-    x = "Počet zabití",
-    y = "Absolutní čestnost",
-    caption = "Datový soubor: players.csv",
-    linetype = "Statistika",
-    colour = "Statistika"
-  )
-
-save_bc_picture(g, f = "histogram_zabiti.png")
-g
-```
-
-Hostogram má normání rozdělení s dlouhým skloněním doprava. To je z
-toho důvodu, že existují speciální případy s 44+ zabitími za zápas.
-To může nastat např. v prodloužní, kdy se hraje více kol než v
-základním čase.
-
-## Boxplot ratingu hráče
-Rating hráčů je statistika zprostředkovaná portálem
-[hltv.org](https://www.hltv.org/news/20695/introducing-rating-20).
-Jedná se kombinaci mnoha statistik do jedné metriky, díky které
-se dá ohodnit výkon hráče v daném zápase.
-```{r boxplot-rating}
-g <- players |> 
-  semi_join(
-    results |> 
-      filter(map_winner == 1),
-    by = c("match_id", "team", "map")
+## Histogram proměnných
+```{r maps}
+bin_count <- round(1 + 3.3*log10(nrow(data)/6))
+g <- data |>
+  pivot_longer(
+    cols = c(kills, assists, deaths, hs, fkdiff, rating),
+    names_to = "stats",
+    values_to = "vals"
   ) |> 
-  ggplot(aes(x = reorder(map, rating, FUN = stats::median),
-             y = rating, color = map)) +
-  geom_boxplot(show.legend = F, outlier.shape = 1,
-               alpha = 0.4) +
-  scale_y_continuous(breaks = seq(0, 4, by = 0.25),
-                     limits = c(0, 3.5)) +
+  select(stats, vals) |>
+  mutate(bins = 1 + 3.3*log10(n()/6),
+         bins = 1) |> 
+  ggplot(aes(x = vals, fill = stats)) +
+  facet_wrap(vars(stats), ncol = 2, scales = "free") +
+  geom_histogram(bins = bin_count, show.legend = F) +
+  scale_y_continuous(labels = scales::number) +
   theme(
-    panel.grid.minor.x = element_blank(),
+    axis.title.x = element_blank(),
+    strip.background = element_rect(fill = "grey")
+  ) +
+  labs(
+    title = "Rozdělení kvantitativních statistik",
+    subtitle = "Osa Y je přizpůsobená každé statistice",
+    y = "Absolutní počet",
+    caption = "Spojení souboru players.csv a results.csv"
+  )
+
+save_bc_picture(g, "histogram_prediktoru.png")
+g
+```
+
+## Winrate za CT
+```{r winrate}
+g <- data |>
+  group_by(map) |> 
+  filter(map_winner == 1) |> 
+  summarise(ct_won = mean(starting_ct)) |> 
+  ggplot(aes(x = reorder(map, ct_won), y = ct_won, fill = map)) +
+  geom_col(show.legend = F) +
+  geom_text(aes(label = paste0(round(ct_won*100, 2), "%"),
+                y = ct_won + 0.05),
+            size = 4) +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 0.6)) +
+  theme(
     panel.grid.major.y = element_blank()
   ) +
   coord_flip() +
   labs(
-    title = "Distribuce ratingu ve vítězných zápasech přes kategorii mapy",
-    subtitle = "Seřazeno dle mediánu každé kategorie",
+    title = "Procento vyhraných zápasu, pokud tým začal na mapě za Counter-Terroristy",
+    subtitle = "Omezeno na 0 až 60 procent",
     x = "Mapa",
-    y = "Rating",
-    caption = "Datový soubor: players.csv, results.csv"
+    y = "Procento vyhraných zápasů",
+    caption = "Spojení souboru players.csv a results.csv"
   )
+
+save_bc_picture(g, "sloupce_podle_strany.png")
+g
+```
+
+# Modely
+
+## Model pro hráče
+```{r model_for_player_map}
+model_for_player_map <- function(.tbl, .map) {
+  set.seed(1234)
+  .tbl |>
+      select(kills, assists, deaths, hs, fkdiff, starting_ct,
+           map_winner, map) |> 
+    filter(map == .map) |> 
+    select(-map) |> 
+    glm(map_winner ~ .,
+      data = _,
+      family = binomial) 
+}
+
+model.players <- list()
+for (i in 1:length(maps)) {
+  map <- maps[i]
+  model.players[[map]] <- model_for_player_map(data, map)
   
-save_bc_picture(g, f = "boxplot_ratingu.png")
-g
+  if (!map %in% c("Vertigo", "Mirage")) next
+  sprintf("============ Map: %s", map) |> 
+    print()
+  print(model.players[[i]] |> summary())
+}
 ```
 
-Z box plotů nelze usoudit, že by se rozdělení nějak zásadně lišlio
-ať v mediánu, tak v mezikvartilové šírce. Jednotlivé mapy jsou
-pak charakterizováný delšími ocasy vpravo.
+## Model pro tým
+```{r }
+model_for_team_map <- function(.tbl, .map) {
+  set.seed(1234)
+  .tbl |>
+    filter(map == .map) |> 
+    select(-map) |> 
+    glm(map_winner ~ .,
+      data = _,
+      family = binomial) 
+}
 
-## Korelace mezi prediktory
-Pro regresy je důležité zjistit, zda nejsou prediktory korelované. To
-lze u kvantitativních prediktorů zjistit pomocí korelační tabulky.
-```{r ggplot-correlation}
-g <- players |> 
-  select(kills:rating) |> 
-  ggcorr(label = T) +
-  labs(
-    title = "Korelační matice prediktorů",
-    subtitle = "Prediktory: kills, assists, deaths, hs, fkdiff, rating",
-    caption = "Datový soubor: players.csv"
-  )
-save_bc_picture(g, f = "prediktory_korelace.png")
-g
-```
-
-Z obrázku jde zjistit, že proměnná rating je silně korelovaná se 
-statistikou kills a fkdiff. Z tohoto důvodu je prediktor z dalších
-analýz vyloučen.
-
-# Modelování
-V modelovací části je porovnáno více druhů modelů. První typ předpovídá
-to, zda hráč vyhraje či prohraje zápas dle jeho statistik na určité
-mapě. V druhém modelu se pak porovnává pravděpodovnost výhry
-jednotlivých týmu s interakcí mezi mapou a začínající stranou.
-Na konci je představen model jednoho týmu proti nejlepším třiceti
-týmum z celého datasetu.
-
-## Model pro individuální hráče
-Model pro individuální hráče slouží k popisu pravděpodovnosti, zda
-hráč zápas vyhraje či nikoliv. Pravděpodovnost je porovnána na dvou
-mapách - Vertigo a Dust2.
-
-### Příprava dat
-Prve je nutné dataset se statistikami hráču spojit s výsledky
-daných zápasů. Následně jsou odstraněny nepotřebné prediktory i s
-korelovaným prediktorem rating.
-```{r model.data_per_player}
-model.data.per_player <- players |> 
-  inner_join(results,
-            by = c("match_id", "team", "map")) |>
-  select(-c(match_id, player_id, team, date, rating))
-```
-
-### Mapa de_dust2
-Pro mapu Vertigo je vytvořen následující model
-```{r model.per_player.dust2}
-set.seed(1234)
-model.data.per_player.dust2 <- model.data.per_player |> 
-  filter(map == "Dust2") |> 
-  select(-map)
-
-model.per_player.dust2 <- glm(
-  map_winner ~ kills + assists + deaths + hs + fkdiff + 
-    team_rank + run_mean_3_months,
-  data = model.data.per_player.dust2,
-  family = binomial
-)
-
-save_bc_model(model.per_player.dust2,
-              "model.per_player.dust2.tex")
-
-model.per_player.dust2 |> 
-  summary()
-```
-
-Pro model jsou nevýznamné statistiky fkidff a run_3_mean_months. Z modelu
-vyplívá, že mapa je více soustředěna na týmovou sehranost než na 
-individuální výkon. Jelikož je statistika fkdiff nesignifikantní,
-není důležité, zda hráč jako první umře či zabije - jeho tým se se
-situací dokáže vypořádat. Druhý nesignifikantní statistika naznačuje,
-že na vítězství nemá vliv to, jaký je průměrný rank týmu. Toto 
-potvrzuje hypotézu, že je mapa lepší pro nezkušené týmy.
-
-### Mapa de_inferno
-Mapa inferno je více týmová. Je zde důležitá sehranost a zkušenosti.
-Zde se dá očekávat, že budou signifikantní všechny statistiky.
-```{r model.per_player.inferno}
-set.seed(8754)
-model.data.per_player.inferno <- model.data.per_player |> 
-  filter(map == "Inferno") |> 
-  select(-map)
-
-model.per_player.inferno <- glm(
-  map_winner ~ kills + assists + deaths + hs + fkdiff + 
-    team_rank + run_mean_3_months,
-  data = model.data.per_player.inferno,
-  family = binomial
-)
-
-save_bc_model(model.per_player.inferno,
-              "model.per_player.inferno.tex")
-
-model.per_player.inferno |> 
-  summary()
-```
-
-Je vidět, že na rozdíl od mapy Vertigo je zde statistika fkdiff velmi
-významná. To znamená, že je důležité hrát jako tým a snažit se 
-strategicky získat první zabití v daném kole.
-
-### Matice záměn
-Pro první vyhodnocení se použíje matice záměn
-```{r model.per_player.conf}
-model.per_player.dust2.conf <- confusionMatrix(
-  data = predict(model.per_player.dust2, type = "response") |> 
-    round() |> 
-    as.factor(),
-  reference = model.data.per_player.dust2$map_winner |> 
-    as.factor(),
-  positive = "1"
-) |>
-  tidy(by_class = TRUE) |> 
-  filter(term %in% c("accuracy", "sensitivity")) |> 
-  select(term, estimate, conf.low, conf.high) |> 
-  mutate(map = "Dust2")
-
-model.per_player.inferno.conf <- confusionMatrix(
-  data = predict(model.per_player.inferno, type = "response") |> 
-    round() |> 
-    as.factor(),
-  reference = model.data.per_player.inferno$map_winner |> 
-    as.factor(),
-  positive = "1"
-) |>
-  tidy(by_class = TRUE) |> 
-  filter(term %in% c("accuracy", "sensitivity")) |> 
-  select(term, estimate, conf.low, conf.high) |> 
-  mutate(map = "Inferno")
-
-g <- bind_rows(
-  model.per_player.dust2.conf,
-  model.per_player.inferno.conf
-) |> 
-  ggplot(aes(x = map, y = estimate, color = term)) +
-  geom_point() +
-  geom_text(aes(x = map, y = estimate, label = round(estimate, 3)),
-            nudge_x = 0.1) +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
-  scale_y_continuous(breaks = seq(0.770, 0.810, by = 0.005),
-                     limits = c(0.77, 0.810)) +
-  theme(
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    legend.position = "bottom",
-    legend.box.background = element_rect(colour = "black")
-    
-  ) +
-  scale_color_discrete(
-    labels = c("accuracy" = "Přesnost", "sensitivity" = "Citlivost")
-  ) +
-  labs(
-    title = "Odhadované statistiky z matice záměn",
-    subtitle = "Osa Y je přiblížena pro lepší vyobrazení",
-    x = "Modelovaná mapa",
-    y = "Hodnota statistiky",
-    color = "Statistika",
-    caption = "Modely pro předpověd výhry na základě statistik hráčů"
-  )
-
-save_bc_picture(g, f = "model.per_player.conf.png")
-g
-```
-
-### Waldův test
-```{r model.per_player.wald}
-model.per_player.dust2.wald <- model.per_player.dust2 |> 
-  tidy() |> 
-  filter(term != "(Intercept)") |> 
-  select(term, p.value) |> 
-  mutate(map = "Dust2")
-
-model.per_player.inferno.wald <- model.per_player.inferno |> 
-  tidy() |> 
-  filter(term != "(Intercept)") |> 
-  select(term, p.value) |> 
-  mutate(map = "Inferno")
-
-g <- bind_rows(
-  model.per_player.dust2.wald,
-  model.per_player.inferno.wald
-) |>
-  mutate(p.value = round(p.value, 5)) |> 
-  group_by(term) |> 
-  filter(any(p.value >= 0.05)) |> 
-  ungroup() |> 
-  ggplot(aes(x = map, y = p.value, color = term)) +
-  geom_point() +
-  geom_text(aes(x = map, y = p.value, label = round(p.value, 4)),
-            nudge_x = 0.15) +
-  theme(
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    legend.position = "bottom",
-    legend.box.background = element_rect(colour = "black")
-    
-  ) +
-  labs(
-    title = "Prediktory, které se pro modely liší",
-    subtitle = "Osa Y je přiblížena pro lepší vyobrazení. Hodnoty p jsou zaokrouhlené.",
-    x = "Modelovaná mapa",
-    y = "Hodnota p",
-    color = "Prediktor",
-    caption = "Modely pro předpověd výhry na základě statistik hráčů"
-  ) 
-
-save_bc_picture(g, f = "model.per_player.wald.png")
-g
-```
-
-## Týmové modely
-Modely pro daný tým slouží k přepovědi, zda daný tým vyhraje zápas
-či nikoliv. Na rozdíl od modelů pro hráče se zde počítá i s hranou
-mapou. Opět je nutné spojit datasety se statistikami hráču a výsledků
-zápasu. Nyní je však nutné statistiky agregovat pomocí aritmetického a
-geometrického průměru.
-
-### Tvorba dat
-Nejdříve se data agregují pro každý zápas, tým a hranou mapu. Následně
-se ke statistikám přípojí finální výsledek.
-```{r model.data.per_match}
-model.data.per_match <- players |>
-  # Calculate summary statistics for players per match, team and map
-  group_by(match_id, team, map) |>
-  summarise(
-    mean_kills = mean(kills),
-    mean_assists = mean(assists),
-    mean_deaths = mean(deaths),
-    mean_hs = geom_mean(hs),
-    mean_fkdiff = mean(fkdiff),
-  ) |>
-  ungroup() |>
-  # Join match results
-  inner_join(results,
-    by = c("match_id", "team", "map")
-  )
-```
-
-### Globální model
-Globální model slouží jako model pro všechny týmy. Nebere se zde ohled
-na jednotlivce a snaží se určit obecná pravděpodovnost a prediktory
-pro všechny týmy najednou.
-```{r model.per_match}
-model.per_match <- 
-  glm(map_winner ~ mean_kills + mean_assists + mean_deaths + 
-        mean_hs + mean_fkdiff + run_mean_3_months +
-        starting_ct:map,
-      data = model.data.per_match,
-      family = binomial)
-
-model.per_match |> 
-  summary()
-```
-
-První zajímavý poznatek lze interpretovat z interkací mezi starting_ct
-a mapou. Z koeficientů lze usoudit, že je nevýhodné na většině map
-začínat jako Counter-Terroristé - snížuje to šanci na celkovou výhru!.
-Dále je zajímavé, že s větším procentem HS klesá pravděpodovnost výhry.
-Toto může být vysvětleno případy, kdy má hráč málo zabití. V tomto
-případě je poměr zabití a HS větší, než v případě mnoha zabití.
-
-### Model pro tým Liquid
-Tento model je specifický na refereční tým ze Severní Ameriky.
-```{r model.data.per_match.liquid}
-model.data.per_match.liquid <- 
-  model.data.per_match |> 
-  filter(team == "Liquid")
-
-model.per_match.liquid <- 
-  glm(map_winner ~ mean_kills + mean_assists + mean_deaths + 
-        mean_hs + mean_fkdiff + run_mean_3_months +
-        starting_ct:map,
-      data = model.data.per_match.liquid,
-      family = binomial)
-
-model.per_match.liquid |> 
-  summary()
-```
-
-Můžeme vidět že oproti obecnému modelu, pro tým Liquid není podstatné
-(až na jendu vyjímku) zda začínají jako Teroristé či Counter-Terroristé.
-Z modelu plyne, že
-nejpodstatnější statistika pro tým Liquid je počet zabití a počet 
-úmrtí. Díky kladnosti a zápornosti koeficientů lze usoudit, že 
-s rostoucím počtem průměrného zabití za zápas a klesajícím průměrným
-počtem smrtí za zápas roste pravděpodovnsot na výhru.
-
-### Model pro tým eXtatus
-Nyní si vytvoříme tým eXtatus, který se skládá z českých a slovenských
-hráčů. Je to mimo jiné první tým, který se probojoval na profesionální
-světovou scénu.
-```{r model.data.per_match.extatus}
-model.data.per_match.extatus <- 
-  model.data.per_match |> 
-  filter(team == "eXtatus")
-
-model.per_match.extatus <- 
-  glm(map_winner ~ mean_kills + mean_assists + mean_deaths + 
-        mean_hs + mean_fkdiff + run_mean_3_months +
-        starting_ct:map,
-      data = model.data.per_match.extatus,
-      family = binomial)
-
-model.per_match.extatus |> 
-  summary()
-```
-
-Pro česko-slovenský celek z modelu plyne, že jejich nejvýznamnější
-statistika je pouze počet smrtí a počet zabití.
-
-### Porovnání modelů
-...
-
-## Tým FaZe vs. top30
-
-### Vytvoření dat
-```{r model.versus.data}
-reference_team <- "FaZe"
-top_30 <- results |> 
-  filter(team != reference_team) |> 
-  group_by(team) |>
-  summarise(mr = median(team_rank, na.rm = T)) |> 
-  filter(n() >= 100) |> 
-  slice_min(order_by = mr, n = 30) |> 
-  pull(team)
-
-versus_match_id <- results.raw |> 
-  filter(
-    (team_1 == reference_team & team_2 %in% top_30) |
-    (team_1 %in% top_30 & team_2 %in% reference_team)
-    ) |> 
-  distinct(match_id) |> 
-  pull(match_id)
-
-
-model.versus.data <- 
-  model.data.per_match |> 
-  filter(match_id %in% versus_match_id) |> 
-  mutate(faze_win = (map_winner == 1 & team == reference_team))
-```
-
-### Model
-```{r model.versus}
-model.versus <- 
-  glm(faze_win ~ mean_kills + mean_assists + mean_deaths + 
-        mean_hs + mean_fkdiff +  
-        map,
-      data = model.versus.data,
-      family = binomial)
-
-model.versus |> 
-  summary()
+model.players <- list()
+for (i in 1:length(maps)) {
+  map <- maps[i]
+  model.players[[map]] <- model_for_player_map(data.model, map)
+  
+  if (!map %in% c("Vertigo", "Mirage")) next
+  sprintf("============ Map: %s", map) |> 
+    print()
+  print(model.players[[i]] |> summary())
+}
 ```
 

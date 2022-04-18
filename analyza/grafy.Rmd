@@ -139,7 +139,7 @@ mtcars |>
   writeLines()
 ```
 
-# Boxplot
+# Krabičkový graf
 ```{r krabickovy_graf_mtcars.png}
 g <-  mtcars |>
   ggplot(aes(x = as.factor(cyl), y = wt)) +
