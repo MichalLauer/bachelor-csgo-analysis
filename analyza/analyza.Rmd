@@ -408,14 +408,15 @@ g
 
 ## Model pro hráče
 ```{r model_for_player_map}
-model_for_player_map <- function(.tbl, .map) {
+model_for_player_map <- function(.tbl, .map,
+                                 formula = map_winner ~ .) {
   set.seed(1234)
   .tbl |>
       select(kills, assists, deaths, hs, fkdiff, starting_ct,
            map_winner, map) |> 
     filter(map == .map) |> 
     select(-map) |> 
-    glm(map_winner ~ .,
+    glm(formula,
       data = _,
       family = binomial) 
 }
@@ -423,36 +424,66 @@ model_for_player_map <- function(.tbl, .map) {
 model.players <- list()
 for (i in 1:length(maps)) {
   map <- maps[i]
-  model.players[[map]] <- model_for_player_map(data, map)
+  model <- model_for_player_map(data, map)
+  model.players[[map]] <- model
   
-  if (!map %in% c("Vertigo", "Mirage")) next
   sprintf("============ Map: %s", map) |> 
     print()
-  print(model.players[[i]] |> summary())
+  model |> summary() |> print()
 }
 ```
 
-## Model pro tým
-```{r }
-model_for_team_map <- function(.tbl, .map) {
-  set.seed(1234)
-  .tbl |>
-    filter(map == .map) |> 
-    select(-map) |> 
-    glm(map_winner ~ .,
-      data = _,
-      family = binomial) 
-}
-
-model.players <- list()
-for (i in 1:length(maps)) {
-  map <- maps[i]
-  model.players[[map]] <- model_for_player_map(data.model, map)
-  
-  if (!map %in% c("Vertigo", "Mirage")) next
-  sprintf("============ Map: %s", map) |> 
-    print()
-  print(model.players[[i]] |> summary())
-}
+### Mirage
+```{r mirage_pro_hrace.tex}
+save_bc_model(model.players$Mirage, "mirage_pro_hrace.tex")
 ```
 
+### Vertigo
+```{r vertigo_pro_hrace.tex}
+model <- model.players$Vertigo
+save_bc_model(model, "vertigo_pro_hrace.tex")
+
+model.players$Vertigo_opt <- model_for_player_map(data, "Vertigo",
+                              map_winner ~ kills + assists + deaths)
+save_bc_model(model.players$Vertigo_opt, "vertigo_pro_hrace_opt.tex")
+```
+
+# Matice záměň
+```{r data.players.conf}
+rownames = c("Výhra", "Prohra")
+colnames = c("Predikovaná Výhra", "Predikovaná prohra")
+
+conf_for_player_map <- function(.model) {
+  data.players.conf[["Mirage"]] <- confusionMatrix(
+    data = predict(.model, type = "response") |>
+      round() |>
+      as.factor(),
+    reference = .model$data$map_winner |>
+      as.factor(),
+    positive = "1"
+  )
+}
+
+data.players.conf <- list()
+data.players.conf[["Mirage"]] <-
+  conf_for_player_map(model.players$Mirage)
+
+data.players.conf[["Vertigo"]] <-
+  conf_for_player_map(model.players$Vertigo_opt)
+
+
+dimnames(data.players.conf$Mirage$table) <- 
+  list(
+    rownames,
+    colnames
+  )
+
+data.players.conf$Mirage$table |>
+  kbl(
+    format = "latex",
+    align = "c",
+    valign = "t",
+    position = "H",
+    centering = T
+  )
+```

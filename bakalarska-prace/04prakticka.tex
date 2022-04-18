@@ -139,3 +139,56 @@ Strana, na které tým začíná, může ovlivnit výsledek zápasu. Ovlivnění
 Počáteční strana má největší vliv na mapě Cobblestone, kde necelých 52 procent týmů, co začalo na straně Counter-Terroristů, mapu vyhrálo. Sloupcový graf naopak naznačuje, že 
 je pro týmy nevýhodné začínat na mapě Overpass za stranu Counter-Terroristů. Historicky necelých čtyřicet-devět procent týmu, co na mapě začalo za Counter-Terroristy, mapu prohrálo.
 
+\section{Modely pro výkon hráče}
+První vytvořený logistický regresní model se je založen pouze na výkonu hráče. Model je vytvořen na datech z obou datových souborů \textit{players.csv} a \textit{results.csv}.
+Prediktory se týkají pouze výkonu jednotlivého hráče, model tedy pro předpověď výhry hráče nepoužívá statistiky spoluhráčů. Pro porovnání jsou vybrané mapy Cobblestone a Vertigo.
+Mapa Mirage je jednou z nejvíce tradičních map a mapa Vertigo je naopak nejnovější přídavek do hry.
+
+{\color{green}
+Výběr prediktorů již nepopisuji, jelikož jsou vysvětlené v sekci Cíl analýzy
+}
+
+\subsection{Model pro mapu Mirage}
+\input{kod/mirage_pro_hrace.tex}
+Pro model jsou významné všechny prediktory. S rostoucím počtem zabití, asistencí a statistikou fkdiff má hráč větší šanci mapu vyhrát. Naopak s rostoucím počtem smrtí a 
+statistikou hs, šance na výhru klesá. Mapa je pro stranu Counter-Terroristů nevýhodná, a pokud hráč začne mapu na této straně, jeho šance na výhru klesá. Největší vliv
+má na pravděpodobnost výhry počet úmrtí hráče. Přepis funkce pak vypadá následovně
+\begin{align}
+    \begin{split}
+        &P(1 | X_{kills}, X_{assists}, X_{deaths}, X_{hs}, X_{fkdiff}, X_{starting_ct}) = \frac{1}{1 + e^{-z}} \\
+        &z = 1.7830 + 0.1820*X_{kills} + 0.2986*X_{assists} - 0.3504*X_{deaths} + \\
+        &+ 0.1447*X_{hs} + 0.0064*X_{fkdiff} + 0.0610*X_{starting_ct}
+    \end{split}
+\end{align}
+
+
+
+\subsection{Model pro mapu Vertigo}
+\input{kod/vertigo_pro_hrace.tex}
+
+Pro hráče jsou na mapě Vertigo významné pouze statistiky zabití, asistence a úmrtí. Ostatní prediktory hs, fkdiff a starting\_ct jsou pro model nevýznamné. Výsledek lze 
+interpretovat tak, že pro hráče není významné, na jaké straně mapu začne hrát (prediktor  \textit{tarting\_ct}), ani jak přesně střílí (prediktor \textit{HS}).
+Zde má na výhru hráče největší negativní vliv počet úmrtí. Po vyřazení nevýznamných prediktorů má model následující významné parametry
+
+\input{kod/vertigo_pro_hrace_opt.tex}
+
+Přepis funkce je pak následující
+\begin{align}
+    \begin{split}
+        &P(1 | X_{kills}, X_{assists}, X_{deaths}) = \frac{1}{1 + e^{-z}} \\
+        &z = 1.8792 + 0.1829*X_{kills} + 0.2985*X_{assists} - 0.3512*X_{deaths}
+    \end{split}
+\end{align}
+
+\subsection{Matice záměn}
+Pro porovnání modelů lze použít matice záměn a výkoností parametry, které z ní lze získat.
+
+\begin{tabular}[t]{l|c|c}
+    \hline
+      & Predikovaná Výhra & Predikovaná prohra\\
+    \hline
+    Výhra & 35159 & 9672\\
+    \hline
+    Prohra & 8026 & 33513\\
+    \hline
+    \end{tabular}
