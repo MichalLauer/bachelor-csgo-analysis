@@ -1,25 +1,19 @@
-#' Title
-#'
-#' @param tbl 
-#' @param f 
-#' @param cap 
-#' @param lab 
-save_bc_code <- function(tbl, f, cap, lab) {
-  f <- file(paste0(bc.code_dir, f),
+save_bc_code <- function(.tibble, .file, .cap, .lab) {
+  .file <- file(paste0(bc.code_dir, .file),
             encoding = "UTF-8"
   )
   
-  tbl |>
+  .tibble |>
     kbl(
       format = "latex",
-      caption = cap,
-      label = lab,
+      caption = .cap,
+      label = .lab,
       align = "c",
       valign = "t",
       position = "H",
       centering = T
     ) |>
     kable_styling(latex_options = "scale_down") |> 
-    writeLines(con = f)
-  close(f)
+    writeLines(con = .file)
+  close(.file)
 }

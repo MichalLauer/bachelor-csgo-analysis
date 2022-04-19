@@ -1,32 +1,28 @@
 \chapter{Praktická část}
 
-{\color{red}
 V této části se nachází popis dat, transformace dat, a tvorba logistického regresního modelu. Nejprve jsou představené datové soubory,
 se kterými se pracuje. Následně jsou použité grafy, které jsou představené v sekci \ref{sec:vizualizace_dat}. Pomocí vizualizace dat lze představit proměnné, které
-by mohli do logistického modelu vstupovat. Také lze díky grafům získat intuici, jak datový soubor vypadá a jaké výsledky je možné očekávat.
-Poté jsou vytvořené logistické regresní modely, jejich výstup je interpretován a různé modelu jsou mezi sebou porovnány. V závěru každé podsekce
-se nachází zamyšlení, jak by daný model mohl být vylepšen a jaké je jeho použití v reálném životě.
-}
+do logistického modelu budou vstupovat. Také lze díky grafům získat intuici, jak datový soubor vypadá, jaké mají proměnné rozdělení a jaké výsledky je možné očekávat.
+Poté jsou vytvořené logistické regresní modely, jejich výstup je interpretován a různé modelu jsou mezi sebou porovnány.
 
-{\color{red}
 \section{Datové soubory}
 Dataset\footnote{https://www.kaggle.com/datasets/mateusdmachado/csgo-professional-matches} obsahuje čtyři souboru, které popisují zápasy ve hře
-\ac{CSGO}. K potřebám této bakalářské práce budou použity pouze soubory \textit{players.csv} a \textit{results.csv}. Ostatní dva soubory obsahují
-informace, které nezle k predikci v případě této bakalářské práce použít.
-}
+\ac{CSGO}. K potřebám této bakalářské práce budou použity pouze soubory \textit{players.csv} a \textit{results.csv}. Zbylé dva soubory obsahují
+informace, které jsou již z probíhajících zápasů a z volby map. Tyto informace pro predikci výhry ještě před začátkem zápasu nelze využít. Žádný z těchto
+dvou souborů proto v práci není použit.
 
-{\color{red}
 \subsection{soubor players.csv}
-Soubory \textit{players.csv} obsahuje statistiky jednotlivých hráčů v daném zápase. Původní dataset obsahuje 101 proměnných a 379 680 pozorování.
-V původním datovém souboru se jeden řádek (záznam) rovná statistikám jednoho hráče za celý zápas. Pro potřeby bakalářské práce je však nutné získat statistiky hráčů
-za jednotlivé mapy (jeden zápas může být hrán až na třech mapách). Proto je původní datový soubor transformován do podoby, kde se jeden záznam rovná statistikám
+Soubory \textit{players.csv} obsahuje statistiky jednotlivých hráčů v daném zápase. Původní datový soubor obsahuje 101 proměnných a 379 680 pozorování.
+V původním datovém souboru se jeden řádek (pozorování) rovná statistikám jednoho hráče za celý zápas. Pro potřeby bakalářské práce je však nutné získat statistiky hráčů
+za jednotlivé mapy (jeden zápas může být hrán až na třech mapách). Proto je původní datový soubor transformován do podoby, kde se jedno pozorování rovná statistikám
 právě jednoho hráče na právě jedné mapě, a to bez ohledu, kolik map se v daném zápase hrálo. Jinak řečeno, transformovaný datový soubor nebere v potaz, zda
 se daná mapa hrála jako první, druhá, či třetí.
-Transformovaný dataset má 10 proměnných a 643 620 záznamů. Příklad jednotlivých pozorování v transformovaném
-datasetu je v přiložené tabulce \ref{tab:players_csv_transformovano}.
-}
+Transformovaný dataset má 10 proměnných a 643 620 pozorování. Příklad jednotlivých pozorování v transformovaném
+datovém souboru je v přiložené tabulce \ref{tab:players_csv_transformovano}.
+
+
 \newpage
-Transformovaný dataset má 10 proměnných, které unikátně identifikují statistiky každého hráče na určité mapě v jednom zápase. Interpretace je následující:
+Transformovaný dataset má 10 proměnných, které unikátně identifikují každého hráče na určité mapě v jednom zápase. Interpretace je následující:
 \begin{itemize}
     \item \textbf{match\_id} --- identifikátor zápasu
     \item \textbf{player\_id} --- identifikátor hráče
@@ -36,17 +32,16 @@ Transformovaný dataset má 10 proměnných, které unikátně identifikují sta
     \item \textbf{assists} --- počet asistencí hráče v zápase na dané mapě
     \item \textbf{deaths} --- počet smrtí hráče v zápase na dané mapě
     \item \textbf{hs} --- procento zabití, které lze označit jako headshot\footnote{hráč zabil nepřítele střelou do hlavy}
-    \item \textbf{fkdiff} --- rozdíl, kolikrát hráč zabil jako první nepřítele versus kolikrát byl jako první zabit
+    \item \textbf{fkdiff} --- rozdíl, kolikrát hráč zabil jako první nepřítele versus kolikrát byl zabit jako první
     \item \textbf{rating} --- shrnutí více statistik za jeden zápas do jednoho ukazatele výkonu\footnote{\url{https://www.hltv.org/news/20695/introducing-rating-20}}
 \end{itemize}
 
-{\color{red}
 \subsection{soubor results.csv}
-Druhý datový soubor, který je pro analýzu použit, obsahuje výsledky daných zápasů. Dataset se původně skládá z 45 773 řádků a 19 proměnných. Dataset obsahuje na rozdíl
-od datového souboru \textit{players.csv} jeden chybný záznam. Dle něho hrál tým sám proti sobě, což nedává smysl. Jelikož je zápas na webovém portálu zadán
+Druhý datový soubor, který je pro analýzu použit, obsahuje výsledky daných zápasů. Soubor se původně skládá z 45 773 záznamů a 19 proměnných. Dataset obsahuje na rozdíl
+od datového souboru \textit{players.csv} jedno chybné pozorování. Dle něho hrál tým sám proti sobě, což nedává smysl. Jelikož je zápas na webovém portálu zadán
 správně, nejspíše se jedná o neznámou chybu, která nastala při exportu dat z webového portálu.
-}
-Po transformacích vznikne tabulka o 8 proměnných a 91 436 řádcích. Každé pozorování identifikuje výsledek jednoho týmu v jednom zápasu
+
+Po transformacích vznikne tabulka o 8 proměnných a 91 436 záznamech. Každé pozorování identifikuje výsledek jednoho týmu v jednom zápase
 na jedné mapě. Příklad je zobrazen v přiložené tabulce \ref{tab:results_csv_transformovano}. Jednotlivé proměnné lze interpretovat následovně:
 \begin{itemize}
     \item \textbf{date} --- datum, kdy se hrál zápas
@@ -59,14 +54,13 @@ na jedné mapě. Příklad je zobrazen v přiložené tabulce \ref{tab:results_c
     \item \textbf{run\_mean\_3\_months} --- klouzavý průměr týmu za poslední tři měsíce
 \end{itemize}
 
-{\color{red}
-\subsection{Omezení datasetu}
-Dataset obsahuje pozorování o zápasech a statistikách od konce roku 2015 do začátku roku 2020. Díky velkému počtu záznamů je možné chybné či neúplné záznamy
+\subsection{Omezení datového souboru}
+Dataset obsahuje pozorování o zápasech a statistikách od konce roku 2015 do začátku roku 2020. Díky velkému počtu pozorování je možné chybná či neúplná pozorování
 smazat. To může nastat např. když tým má méně než 5 hráčů nebo když zápas nemá v každém týmu právě 5 hráčů. Tým může mít méně než 5 hráčů z toho důvodu, že je např.
 amatérsky\footnote{neprofesionální, tím pádem nemusí mít všichni hráči na webovém portálu založená profil}. Pokud má hráčů více, vyberou se hráči dle délky svého působení v týmu.
-Tým může mít v zápasu více než pět hráčů, pokud použijí náhradníka. Také jsou smazané záznamy, které neobsahují všechny potřebné statistiky. To může nastat u velmi historických
+Tým může mít v zápasu více než pět hráčů, pokud použije náhradníka. Také jsou smazána pozorování, která neobsahují všechny potřebné statistiky. To může nastat u historických
 zápasů, kde výpočet daných statistik ještě nebyl možný.
-}
+
 
 \newpage
 \section{Cíl analýzy}
@@ -74,25 +68,20 @@ Cílem analýzy je vytvořit logistické regresní modely, které předpovídaj�
 za každou mapu a výsledné týmové statistiky za každou mapu. Statistiky hráčů, které jsou označovaný za prediktory jsou: \textit{kills}, \textit{assists}, \textit{deaths},
 \textit{hs}, \textit{fkdiff} a \textit{rating}. Za týmové statistiky jsou pak považovány proměnné \textit{starting\_ct} a \textit{run\_mean\_3\_months}. Lze očekávat, že
 prediktory \textit{kills}, \textit{assists}, \textit{hs}, \textit{rating} a \textit{fkdiff} budou šanci na výhru zvyšovat. Naopak prediktor \textit{deaths} by měl
-výslednou šanci na výhru snížit. 
+výslednou šanci na výhru snížit. Predikovaná proměnná se jmenuje \textit{map\_winner}.
 
-{\color{green}
-Nehodila by se tato část spíše někde v úvodu bakalářské práce?
-}
-První typ logistického modelu bude predikovat výhru zápasu na určité mapě podle individuálních statistik hráče a týmových prediktorů. Nebere se v potaz
+První typ logistického modelu bude predikovat výhru zápasu na určité mapě pouze pro jednotlivého hráče. Nebere se v potaz
 výkon spoluhráčů ani průměrný rank týmu za poslední tři měsíce. Cílem modelu je identifikovat, která statistika hráčů má na určité mapě největší vliv na výhru.
 
-Druhý model se bude soustředit na predikci výhry týmu. K tom využije agregované statistiky hráčů, kteří jsou součástí týmu. Může se stát, že za tým historicky hrálo více hráčů.
-V případě, že tým vymění jednoho hráče za druhého, bude za tým historicky hrát 6 hráčů. V takovém případě model počítá s hráči, kteří za tým hrají nejdelší dobu. V případě schody
-se vezme hráč, který hrál v týmu jako poslední. Agregace statistik je spočítaná jako aritmetický průměr přes všechny zápasy, kde daná pětice za tým hraje. Dále jsou v modelu
-prediktory \textit{starting\_ct} a \textit{run\_mean\_3\_months}. Cíl druhého modelu je zjistit, jaké prediktory jsou pro předpověď výhry týmu významné. Model je vytvořen
-jak pro celý datový soubor, tak pro jeden vybraný tým.
+Druhý model se bude soustředit na predikci výhry týmu. K tom se využijí agregované statistiky hráčů, kteří jsou součástí týmu. Agregace statistik je spočítaná jako
+aritmetický nebo geometrický průměr přes všechny zápasy, kde daná pětice za tým hraje. Cíl druhého modelu je zjistit, jaké prediktory jsou pro předpověď výhry týmu významné.
+Model je vytvořen jak pro celý datový soubor, tak pro jeden vybraný tým.
 
-Poslední třetí logistický model je vytvořen pro jeden specifický tým, který bude předpovídat pravděpodobnost výhry proti historicky nejlepším třiceti týmům. Cílem tohoto modelu
+Poslední logistický model je vytvořen pro jeden specifický tým, který bude předpovídat pravděpodobnost výhry proti historicky nejlepším třiceti týmům. Cílem tohoto modelu
 je zjistit, jak se liší významnost prediktorů, pokud tým hraje pouze proti těm nejlépe hodnocením týmům. 
 
 \section{Průzkumová analýza dat}
-Průzkumová analýza slouží k vizualizaci prediktorů, hledání různých vztahů a rozdělení proměnných. Díky průzkumu lze určit, které proměnné není vhodné použít pro tvorbu
+Průzkumová analýza vizualizuje prediktory, hledá různé vztahy a rozdělení proměnných. Díky průzkumu lze určit, které proměnné není vhodné použít pro tvorbu
 logistického regresního modelu, např. kvůli problému multikolinearity.
 
 \newpage
@@ -106,13 +95,13 @@ Pro logistickou regresi je důležité, aby prediktory nebyli lineárně závisl
     \label{fig:korelacni_matice}
 \end{figure}
 
-Z korelační matice \ref{fig:korelacni_matice} lze vyčíst, korelace se blíží nule mezi průměrem týmu za poslední tři měsíce a agregovanými statistikami hráčů. Zároveň je
-vidět středně silná korelace mezi prediktorem \textit{rating} a statistikami \textit{fkdiff}, \textit{deaths} a \textit{kills}. Z tohoto důvodu je
+Z korelační matice \ref{fig:korelacni_matice} lze vyčíst, že se korelace blíží nule mezi průměrem týmu za poslední tři měsíce a statistikami hráčů. Zároveň je
+vidět středně silná korelace mezi prediktorem \textit{rating} a prediktory \textit{fkdiff}, \textit{deaths} a \textit{kills}. Z tohoto důvodu je
 prediktor \textit{rating} z tvorby modelů vyloučen.
 
 \newpage
 \subsection{Histogram kvantitativních prediktorů}
-Histogram kvantitativních prediktorů umožní zobrazit rozdělení prediktorů.
+Histogram kvantitativních prediktorů umožní zobrazit jejich rozdělení.
 
 \begin{figure}[H]
     \centering
@@ -140,55 +129,81 @@ Počáteční strana má největší vliv na mapě Cobblestone, kde necelých 52
 je pro týmy nevýhodné začínat na mapě Overpass za stranu Counter-Terroristů. Historicky necelých čtyřicet-devět procent týmu, co na mapě začalo za Counter-Terroristy, mapu prohrálo.
 
 \section{Modely pro výkon hráče}
-První vytvořený logistický regresní model se je založen pouze na výkonu hráče. Model je vytvořen na datech z obou datových souborů \textit{players.csv} a \textit{results.csv}.
-Prediktory se týkají pouze výkonu jednotlivého hráče, model tedy pro předpověď výhry hráče nepoužívá statistiky spoluhráčů. Pro porovnání jsou vybrané mapy Cobblestone a Vertigo.
-Mapa Mirage je jednou z nejvíce tradičních map a mapa Vertigo je naopak nejnovější přídavek do hry.
-
-{\color{green}
-Výběr prediktorů již nepopisuji, jelikož jsou vysvětlené v sekci Cíl analýzy
-}
+První vytvořený logistický regresní model je založen na individuálních statistikách. Model je vytvořen na datech z obou datových souborů \textit{players.csv} a \textit{results.csv}.
+Prediktory se týkají pouze výkonu jednotlivých hráčů, model tedy pro předpověď výhry hráče nepoužívá statistiky spoluhráčů. Pro porovnání jsou vybrané mapy Mirage a Vertigo.
+Mapa Mirage je jednou z nejvíce tradičních map a mapa Vertigo je naopak nejnovější přídavek do hry. Díky rozdílným modelům bude možné zkoumat, na čem pravděpodobnost výhry na 
+mapách záleží. Pro vytvoření logistického modelu je použito 80\% náhodně vybraných pozorování. Zbylých 20\% je použito pro validaci a vytvoření matice záměn.
 
 \subsection{Model pro mapu Mirage}
+
 \input{kod/mirage_pro_hrace.tex}
+
 Pro model jsou významné všechny prediktory. S rostoucím počtem zabití, asistencí a statistikou fkdiff má hráč větší šanci mapu vyhrát. Naopak s rostoucím počtem smrtí a 
 statistikou hs, šance na výhru klesá. Mapa je pro stranu Counter-Terroristů nevýhodná, a pokud hráč začne mapu na této straně, jeho šance na výhru klesá. Největší vliv
 má na pravděpodobnost výhry počet úmrtí hráče. Přepis funkce pak vypadá následovně
+
 \begin{align}
     \begin{split}
         &P(1 | X_{kills}, X_{assists}, X_{deaths}, X_{hs}, X_{fkdiff}, X_{starting_ct}) = \frac{1}{1 + e^{-z}} \\
-        &z = 1.7830 + 0.1820*X_{kills} + 0.2986*X_{assists} - 0.3504*X_{deaths} + \\
-        &+ 0.1447*X_{hs} + 0.0064*X_{fkdiff} + 0.0610*X_{starting_ct}
+        &z = 2,446 + 0,181*X_{kills} + 0,302*X_{assists} - 0,369*X_{deaths} + \\
+        &- 0,134*X_{hs} + 0,015*X_{fkdiff} - 0,227*X_{starting_ct}
     \end{split}
 \end{align}
 
+\subsection{Matice záměn pro mapu Mirage}
+Predikce jsou provedené na validačním podmnožině z datového souboru.
 
+\input{kod/mirage_pro_hrace_matice.tex}
+
+Model predikoval správně 7 022 výher a 6 709 proher. Z matice záměn lze dále vypočítat následující statistiky:
+
+\input{kod/mirage_pro_hrace_matice_stats.tex}
+
+Model určuje zhruba 79,5 \% dat správně. Specificita je o zhruba 4 \% body vyšší než senzitivita, což značí, že je model úspěšnější při predikci proher
+než výher.
 
 \subsection{Model pro mapu Vertigo}
+
 \input{kod/vertigo_pro_hrace.tex}
 
-Pro hráče jsou na mapě Vertigo významné pouze statistiky zabití, asistence a úmrtí. Ostatní prediktory hs, fkdiff a starting\_ct jsou pro model nevýznamné. Výsledek lze 
-interpretovat tak, že pro hráče není významné, na jaké straně mapu začne hrát (prediktor  \textit{tarting\_ct}), ani jak přesně střílí (prediktor \textit{HS}).
-Zde má na výhru hráče největší negativní vliv počet úmrtí. Po vyřazení nevýznamných prediktorů má model následující významné parametry
+Pro hráče jsou na mapě Vertigo významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths}. Ostatní prediktory \textit{hs}, \textit{fkdiff} a \textit{starting\_ct}
+jsou pro model nevýznamné. Nevýznamnost lze interpretovat tak, že pro hráče není důležité, na jaké straně mapu začnou hrát (prediktor  \textit{starting\_ct}), ani jak přesně
+střílí (prediktor \textit{HS}). Zde má na výhru hráče největší negativní vliv počet úmrtí. Po vyřazení nevýznamných prediktorů má model následující významné parametry
 
 \input{kod/vertigo_pro_hrace_opt.tex}
 
 Přepis funkce je pak následující
+
 \begin{align}
     \begin{split}
         &P(1 | X_{kills}, X_{assists}, X_{deaths}) = \frac{1}{1 + e^{-z}} \\
-        &z = 1.8792 + 0.1829*X_{kills} + 0.2985*X_{assists} - 0.3512*X_{deaths}
+        &z = 1,893 + 0,184*X_{kills} + 0,301*X_{assists} - 0,352*X_{deaths}
     \end{split}
 \end{align}
 
-\subsection{Matice záměn}
-Pro porovnání modelů lze použít matice záměn a výkoností parametry, které z ní lze získat.
+Každé zabití zvyšuje šanci na výhru o zhruba $6.63$. Naopak každá smrt hráče šanci na výhru snižuje zhruba $0.70$.
 
-\begin{tabular}[t]{l|c|c}
-    \hline
-      & Predikovaná Výhra & Predikovaná prohra\\
-    \hline
-    Výhra & 35159 & 9672\\
-    \hline
-    Prohra & 8026 & 33513\\
-    \hline
-    \end{tabular}
+\newpage
+\subsection{Matice záměn pro mapu Vertigo}
+Matice záměn pro logistický model sestavený pro mapu Vertigo je následující
+
+\input{kod/vertigo_pro_hrace_matice.tex}
+
+Model úspěšné predikoval 415 výher a 441 proher. Z matice záměn pak lze získat výkonnostní statistiky.
+
+\input{kod/vertigo_pro_hrace_matice_stats.tex}
+
+Na nových datech model určil správně zhruba 77,7\% pozorování. Model má 80\% senzitivitu, což je více než jeho specificita o zhruba 5 \%. Model je tedy spolehlivější
+pro předpověď výhry hráče.
+
+\subsection{Interpretace výsledků}
+Model pro mapu Mirage je přesnější a je spolehlivější pro předpověď prohry hráče. Model pro mapu Vertigo má menší přesnost o zhruba 
+2 procentní body a je vhodnější pro predikování výhry se 80 \% senzitivitou.
+
+Pro logistický model mapy Mirage jsou významné všechny zvolené prediktory. Největší vliv na výhru hráče na mapě Mirage má počet jeho smrtí, kdy s každou další smrtí se šance
+na výhru zmenšuje o zhruba 0,69. Pro mapu Vertigo jsou významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths} a největší vliv na výhru hráče
+má zde také počet smrtí.
+
+Rozdíl by mohl být vysvětlen právě stářím jednotlivých map. Jelikož je mapa Mirage už tradiční mapou, mnoho hráčů na ní zná různé triky a strategie. To vede k tomu, že
+každý malý detail hraje velikou roli a všechny vybrané prediktory jsou pro model významné. Naopak mapa Vertigo je relativně nová a pro hráče je nejdůležitější individuální
+výkon. Jelikož hráči mapu tak dobře strategicky neznají, jsou významné pouze statistiky jejich hráčů.

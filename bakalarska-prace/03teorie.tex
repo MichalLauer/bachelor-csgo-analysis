@@ -26,14 +26,12 @@ se pak položí sledovaná statistika.
 Sledovat můžeme nejen četnost, ale i průměr či kteroukoli jinou statistiku, kterou bude možné na ose zobrazit.
 
 {\color{red}
-Nejčastější se pomocí sloupcového grafu porovnává absolutní četnost dané kategorie. Řazení kategorií se dále odvíjí podle toho, zda je
-daná proměnná ordinální či nominální. V případě nominální proměnné se sloupce řadí podle absolutní četnosti dané kategorie. V případě ordinální
+Nejčastější se pomocí sloupcového grafu porovnává absolutní četnost přes kategorie. Řazení kategorií se dále odvíjí podle toho, zda je
+daná proměnná ordinální či nominální. V případě nominální proměnné se sloupce řadí podle absolutní četnosti. V případě ordinální
 proměnné se zachovává přirozené řazení.
-}
-
 Příklad sloupcového grafu je zobrazen na obrázku, který porovnává průměrnou hrubou koňskou sílu s počtem válců.
-Je na něm také vidět vztah, kdy s vyšším počtem válců stoupá průměrná koňská síla.
-
+Je na něm také vidět závislost hrubé koňské síly na počtu válců.
+}
 \begin{figure}[H]
     \centering
     \includegraphics{../obrazky/sloupcovy_graf_mtcars.png}
@@ -144,17 +142,17 @@ r = \frac{n \sum_{i=1}^n x_i y_i - \sum_{i=1}^n x_i \sum_{i=1}^n y_i}
 {\sqrt{(\overline{x^2} - \overline{x}^2)(\overline{y^2} - \overline{y}^2)}}
 \end{equation}
 
-Čím větší je absolutní hodnota korelace mezi proměnnou $x$ a $y$, tím lépe lze pomocí jedné proměnné vysvětlit druhou proměnnou. Kladnost, případně zápornost korelace
+Čím větší je absolutní hodnota korelace mezi proměnnou $x$ a $y$, tím lépe lze pomocí jedné proměnné vysvětlit proměnnou druhou. Kladnost, případně zápornost korelace
 značí pak směr vztahu. Pokud je korelace záporná, tedy $r < 0$, s růstem jedné proměnné klesá proměnná druhá. Naopak při kladné korelace, tedy $r > 0$, s růstem
 jedné proměnné roste i druhá. Pokud by se například změřila výška žáku ve třídě, kde proměnná $x$ bude jejich naměřená výška v centimetrech
 a proměnná $y$ jejich naměřená výška v metrech, korelace mezi proměnnou $x$ a $y$ bude rovna jedné. To je z toho důvodu, že výška v centimetrech lze
-perfektně vysvětlit výškou v měřenou v metrech. To platí i naopak.  
+perfektně vysvětlit výškou v měřenou v metrech.
 
 \subsubsection{Korelační matice}
-Korelační matice je nástroj, díky kterému lze zobrazit korelaci mezi více jak dvěma páry proměnných. Matice může být zobrazená jako tabulka nebo
+Korelační matice je nástroj, díky kterému lze zobrazit korelaci mezi více jak dvěma páry proměnných. Matice může být zobrazená jako 
 graf. Korelační matice je velmi užitečná v regresní analýze kvůli předpokladu nezávislosti proměnných. Pokud jsou při tvorbě modelu prediktory korelované,
-vzniká problém tzn. multikolinearity. Pokud jsou prediktory vysoce korelované, zhoršuje to přesnost a vypovídací hodnotu koeficientů. \cite{Kleinbaum2010}
-V takovém případě je např zvýšit počet pozorování nebo z modelu určité modelované prediktory odebrat. 
+vzniká problém tzn. multikolinearity. Při multikolinearitě se zhoršuje přesnost a vypovídací hodnota koeficientů. \cite{Kleinbaum2010}
+V takovém případě je potřeba zvýšit počet pozorování nebo z modelu určité modelované prediktory odebrat. 
 
 \begin{figure}[H]
     \centering
@@ -198,7 +196,7 @@ vzhledem k definovaným prediktorům lze zapsat jako
     P(Y = 1 \mid X_1, X_2, ..., X_k) = \frac{1}{1 + e^{- \left( \alpha + \sum_{i=1}^k \beta_i X_i \right) }},
 \end{equation}
 
-kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru. 
+kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru. \cite{Kleinbaum2010}
 
 \subsection{Interpretace parametrů}
 Parametry $\alpha$ a $\beta_i$ značí logaritmus šance. $\alpha$ je logaritmus šance v případě, že všechny prediktory
@@ -237,13 +235,23 @@ Pro logistickou regresi má věrohodnostní funkce tvar
 
 kde $n$ je počet pozorování a $m_1$ je počet příznivých ($Y = 1$) jevů. Funkce předpokládá, že datový soubor je seřazen tak, že prvních $m_1$ výskytů
 jsou jevy příznivé. $P(X_i)$ poté značí logistickou funkci \ref{eq:logisticka_funkce}. Pro vypočtení optimálního parametru $\beta_i$ je nutné vypočítat
-maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lze tedy získat derivací funkce $L(\theta)$ vzhledem k parametru $\beta_i$
+maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lze tedy získat derivací funkce $L(\theta)$ vzhledem k parametru $\beta_i$. \cite{Kleinbaum2010}
 
 \begin{equation}
     \frac{\partial L(\theta)}{\partial \beta_i} = 0
 \end{equation}
 
-\newpage
+{\color{red}
+\subsection{Křížová validace}
+Při tvoření logistické modelu může dojít k takzvanému přeučení modelu. To znamená, že výsledný model je velmi přizpůsobený na data, ze kterých byl vytvořen, a nebude
+připravený na náhodnou variaci, která může v nových datech nastat. Z tohoto důvodu se datový soubor rozděluje na dvě podmnožiny. Jedna podmnožina, většinou zvaná trénovací,
+slouží k sestavení a natrénování modelu. Model pak otestuje predikce na druhé množině dat, na kterou nebyl natrénovaný. Druhá množina se většinou nazývá validační. 
+
+Způsobu, jak data set rozdělit, je mnoho. Existuje například $k$-fold validace, kdy se trénovací množina dat rozdělí na $k$ podmnožin. Pro každou podmnožinu se pak vytvoří
+model, který se následně validuje na validační množině dat. Model s nejlepším výkonem je následně vybrán a použit. V práci je použité rozdělení 80/20, tedy 80\% dat je použito
+pro tvorbu logistického regresního modelu a 20\% dat k jeho validaci.
+}
+
 \subsection{Matice záměn}
 Matice záměn je nástroj pro vyhodnocení predikcí modelu. Matice je o velikosti $n \times n$. Pro potřeby logistické regrese se matice skládá ze dvou řádku a dvou sloupců.
 V řádcích se nachází původní hodnoty, tedy hodnoty, které chceme předpovídat. Ve sloupcích se pak nachází předpovědi.  
@@ -252,10 +260,10 @@ V řádcích se nachází původní hodnoty, tedy hodnoty, které chceme předpo
     \centering
     \begin{tabular}{|c|c|c|c|}
         \hline
-                          &   & Pozitivní predikce & Negativní predikce \\ \hline
-                          &   & 1                  & 0                  \\ \hline
-        Původní pozitivní & 1 & Skutečně pozitivní & Falešně negativní  \\ \hline
-        Původní negativní & 0 & Falešně pozitivní  & Skutečně negativní \\ \hline
+                           &   & Původní pozitivní   & Původní negativní    \\ \hline
+                           &   & 1                  & 0                  \\ \hline
+        Pozitivní predikce & 1 & Skutečně pozitivní & Falešně pozitivní  \\ \hline
+        Negativní predikce & 0 & Falešně negativní  & Skutečně negativní \\ \hline
     \end{tabular}
     \caption{\label{tab:matice_zamen}Matice záměn}
 \end{table}
@@ -278,10 +286,9 @@ počtem všech provedených predikcí $n$.
 \end{equation}
 
 {\color{red}
-Přesnost říká, kolik predikcí bylo klasifikováno správně. Pokud je ovšem poměr původních pozitivních a negativních hodnot velmi nevyrovnaný, tato statistika
-není vhodná. Toto se může stát například v lékařství při identifikaci nemocného pacienta. Zde je důležitější úspěšně predikovat výskyt nemoci, který se ovšem v datovém
-souboru často objevuje v menším poměru. V tomto případě lze použít statistiku zvanou senzitivita. Ta se rovná poměru správných pozitivních predikcí a
-úhrnu všech pozitivních predikcí
+Přesnost říká, jaké procento predikcí bylo klasifikováno správně. Pokud je ovšem poměr původních pozitivních a negativních hodnot velmi nevyrovnaný, tato statistika
+není vhodná. Toto se může stát například v lékařství při identifikaci nemocného pacienta. Zde většinou dochází k velkému nepoměru mezi počtem nemocných a počtem zdravých.
+V takovém případě lze použít statistiku zvanou senzitivita. Ta se rovná poměru správných pozitivních predikcí a úhrnu všech pozitivních predikcí
 
 \begin{equation}
     \label{eq:senzitivita}
@@ -289,7 +296,7 @@ souboru často objevuje v menším poměru. V tomto případě lze použít stat
 \end{equation}
 
 Senzitivita tedy určuje poměr správně klasifikovaných pozitivních případů a všech pozitivně klasifikovaných případů. Pokud by bylo vhodné preferovat
-spíše negativní klasifikace, lze použit statistiku zvanou specificita.
+spíše negativní klasifikace, tedy zdravé pacienty, lze použit statistiku zvanou specificita.
 
 \begin{equation}
     \label{eq:specificita}
@@ -301,7 +308,7 @@ Nanesením sensitivity \ref{eq:senzitivita} a specificity \ref{eq:specificita} l
 
 {\color{red}
 \subsection{Testování hypotéz}
-... Dopsat
+...
 }
 
 \subsection{Waldův test}
@@ -317,4 +324,4 @@ a směrodatné chyby koeficientu $\beta_i$
     Z = \frac{\hat{\beta_i}}{S_{\hat{\beta_i}}}.
 \end{equation}
 
-Kritická hodnota $Z$ má za platnosti nulové hypotézy normální $N(0, 1)$ a její mocnina, $Z^2$, má chi-kvadrát rozdělení s jedním stupněm volnosti.
+Kritická hodnota $Z$ má za platnosti nulové hypotézy normální $N(0, 1)$ a její mocnina, $Z^2$, má chi-kvadrát rozdělení s jedním stupněm volnosti.\cite{Kleinbaum2010}

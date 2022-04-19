@@ -20,6 +20,7 @@ editor_options:
 ## Nastavení
 ```{r global-options, message=F}
 knitr::opts_chunk$set(message = F)
+options(OutDec = ",")
 ```
 
 ## Knihovny
@@ -195,17 +196,6 @@ players.raw <- players.raw |>
 players.raw |>
   slice_sample(n = 10) |>
   print()
-
-# Bachelor save
-players.raw |> 
-  names() |> 
-  matrix(ncol = 4) |> 
-  save_bc_code(
-    f = "players_csv_puvodni.tex",
-    cap = "Sloupce v původní struktuře datového souboru players.csv",
-    lab = "players.csv_puvodni"
-  )
-
 ```
 
 Pro potřeby logistické statistiky za zápas a mapy musí sjednotit.
@@ -232,10 +222,11 @@ Pro interpretaci dat použijeme první řádek z transformovaného
 datasetu
 ```{r players-interpretation}
 r <- players[3, ]
-save_bc_code(r,
-        f = "players_csv_transformovano.tex",
-        cap = "Záznam z transformovaného datového souboru players.csv",
-        lab = "players_csv_transformovano")
+save_bc_code(
+  .tibble = r,
+  .file = "players_csv_transformovano.tex",
+  .cap = "Záznam z transformovaného datového souboru players.csv",
+  .lab = "players_csv_transformovano")
 r
 ```
 
@@ -301,10 +292,10 @@ results <- results |>
 
 r <- results[4,  ]
 save_bc_code(
-  r,
-  f = "results_csv_transformovano.tex",
-  cap = "Příklad záznamu z transformovaného datového souboru results.csv",
-  lab = "results_csv_transformovano"
+  .tibble = r,
+  .file = "results_csv_transformovano.tex",
+  .cap = "Příklad záznamu z transformovaného datového souboru results.csv",
+  .lab = "results_csv_transformovano"
 )
 r
 ```
@@ -335,18 +326,19 @@ data <- players |>
 g <- data |> 
   select(kills, assists, deaths, hs, fkdiff, rating,
          run_mean_3_months ) |> 
-  ggcorr(label = T, hjust = 0.8, size = 4) +
+  ggcorr(hjust = 0.8, size = 4, label = T) +
   labs(
     title = "Korelační matice kvantitativních prediktorů",
     caption = "Spojení souboru players.csv a results.csv"
   )
 
-save_bc_picture(g, "prediktory_corr_matice.png")
+save_bc_picture(.graph = g,
+                .file = "prediktory_corr_matice.png")
 g
 ```
 
 ## Histogram proměnných
-```{r maps}
+```{r histogram_maps}
 bin_count <- round(1 + 3.3*log10(nrow(data)/6))
 g <- data |>
   pivot_longer(
@@ -372,7 +364,8 @@ g <- data |>
     caption = "Spojení souboru players.csv a results.csv"
   )
 
-save_bc_picture(g, "histogram_prediktoru.png")
+save_bc_picture(.graph = g,
+                .file = "histogram_prediktoru.png")
 g
 ```
 
@@ -400,90 +393,94 @@ g <- data |>
     caption = "Spojení souboru players.csv a results.csv"
   )
 
-save_bc_picture(g, "sloupce_podle_strany.png")
+save_bc_picture(.graph = g,
+                .file = "sloupce_podle_strany.png")
 g
 ```
 
-# Modely
-
-## Model pro hráče
+# Model pro hráče
 ```{r model_for_player_map}
-model_for_player_map <- function(.tbl, .map,
-                                 formula = map_winner ~ .) {
-  set.seed(1234)
-  .tbl |>
-      select(kills, assists, deaths, hs, fkdiff, starting_ct,
-           map_winner, map) |> 
-    filter(map == .map) |> 
-    select(-map) |> 
-    glm(formula,
-      data = _,
-      family = binomial) 
-}
-
 model.players <- list()
-for (i in 1:length(maps)) {
-  map <- maps[i]
-  model <- model_for_player_map(data, map)
-  model.players[[map]] <- model
+model.players.conf <- list()
+
+fill_model_player <- function(.map, .formula = map_winner ~ .) {
+  set.seed(123)
   
-  sprintf("============ Map: %s", map) |> 
-    print()
-  model |> summary() |> print()
+  dataset <- data |>
+    select(kills, assists, deaths, hs, fkdiff, starting_ct,
+           map_winner, map) |>
+    filter(map == .map) |>
+    select(-map)
+  
+  split <- createDataPartition(dataset$map_winner,
+                               p = 0.8, list = F)
+
+  model.players[[.map]] <<-
+    glm(.formula,
+        data = dataset[split, ],
+        family = binomial)
+  
+  model.players.conf[[.map]] <<-
+    confusionMatrix(
+      data = predict(model.players[[.map]],
+                     newdata = dataset[-split, ],
+                     type = "response") |> 
+        round() |> 
+        as.factor(),
+      reference = dataset[-split, ]$map_winner |> 
+        as.factor(),
+      positive = "1"
+    )
+}
+
+for (i in 1:length(maps)) {
+  fill_model_player(maps[i])
 }
 ```
 
-### Mirage
+## Mirage
 ```{r mirage_pro_hrace.tex}
-save_bc_model(model.players$Mirage, "mirage_pro_hrace.tex")
+save_bc_model(.model = model.players$Mirage,
+              .file = "mirage_pro_hrace.tex")
 ```
 
-### Vertigo
+### Matice záměn
+```{r}
+save_bc_matrix(
+  .matrix = model.players.conf$Mirage$table,
+  .file = "mirage_pro_hrace_matice.tex",
+  .cap = "Matice záměn pro mapu Mirage"
+)
+
+save_bc_matrix_output(
+  .output = model.players.conf$Mirage,
+  .file = "mirage_pro_hrace_matice_stats.tex",
+  .cap = "Statistiky pro mapu Mirage z matice záměn"
+)
+ 
+```
+
+## Vertigo
 ```{r vertigo_pro_hrace.tex}
-model <- model.players$Vertigo
-save_bc_model(model, "vertigo_pro_hrace.tex")
+save_bc_model(model.players$Vertigo, "vertigo_pro_hrace.tex")
 
-model.players$Vertigo_opt <- model_for_player_map(data, "Vertigo",
-                              map_winner ~ kills + assists + deaths)
-save_bc_model(model.players$Vertigo_opt, "vertigo_pro_hrace_opt.tex")
+fill_model_player("Vertigo",
+                  map_winner ~ kills + assists + deaths)
+
+save_bc_model(model.players$Vertigo, "vertigo_pro_hrace_opt.tex")
 ```
 
-# Matice záměň
-```{r data.players.conf}
-rownames = c("Výhra", "Prohra")
-colnames = c("Predikovaná Výhra", "Predikovaná prohra")
+### Matice záměn
+```{r }
+save_bc_matrix(
+  .matrix = model.players.conf$Vertigo$table,
+  .file = "vertigo_pro_hrace_matice.tex",
+  .cap = "Matice záměn pro mapu Vertigo"
+)
 
-conf_for_player_map <- function(.model) {
-  data.players.conf[["Mirage"]] <- confusionMatrix(
-    data = predict(.model, type = "response") |>
-      round() |>
-      as.factor(),
-    reference = .model$data$map_winner |>
-      as.factor(),
-    positive = "1"
-  )
-}
-
-data.players.conf <- list()
-data.players.conf[["Mirage"]] <-
-  conf_for_player_map(model.players$Mirage)
-
-data.players.conf[["Vertigo"]] <-
-  conf_for_player_map(model.players$Vertigo_opt)
-
-
-dimnames(data.players.conf$Mirage$table) <- 
-  list(
-    rownames,
-    colnames
-  )
-
-data.players.conf$Mirage$table |>
-  kbl(
-    format = "latex",
-    align = "c",
-    valign = "t",
-    position = "H",
-    centering = T
-  )
+save_bc_matrix_output(
+  .output = model.players.conf$Vertigo,
+  .file = "vertigo_pro_hrace_matice_stats.tex",
+  .cap = "Statistiky pro mapu Vertigo z matice záměn"
+)
 ```

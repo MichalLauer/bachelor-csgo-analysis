@@ -19,7 +19,7 @@ editor_options:
 Přejít [zpět](analyza.html) na analýzu
 
 # Globální nastavení
-```{r global-settings}
+```{r global-settings, message=F}
 data("mtcars")
 library(ggplot2)
 library(grid)
@@ -50,7 +50,8 @@ g <- mtcars |>
     y = "Průměrná hrubá koňská síla"
   )
 
-save_bc_picture(g, f = "sloupcovy_graf_mtcars.png")
+save_bc_picture(.graph = g,
+                .file = "sloupcovy_graf_mtcars.png")
 g
 ```
 
@@ -90,7 +91,8 @@ g <- arrangeGrob(h1 + labs(caption = ""),
                   h3 + labs(caption = ""),
                   h4, nrow = 2)
 
-save_bc_picture(g, "histogram_porovnani_mtcars.png")
+save_bc_picture(.graph = g, 
+                .file = "histogram_porovnani_mtcars.png")
 grid.draw(g)
 ```
 
@@ -115,7 +117,8 @@ g <- mtcars |>
       y = "Absolutní četnost"
     )
 
-save_bc_picture(g, "histogram_mtcars_sturges.png")
+save_bc_picture(.graph = g, 
+                .file = "histogram_mtcars_sturges.png")
 ```
 
 # Five-number summary
@@ -152,7 +155,8 @@ g <-  mtcars |>
        x = 'Počet válců',
        y = 'Hmotnost vozidla (lb/1000)')
 
-save_bc_picture(g, "krabickovy_graf_mtcars.png")
+save_bc_picture(.graph = g,
+                .file = "krabickovy_graf_mtcars.png")
 g
 ```
 
@@ -169,7 +173,8 @@ g <- mtcars |>
     y = 'Hmotnost (lb/1000)',
   )
 
-save_bc_picture(g, "bodovy_graf_mtcars.png")
+save_bc_picture(.graph = g,
+                .file = "bodovy_graf_mtcars.png")
 g
 ```
 
@@ -183,6 +188,7 @@ g <- mtcars |>
     caption = "Dataset: mtcars"
   )
 
-save_bc_picture(g, "mtcars_korelace.png")
+save_bc_picture(.graph = g,
+                .file = "mtcars_korelace.png")
 g
 ```
