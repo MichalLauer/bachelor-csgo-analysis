@@ -1,20 +1,42 @@
 \chapter{Praktická část}
+{\color{red}
+Cílem praktické části je prozkoumat dva typy modelů. První typ modelu bude predikovat výhru zápasu pro jednotlivé hráče přes kategorie map. Hlavním cílem 
+modelu bude identifikovat významné charakteristiky hráčů na vybraných mapách a následně rozdíly interpretovat. V druhém modelu bude zkoumaná výhra týmu v zápase.
+V tomto typu modelu se jako prediktory použijí agregované charakteristiky hráčů jednotlivých týmu. Pro agregaci bude použit buď aritmetický nebo geometrický průměr. 
 
-V této části se nachází popis dat, transformace dat, a tvorba logistického regresního modelu. Nejprve jsou představené datové soubory,
+V této části se dále nachází popis dat, transformace dat, a tvorba logických regresních modelů. Nejprve jsou představené datové soubory,
 se kterými se pracuje. Následně jsou použité grafy, které jsou představené v sekci \ref{sec:vizualizace_dat}. Pomocí vizualizace dat lze představit proměnné, které
-do logistického modelu budou vstupovat. Také lze díky grafům získat intuici, jak datový soubor vypadá, jaké mají proměnné rozdělení a jaké výsledky je možné očekávat.
-Poté jsou vytvořené logistické regresní modely, jejich výstup je interpretován a různé modelu jsou mezi sebou porovnány.
+do logistického modelu budou vstupovat. Také lze díky grafům získat povědomí, jak datový soubor vypadá a jaké mají proměnné rozdělení.
+Poté jsou vytvořené logistické regresní modely, jejich výstup je interpretován a různé modely jsou mezi sebou porovnány.
+}
 
 \section{Datové soubory}
-Dataset\footnote{https://www.kaggle.com/datasets/mateusdmachado/csgo-professional-matches} obsahuje čtyři souboru, které popisují zápasy ve hře
-\ac{CSGO}. K potřebám této bakalářské práce budou použity pouze soubory \textit{players.csv} a \textit{results.csv}. Zbylé dva soubory obsahují
+Dataset\footnote{https://www.kaggle.com/datasets/mateusdmachado/csgo-professional-matches} obsahuje čtyři 
+{\color{red}
+datové soubory
+}
+, které popisují zápasy ve hře
+\ac{CSGO}. K potřebám této bakalářské práce budou použity pouze soubory \textit{players.csv} a \textit{results.csv}. Datové soubory jsou následně spojeny do jedné tabulky,
+která obsahuje charakteristiky všech hráčů v právě jednom zápase, potřebné informace o zápase a výsledek (zda hráč zápas vyhrál či nikoliv). Data jsou následně dle potřeby
+sjednocena pro týmy v zápase. Charakteristiky se agregují pomocí aritmetického nebo geometrického průměru. Zbylé dva soubory obsahují
 informace, které jsou již z probíhajících zápasů a z volby map. Tyto informace pro predikci výhry ještě před začátkem zápasu nelze využít. Žádný z těchto
 dvou souborů proto v práci není použit.
 
 \subsection{soubor players.csv}
-Soubory \textit{players.csv} obsahuje statistiky jednotlivých hráčů v daném zápase. Původní datový soubor obsahuje 101 proměnných a 379 680 pozorování.
-V původním datovém souboru se jeden řádek (pozorování) rovná statistikám jednoho hráče za celý zápas. Pro potřeby bakalářské práce je však nutné získat statistiky hráčů
-za jednotlivé mapy (jeden zápas může být hrán až na třech mapách). Proto je původní datový soubor transformován do podoby, kde se jedno pozorování rovná statistikám
+{\color{red}
+Datový soubor
+}
+\textit{players.csv} obsahuje 
+{\color{red}
+charakteristiky
+}
+jednotlivých hráčů v daném zápase. Původní datový soubor obsahuje 101 proměnných a 379 680 pozorování.
+V původním datovém souboru se jeden řádek (pozorování) rovná statistikám jednoho hráče za celý zápas
+{\color{red}
+, který se může odehrávat až na třech mapách.
+}
+Pro potřeby bakalářské práce je tak nutné získat statistiky hráčů
+za jednotlivé mapy. Proto je původní datový soubor transformován do podoby, kde se jedno pozorování rovná statistikám
 právě jednoho hráče na právě jedné mapě, a to bez ohledu, kolik map se v daném zápase hrálo. Jinak řečeno, transformovaný datový soubor nebere v potaz, zda
 se daná mapa hrála jako první, druhá, či třetí.
 Transformovaný dataset má 10 proměnných a 643 620 pozorování. Příklad jednotlivých pozorování v transformovaném
@@ -22,7 +44,11 @@ datovém souboru je v přiložené tabulce \ref{tab:players_csv_transformovano}.
 
 
 \newpage
-Transformovaný dataset má 10 proměnných, které unikátně identifikují každého hráče na určité mapě v jednom zápase. Interpretace je následující:
+Transformovaný 
+{\color{red}
+datový soubor
+}
+má 10 proměnných. Interpretace je následující:
 \begin{itemize}
     \item \textbf{match\_id} --- identifikátor zápasu
     \item \textbf{player\_id} --- identifikátor hráče
@@ -55,30 +81,38 @@ na jedné mapě. Příklad je zobrazen v přiložené tabulce \ref{tab:results_c
 \end{itemize}
 
 \subsection{Omezení datového souboru}
-Dataset obsahuje pozorování o zápasech a statistikách od konce roku 2015 do začátku roku 2020. Díky velkému počtu pozorování je možné chybná či neúplná pozorování
-smazat. To může nastat např. když tým má méně než 5 hráčů nebo když zápas nemá v každém týmu právě 5 hráčů. Tým může mít méně než 5 hráčů z toho důvodu, že je např.
-amatérsky\footnote{neprofesionální, tím pádem nemusí mít všichni hráči na webovém portálu založená profil}. Pokud má hráčů více, vyberou se hráči dle délky svého působení v týmu.
-Tým může mít v zápasu více než pět hráčů, pokud použije náhradníka. Také jsou smazána pozorování, která neobsahují všechny potřebné statistiky. To může nastat u historických
-zápasů, kde výpočet daných statistik ještě nebyl možný.
+{\color{red}
+Všechny datové soubory obsahují pozorování o zápasech a charakteristikách hráčů od konce roku 2015 do začátku roku 2020. Jelikož pro finální modely je nutné datové soubory
+\textit{players.csv} a \textit{results.csv} sjednotit, může se stát, že se vytvoří zápas bez hráčů. Může také nastat situace, kdy zápas nebude mít přiřazených právě 
+deset různých hráčů. To může nastat když tým nemá v zápasu právě 5 hráčů. Tým může mít méně než 5 hráčů z toho důvodu, že je např.
+amatérsky\footnote{neprofesionální, tím pádem nemusí mít všichni hráči na webovém portálu založená profil}. Více hráčů může hrát za tým v případě, že tým použil náhradníka.
+Zároveň je možné, že kvůli historickým změnám ve hře a na webovém portálu nebude možné získat všechny potřebné charakteristiky hráčů. Také je nutné kontrolovat,
+zda tým nehrál sám proti sobě. V případě všech zmíněných chyb jsou chybné záznamy odstraněny.
+}
 
 
 \newpage
 \section{Cíl analýzy}
-Cílem analýzy je vytvořit logistické regresní modely, které předpovídají pravděpodobnost výhry daného hráče či týmu. Pro předpověď se použijí statistiky hráčů
-za každou mapu a výsledné týmové statistiky za každou mapu. Statistiky hráčů, které jsou označovaný za prediktory jsou: \textit{kills}, \textit{assists}, \textit{deaths},
+{\color{red}
+Cílem analýzy je vytvořit logistické regresní modely, které předpovídají pravděpodobnost výhry daného hráče či týmu. Modely budou následně porovnány a jejich rozdíly
+interpretovány. Pro předpověď se použijí statistiky hráčů
+za každou mapu a výsledné týmové statistiky za každou mapu.
+Prediktory, které budou sloužit pro predikci vítězství daného hráče, jsou:
+\textit{kills}, \textit{assists}, \textit{deaths},
 \textit{hs}, \textit{fkdiff} a \textit{rating}. Za týmové statistiky jsou pak považovány proměnné \textit{starting\_ct} a \textit{run\_mean\_3\_months}. Lze očekávat, že
 prediktory \textit{kills}, \textit{assists}, \textit{hs}, \textit{rating} a \textit{fkdiff} budou šanci na výhru zvyšovat. Naopak prediktor \textit{deaths} by měl
-výslednou šanci na výhru snížit. Predikovaná proměnná se jmenuje \textit{map\_winner}.
+výslednou šanci na výhru snížit. Prediktory jsou vybrané kvůli tomu, že to jsou ty nejvíce základní a zároveň klíčové charakteristiky, které lze za zápas získat.
 
 První typ logistického modelu bude predikovat výhru zápasu na určité mapě pouze pro jednotlivého hráče. Nebere se v potaz
-výkon spoluhráčů ani průměrný rank týmu za poslední tři měsíce. Cílem modelu je identifikovat, která statistika hráčů má na určité mapě největší vliv na výhru.
+výkon spoluhráčů ani průměrný rank týmu za poslední tři měsíce. Cílem modelu je identifikovat, který
+prediktor
+má na určité mapě největší vliv na výhru.
 
-Druhý model se bude soustředit na predikci výhry týmu. K tom se využijí agregované statistiky hráčů, kteří jsou součástí týmu. Agregace statistik je spočítaná jako
+Druhý model se bude soustředit na predikci výhry týmu. K tomu se využijí agregované statistiky hráčů, kteří jsou součástí týmu. Agregace statistik je spočítaná jako
 aritmetický nebo geometrický průměr přes všechny zápasy, kde daná pětice za tým hraje. Cíl druhého modelu je zjistit, jaké prediktory jsou pro předpověď výhry týmu významné.
-Model je vytvořen jak pro celý datový soubor, tak pro jeden vybraný tým.
-
-Poslední logistický model je vytvořen pro jeden specifický tým, který bude předpovídat pravděpodobnost výhry proti historicky nejlepším třiceti týmům. Cílem tohoto modelu
-je zjistit, jak se liší významnost prediktorů, pokud tým hraje pouze proti těm nejlépe hodnocením týmům. 
+Model bude vytvořen jak pro celý datový soubor, tak pro dva určité týmy. Jeden tým bude považován za velmi profesionální a bude patřit mezi ty nejlepší týmy na světě. Druhý
+tým bude naopak patřit k horší skupině týmů. Tři vytvořené modely mezi sebou budou porovnány a jejich rozdíly interpretovány.
+}
 
 \section{Průzkumová analýza dat}
 Průzkumová analýza vizualizuje prediktory, hledá různé vztahy a rozdělení proměnných. Díky průzkumu lze určit, které proměnné není vhodné použít pro tvorbu

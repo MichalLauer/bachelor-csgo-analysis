@@ -290,7 +290,7 @@ results <- results |>
   )) |>  
   ungroup()
 
-r <- results[4,  ]
+r <- results[2000,  ]
 save_bc_code(
   .tibble = r,
   .file = "results_csv_transformovano.tex",
@@ -303,7 +303,7 @@ r
 Interpretace je následující:
 
 - **date** - Datum zápasu
-- **match_id** - Identifikátor zápasu
+- **match_id** - Identifikáto= zápasu
 - **team** - Jméno týmu
 - **map** - Hraná mapa
 - **map_winner** - Ukazuje, zda tým zápas vyhrál

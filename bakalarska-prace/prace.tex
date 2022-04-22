@@ -38,11 +38,18 @@ Dále děkuji autorům citovaných knih za poskytnutou příležitost se ve logi
 
 % Abstrakt (doporučený rozsah cca 150-250 slov; nejedná se o zadání práce)
 \def\Abstrakt{%
-Cílem bakalářské práce je kvantitativně zanalyzovat esportové zápasy ze hry \ac{CSGO} a predikovat výhry vybraného teamu. Použitý datový soubor je z internetového portálu
-kaggle.com\footnote{\url{https://www.kaggle.com/mateusdmachado/csgo-professional-matches}} a obsahuje data od roku 2017 až do roku 2020. Práce je rozdělena do tří částí.
+Cílem bakalářské práce je kvantitativně zanalyzovat esportové zápasy ze hry \ac{CSGO} a predikovat výhry
+{\color{red}
+hráčů a týmů.
+}
+Použitý datový soubor je z internetového portálu
+kaggle.com a obsahuje data od roku 2015 až do roku 2020. Práce je rozdělena do tří částí.
 V první části je představen esport jako takový, je zde shrnutý jeho vývoj a jsou zde definovány důležité pojmy a termíny. Druhá část obsahuje popis metod, které jsou
-pro analýzu a predikci použity. Pro analýzu data setu jsou zobrazeny grafy jako krabičkový či čárový graf. Predikce jsou založené na vícerozměrném logistickém regresním modelu.
-V závěrečné praktické části jsou metody použité pro analýzu data setu, predikci výhry daného teamu a model je vyhodnocen jak kvantitativně, tak i v kontextu reálného využití.
+pro analýzu a predikci použity. Predikce jsou založené na vícerozměrném logistickém regresním modelu.
+{\color{red}
+V závěrečné praktické části jsou modely jsou sestavené jak pro hráče, tak pro týmy a to přes různé kategorie map. Modely jsou následně vyhodnoceny pomocí matice záměn a 
+významnost koeficientů je testována pomocí Waldova testu. Modely jsou následně interpretovány v kontextu esportu a reálného života.
+}
 }
 
 \def\AbstraktEN{%
@@ -50,8 +57,8 @@ V závěrečné praktické části jsou metody použité pro analýzu data setu,
 }
 
 % 3 až 5 klíčových slov (doporučeno)
-\def\KlicovaSlova{Model, logistická regrese, predikce, esport}
-\def\KlicovaSlovaEN{Model, logistic regression, prediction, esport}
+\def\KlicovaSlova{model, logistická regrese, predikce, esport}
+\def\KlicovaSlovaEN{model, logistic regression, prediction, esport}
 
 %% Titulní strana a různé povinné informační strany
 \begin{document}
