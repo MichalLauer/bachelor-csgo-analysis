@@ -172,7 +172,7 @@ při začínající straně Counter-Terroristů na mapě Train. Díky obrázku j
 by měl tento vztah reflektovat. 
 }
 
-\section{Modely pro výkon hráče}
+\section{Predikce výhry hráče}
 {\color{red}
 Cílem modelu je predikovat výhru zápasu pro jednotlivé hráče a identifikovat významné prediktory na odlišných mapách.
 }
@@ -202,7 +202,7 @@ Model lze zapsat také pomocí logistické funkce.
 
 \begin{align}
     \begin{split}
-        &P(1 | X_{kills}, X_{assists}, X_{deaths}, X_{hs}, X_{fkdiff}, X_{starting_ct}) = \frac{1}{1 + e^{-z}} \\
+        &P(1 | X_{kills}, X_{assists}, X_{deaths}, X_{fkdiff}, X_{starting_ct}) = \frac{1}{1 + e^{-z}} \\
         &z = 2,399 + 0,180*X_{kills} + 0,305*X_{assists} - 0,371*X_{deaths} + \\
         &+ 0,017*X_{fkdiff} - 0,203*X_{starting_ct}
     \end{split}
@@ -302,4 +302,32 @@ ve významnosti prediktorů
 by mohl být vysvětlen právě stářím jednotlivých map. Jelikož je mapa Mirage už tradiční mapou, mnoho hráčů na ní zná různé triky a strategie. To vede k tomu, že
 každý malý detail hraje velikou roli a většina vybraných prediktorů je pro model významná. Naopak mapa Vertigo je relativně nová a pro hráče je nejdůležitější individuální
 výkon. Jelikož hráči mapu tak dobře strategicky neznají, jsou významné pouze charakteristiky hráčů.
+
+\newpage
+\section{Predikce výhry týmu}
+Cílem modelů je predikovat výhru na základě agregovaných charakteristik hráče za tým v zápase. Charakteristiky jsou agregované buď pomocí aritmetického průměru,
+nebo pomocí průměru geometrického. Ostatní charakteristiky zápasu jako počáteční strana či výherní tým nejsou nijak změněny. V modelu pro predikci týmu vystupuje
+navíc prediktor \textit{run\_mean\_3\_months}, která ukazuje klouzavý průměr ranku daného týmu za poslední tři měsíce. Dále do modelu důležité zakomponovat interakci
+mezi počáteční stranou (\textit{starting\_ct}) a hranou mapou (\textit{map}). Příklad tabulky s agregovanými charakteristikami je v přiložené tabulce \ref{tab:data_agregovana}.
+Pro trénink a validaci je rozdělený původní datový soubor v poměru 8:2.
+\subsection{Celkový model}
+\input{kod/modely/team_model_All.tex}
+
+První vytvořený model je sestavený na celém trénovacím datovém souboru. Pro model jsou významné všechny agregované prediktory, tedy jmenovitě \textit{mean\_kills},
+\textit{mean\_assists}, \textit{mean\_deaths}, \textit{mean\_hs},\textit{mean\_fkdiff} a \textit{run\_mean\_3\_months}. Interakce mezi prediktory \textit{map} a
+\textit{starting\_ct} není významná u map Vertigo a Cache.
+
+Agregované charakteristiky hráče \textit{mean\_kills} a \textit{mean\_assists} šanci na výhru týmu zvyšují. Pokud se průměr zabitých nepřátel za tým zvýší o jednotku,
+šance na výhru týmu se zvýší zhruba 3,89 krát. Pokud se průměr smrtí hráčů za tým zvýší o jednotku, šance na výhru se sníží zhruba 0,24 krát. Všechny statisticky
+významné interakce mezi prediktory \textit{map} a \textit{starting\_ct} naznačují, že je pro hráče nevýhodné začínat na straně Counter-Terroristů. Jejich šance
+na výhru se vždy sníží, a to nejvíce na mapě Overpass, kde se šance sníží zhruba 0,62 krát. Model lze zapsat jako přepis funkce následovně:
+
+\begin{align}
+    \begin{split}
+        &P(1 | X_{mean_kills}, X_{mean_assists}, X_{mean_deaths}, X_{mean_hs}, X_{mean_fkdiff}, X_{run_mean_3_months}, \\
+        &X_{mapCache*starting_ct}, X_{mapCobblestone*starting_ct}, X_{mapDust2*starting_ct}, X_{mapInferno*starting_ct}, X_{mapMirage*starting_ct}, \\
+        &X_{mapNuke*starting_ct}, X_{mapOverpass*starting_ct}, X_{mapTrain*starting_ct}, X_{mapVertigo*starting_ct}) = \frac{1}{1 + e^{-z}} \\
+        &z = 1,971 + 0,183*X_{kills} + 0,308*X_{assists} - 0,357*X_{deaths}.
+    \end{split}
+\end{align}
 

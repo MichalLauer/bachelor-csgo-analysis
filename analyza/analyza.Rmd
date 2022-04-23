@@ -37,6 +37,7 @@ library(knitr)
 library(caret)
 library(broom)
 library(xtable)
+library(rsample)
 
 theme_set(theme_minimal() +
             theme(
@@ -49,7 +50,7 @@ Pro bakalářskou práci jsou potřeba další podpůrné grafy. Ty jsou
 generovány na stránce [grafy](grafy.html)
 ```{r grafy.Rmd, include=F}
 rmarkdown::render("grafy.Rmd",
-                   quiet = T)
+                  quiet = T)
 ```
 
 ## globální proměnná maps
@@ -82,11 +83,11 @@ clear_player_map <- function(tbl, map) {
   m_ <- sprintf("m%i_", map)
   tbl |>
     select(match_id,
-      player_id,
-      team,
-      # Select statistics regarding specified map
-      map = sprintf("map_%i", map),
-      matches(sprintf("^m%i_", map))
+           player_id,
+           team,
+           # Select statistics regarding specified map
+           map = sprintf("map_%i", map),
+           matches(sprintf("^m%i_", map))
     ) |>
     # matches only aggregated statistics for specified map
     # e.g. excludes m1_kills_ct, m1_kills_t and keeps only m1_kills
@@ -185,7 +186,7 @@ zápasů, dataset není použít.
 Soubor *players.csv* obsahuje detailní statistiky hráčů v jednotlivých zápasech.
 Jeden řádek obsahuje statistiky pro jeden zápas, ale pro všechny mapy
 (resp. jednu, dvě, nebo tři).
-```{r players.raw}
+```{r }
 players.raw <- read_csv("data/players.csv", show_col_types = F)
 
 # Get only matches where we have data for all 10 players
@@ -205,7 +206,7 @@ statistiky jednoho hráče na jedné mapě. Reprezentace statistik
 jednoho hráče v jednom zápase je tedy rozdělena na více řádků. Z 
 datasetu se následně vyloučí nepotřebné mapy a použijí se pouze
 zápasy, ve kterých máme statistiky pro všech 10 hráčů.
-```{r players}
+```{r }
 players <- clear_player_map(players.raw, 1) |>
   rbind(clear_player_map(players.raw, 2)) |>
   rbind(clear_player_map(players.raw, 3)) |>
@@ -220,7 +221,7 @@ players <- clear_player_map(players.raw, 1) |>
 
 Pro interpretaci dat použijeme první řádek z transformovaného
 datasetu
-```{r players-interpretation}
+```{r }
 set.seed(12345)
 r <- players |> 
   slice_sample(n = 6)
@@ -228,7 +229,7 @@ save_bc_code(
   .tibble = r,
   .file = "players_csv_transformovano.tex",
   .cap = "Záznam z transformovaného datového souboru players.csv",
-  .lab = "players_csv_transformovano",
+  .lab = "tab:players_csv_transformovano",
   .scale = 0.8)
 r
 ```
@@ -240,15 +241,15 @@ r
 - **map** - Mapa, na které se zápas odehrál
 - **kills** - počet zabití daného hráče na mapě
 - **assists** - počet asistencí daného hráče na mapě
-  - hráč nepřítele nezabil, ale udělil mu velké poškození
+- hráč nepřítele nezabil, ale udělil mu velké poškození
 - **deaths** - počet smrtí daného hráče na mapě
 - **hs** - procento, kolik zabití bylo tzn. headshotem
-  - v případě že hráč zabije nepřítele střelou do hlavy
+- v případě že hráč zabije nepřítele střelou do hlavy
 - **fkdiff** - rozdíl mezi prvním zabitím a první smrtí
-  - pokud hráč jako první zabil nepřítele, pričte se jedna. Pokud
-  hráč jako první umřel, odečte se jedna
+- pokud hráč jako první zabil nepřítele, pričte se jedna. Pokud
+hráč jako první umřel, odečte se jedna
 - **rating** - rating hráče v daném zápasu
-  - rating je vypočítán stránkou [hltv.org](https://www.hltv.org/)
+- rating je vypočítán stránkou [hltv.org](https://www.hltv.org/)
 
 ## results.csv
 Poslední datový soubor *results.csv* obsahuje tu nejdůležitější
@@ -256,13 +257,13 @@ proměnou, a to výsledek daného zápasu. Z datasetu je nutné
 vyloučit chybný záznam, kde tým hrál sám proti sobě. Nejspíše se stala
 chyba při exportu dat, jelikož zápas je na webu zadán ve správném
 formátu.
-```{r results.raw}
+```{r }
 results.raw <- read_csv("data/results.csv",
-  show_col_types = F,
-  col_select = c(date, team_1, team_2,
-    map = "_map", map_winner,
-    starting_ct, rank_1, rank_2, match_id
-  )
+                        show_col_types = F,
+                        col_select = c(date, team_1, team_2,
+                                       map = "_map", map_winner,
+                                       starting_ct, rank_1, rank_2, match_id
+                        )
 ) |>
   # Incorrect data when team played against itself
   filter(match_id != 2314674)
@@ -275,7 +276,7 @@ proto dataset transformovat do formátu, kde každý zápas bude mít dva
 tým co prohrál (**map_winner = 0**). Jelikož team mohl mít
 v zápase jiný rank, výsledný rank, je spočítán průměrný rank týmu
 za poslední 3 měsíce.
-```{r results, cache=TRUE}
+```{r ,cache=TRUE}
 results <- clear_results_team(results.raw, 1) |>
   rbind(clear_results_team(results.raw, 2)) |> 
   group_by(team) |> 
@@ -296,11 +297,12 @@ results <- results |>
 set.seed(9574)
 r <- results |> 
   slice_sample(n = 6)
+
 save_bc_code(
   .tibble = r,
   .file = "results_csv_transformovano.tex",
   .cap = "Příklad záznamu z transformovaného datového souboru results.csv",
-  .lab = "results_csv_transformovano",
+  .lab = "tab:results_csv_transformovano",
   .scale = 0.8
 )
 r
@@ -320,10 +322,10 @@ nebo T (Terrorists)
 
 # Průzkumová analýza dat
 Explorační analýza dat slouží ke grafickému zobrazení datasetu.
-```{r data}
+```{r }
 data <- players |> 
   inner_join(results,
-            by = c("match_id", "map", "team"))
+             by = c("match_id", "map", "team"))
 
 set.seed(7845)
 r <- data |> 
@@ -332,13 +334,13 @@ save_bc_code(
   .tibble = r,
   .file = "data_transformovano.tex",
   .cap = "Datový soubor pro logistické modely",
-  .lab = "data_transformovano",
+  .lab = "tab:data_transformovano",
   .scale = 0.52)
 r
 ```
 
 ## Kvantitativní proměnné
-```{r quantitative}
+```{r }
 g <- data |> 
   select(kills, assists, deaths, hs, fkdiff, rating,
          run_mean_3_months ) |> 
@@ -354,7 +356,7 @@ g
 ```
 
 ## Histogram proměnných
-```{r histogram_maps}
+```{r }
 bin_count <- round(1 + 3.3*log10(nrow(data)/6))
 g <- data |>
   pivot_longer(
@@ -386,13 +388,20 @@ g
 ```
 
 ## Winrate za CT
-```{r winrate}
+```{r }
 g <- data |>
-  group_by(team, map) |> 
-  filter(map_winner == 1, team %in% c("Astralis", "eSuba")) |> 
+  mutate(cat = ifelse(!team %in% c("Astralis", "eSuba"),
+                      "Všechny záznamy",
+                      paste0("tým ", team)),
+         cat = factor(cat,
+                      levels = c("Všechny záznamy",
+                                 "tým Astralis",
+                                 "tým eSuba"))) |> 
+  group_by(cat, map) |> 
+  filter(map_winner == 1) |> 
   summarise(ct_won = mean(starting_ct)) |> 
   ggplot(aes(x = map, y = ct_won, fill = map)) +
-  facet_wrap(vars(team), ncol = 1, scales = "free_x") +
+  facet_wrap(vars(cat), ncol = 1, scales = "free_x") +
   geom_col(show.legend = F, color = "black") +
   scale_y_continuous(labels = scales::percent,
                      limits = c(0, 1)) +
@@ -402,20 +411,19 @@ g <- data |>
   ) +
   labs(
     title = "Procento vyhraných zápasu, pokud tým začal\nna mapě za Counter-Terroristy",
-    subtitle = "Pouze pro týmy Astralis a eSuba",
     x = "Mapa",
     y = "Procento vyhraných zápasů",
     caption = "Spojení souboru players.csv a results.csv",
     fill = "Tým"
   )
-  
+
 save_bc_picture(.graph = g,
                 .file = "sloupce_podle_strany.png")
 g
 ```
 
 # Model pro hráče
-```{r get_model_for_player, options}
+```{r }
 get_player_model <- function(.data,
                              .y = "map_winner",
                              .x = "kills + assists + deaths + hs + fkdiff + starting_ct"
@@ -430,7 +438,7 @@ get_player_model <- function(.data,
       family = binomial)
 }
 
-get_matrix_for_player_model <- function(.model, .test) {
+get_conf_matrix <- function(.model, .test) {
   confusionMatrix(
     data = predict(object = .model,
                    newdata = .test,
@@ -445,12 +453,10 @@ get_matrix_for_player_model <- function(.model, .test) {
 ```
 
 ## Vytvoření modelů, tabulek a statistik
-```{r players.models}
+```{r }
 players.models <- list()
 players.matrixes <- list()
 players.split <- list()
-
-library(rsample)
 
 for (m in maps) {
   set.seed(48754)
@@ -466,14 +472,15 @@ for (m in maps) {
   
   players.models[[m]] <- model
   players.matrixes[[m]] <-
-    get_matrix_for_player_model(.model = model,
-                                .test = testing(split))
+    get_conf_matrix(.model = model,
+                    .test = testing(split))
 }
 
+data
 ```
 
 ### Uložení modelů a tabulek
-```{r players.save, options}
+```{r }
 for (map in maps) {
   save_bc_model(
     .model = players.models[[map]],
@@ -488,28 +495,28 @@ for (map in maps) {
                     map),
     .cap = sprintf("Matice záměn pro jednotlivé hráče na mapě %s",
                    map))
-
+  
   save_bc_matrix_output(
     .object = players.matrixes[[map]],
     .file = sprintf("player_stats_%s.tex",
                     map),
     .cap = sprintf("Statistiky pro jednotlivé hráče na mapě %s",
-                               map))
+                   map))
 }
 ```
 
 ## Mirage
 
 ### Optimalizace
-```{r mirage_pro_hrace_opt.tex}
+```{r }
 players.models$Mirage <- 
   get_player_model(.data = training(players.split$Mirage),
                    .x = "kills + assists + deaths + fkdiff + starting_ct"
-                   )
+  )
 
 players.matrixes$Mirage <- 
-  get_matrix_for_player_model(.model = players.models$Mirage,
-                              .test = testing(players.split$Mirage))
+  get_conf_matrix(.model = players.models$Mirage,
+                  .test = testing(players.split$Mirage))
 
 ### Znovuuložení
 save_bc_model(.model = players.models$Mirage,
@@ -531,24 +538,23 @@ save_bc_matrix_output(
 
 
 ## Vertigo
-```{r vertigo_pro_hrace.tex}
+```{r }
 save_bc_model(.model = players.models$Vertigo,
               .file = "vertigo_pro_hrace.tex",
               .cap = "Logistický model pro hráče pro mapu Vertigo")
 ```
 
 ### Optimalizace
-```{r vertigo_pro_hrace_opt.tex}
+```{r }
 players.models$Vertigo <- 
   get_player_model(.data = training(players.split$Vertigo),
                    .x = "kills + assists + deaths"
-                   )
+  )
 
 players.matrixes$Vertigo <- 
-  get_matrix_for_player_model(.model = players.models$Vertigo,
-                              .test = testing(players.split$Vertigo))
+  get_conf_matrix(.model = players.models$Vertigo,
+                  .test = testing(players.split$Vertigo))
 ### Znovuuložení
-### 
 save_bc_model(.model = players.models$Vertigo,
               .file = "player_model_Vertigo_opt.tex",
               .cap = "Optimální logistický model pro hráče pro mapu Vertigo")
@@ -564,4 +570,108 @@ save_bc_matrix_output(
   .file = "player_stats_Vertigo_opt.tex",
   .cap = "Statistiky pro mapu Vertigo z matice záměn"
 )
+```
+
+# Modely pro tým
+```{r }
+get_team_model <- function(.data,
+                           .y = "map_winner",
+                           .x = "") {
+  .formula = as.formula(sprintf("%s ~ %s",
+                                .y,
+                                .x))
+  
+  glm(formula = .formula,
+      data = .data,
+      family = "binomial")
+}
+```
+
+## Vytvoření modelů, tabulek a statistik
+```{r }
+teams <- c("All", "Astralis", "Sprout")
+teams.models <- list()
+teams.matrixes <- list()
+teams.split <- list()
+
+for (t in teams) {
+  set.seed(7458)
+  
+  filter <- ifelse(t == "All", ".*", t)
+  
+  model.data <- data |> 
+    filter(str_detect(team, filter)) |> 
+    group_by(match_id, map, team) |> 
+    filter(n() %% 5 == 0) |> 
+    summarise(
+      mean_kills = mean(kills),
+      mean_assists = mean(assists),
+      mean_deaths = mean(deaths),
+      mean_hs = geom_mean(hs),
+      mean_fkdiff = mean(fkdiff),
+      map_winner = unique(map_winner) |> as.factor(),
+      starting_ct = unique(starting_ct) |> as.factor(),
+      run_mean_3_months = unique(run_mean_3_months),
+      .groups = "drop" 
+      )
+  
+  split <- initial_split(model.data, prop = 0.8,
+                         strata = map)
+
+  teams.split[[t]] <- split
+
+  model <- get_team_model(
+    .data = training(split),
+    .x = paste0("mean_kills + mean_assists + mean_deaths + mean_hs +",
+                "mean_fkdiff + run_mean_3_months + map:starting_ct")
+  )
+
+  teams.models[[t]] <- model
+  teams.matrixes[[t]] <-
+    get_conf_matrix(.model = model,
+                    .test = testing(split))
+}
+
+set.seed(587)
+teams.models$All$data |> 
+  slice_sample(n = 6) |> 
+  save_bc_code(
+    .tibble = _,
+    .file = "data_agregovana.tex",
+    .cap = "Agregovaná tabulka pro predikcy výhry týmu",
+    .lab = "tab:data_agregovana",
+    .scale = 0.5
+  )
+
+```
+
+## Celkový model
+```{r }
+for (t in teams) {
+  cap <- ifelse(t == "All",
+                "pro všechny týmy",
+                sprintf("pro tým %s", t))
+  
+  save_bc_model(
+    .model = teams.models[[t]],
+    .file = sprintf("team_model_%s.tex",
+                    t),
+    .cap = sprintf("Model %s",
+                   cap))
+  
+  save_bc_matrix(
+    .matrix = teams.matrixes[[t]]$table,
+    .file = sprintf("team_matice_%s.tex",
+                    t),
+    .cap = sprintf("Matice záměn %s",
+                   cap))
+  
+  save_bc_matrix_output(
+    .object = teams.matrixes[[t]],
+    .file = sprintf("team_stats_%s.tex",
+                    t),
+    .cap = sprintf("Statistiky %s",
+                   cap))
+}
+
 ```
