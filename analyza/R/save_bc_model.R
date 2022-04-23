@@ -1,4 +1,4 @@
-save_bc_model <- function(.model, .file, .cap = NA) {
+save_bc_model <- function(.model, .file, .cap) {
   lab <- paste0(
     "\\label{tab:",
     str_remove_all(.file, ".tex$"),

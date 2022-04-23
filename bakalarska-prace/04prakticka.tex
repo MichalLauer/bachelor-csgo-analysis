@@ -60,7 +60,6 @@ se daná mapa hrála jako první, druhá, či třetí.
 Transformovaný dataset má 10 proměnných a 643 620 pozorování. Příklad jednotlivých pozorování v transformovaném
 datovém souboru je v přiložené tabulce \ref{tab:players_csv_transformovano}.
 
-
 \newpage
 Transformovaný 
 {\color{red}
@@ -186,81 +185,121 @@ ověření kvality modelu.
 
 \subsection{Model pro mapu Mirage}
 
-\input{kod/modely/mirage_pro_hrace.tex}
+\input{kod/modely/player_model_Mirage.tex}
 
-% INTERPRETOVAT JAKO POMĚR ŠANCÍ
-Pro model jsou významné všechny prediktory. S rostoucím počtem zabití, asistencí a statistikou fkdiff má hráč větší šanci mapu vyhrát. Naopak s rostoucím počtem smrtí a 
-statistikou hs, šance na výhru klesá. Mapa je pro stranu Counter-Terroristů nevýhodná, a pokud hráč začne mapu na této straně, jeho šance na výhru klesá. Největší vliv
-má na pravděpodobnost výhry počet úmrtí hráče. Přepis funkce pak vypadá následovně
+{\color{red}
+Z tabulky \ref{tab:player_model_Mirage} je vidět, že pro model není významný prediktor \textit{hs}. Prediktor je proto odebrán a model je znovu natrénován na stejných datech.
+}
+
+\input{kod/modely/player_model_Mirage_opt.tex}
+
+{\color{red}
+Tabulka \ref{tab:player_model_Mirage_opt} představuje model se všemi významnými prediktory. Prediktory \textit{kills}, \textit{assists} a \textit{fkdiff} šanci na výhru
+hráče zvyšují. S každým zabitím hráč zvyšuje šanci na výhru zhruba 1,1 krát. Naopak prediktory \textit{deaths} a \textit{starting\_ct} šanci snižují. S každou hráčovou smrtí
+se šance na výhru snižuje zhruba 0,69 krát. Pokud hráči začnou mapu na straně Counter-Terroristů, jejich šance na výhru se sníží zhruba 0,81 krát. 
+Model lze zapsat také pomocí logistické funkce.
+}
 
 \begin{align}
     \begin{split}
         &P(1 | X_{kills}, X_{assists}, X_{deaths}, X_{hs}, X_{fkdiff}, X_{starting_ct}) = \frac{1}{1 + e^{-z}} \\
-        &z = 2,446 + 0,181*X_{kills} + 0,302*X_{assists} - 0,369*X_{deaths} + \\
-        &- 0,134*X_{hs} + 0,015*X_{fkdiff} - 0,227*X_{starting_ct}
+        &z = 2,399 + 0,180*X_{kills} + 0,305*X_{assists} - 0,371*X_{deaths} + \\
+        &+ 0,017*X_{fkdiff} - 0,203*X_{starting_ct}
     \end{split}
+    \label{eq:player_funkce_Mirage}
 \end{align}
 
 \subsection{Matice záměn pro mapu Mirage}
-Predikce jsou provedené na validačním podmnožině z datového souboru.
+Predikce jsou provedené na validačním podmnožině a na optimalizovaném modelu z tabulky \ref{tab:player_model_Mirage_opt}.
 
-\input{kod/matice/mirage_pro_hrace_matice.tex}
+\input{kod/matice/player_matice_Mirage_opt.tex}
 
-% V PROCENTECH
-Model predikoval správně 7 022 výher a 6 709 proher. Z matice záměn lze dále vypočítat následující statistiky:
+Model predikoval správně 7 022 výher 
+{\color{red}
+($\sim 81,4\%$)
+}
+a 6 709 proher
+{\color{red}
+($\sim 77,2\%$). Celkově model určil správně 13 696 objektů ($\sim 79,3\%$).
+}
 
-\input{kod/matice_out/mirage_pro_hrace_matice_stats.tex}
+\input{kod/matice_out/player_stats_Mirage_opt.tex}
 
-Model určuje zhruba 79,5 \% objektů správně. Specificita je o zhruba 4 \% body vyšší než senzitivita, což značí, že je model úspěšnější při predikci proher
-než výher.
+{\color{red}
+Díky vyšší specificitě modelu o zhruba $4\%$ je model vhodnější na predikci prohry hráče.
+}
 
 \subsection{Model pro mapu Vertigo}
 
-\input{kod/modely/vertigo_pro_hrace.tex}
+\input{kod/modely/player_model_Vertigo.tex}
 
 Pro hráče jsou na mapě Vertigo významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths}. Ostatní prediktory \textit{hs}, \textit{fkdiff} a \textit{starting\_ct}
-jsou pro model nevýznamné. Nevýznamnost lze interpretovat tak, že pro hráče není důležité, na jaké straně mapu začnou hrát (prediktor  \textit{starting\_ct}), ani jak přesně
-střílí (prediktor \textit{HS}). Zde má na výhru hráče největší negativní vliv počet úmrtí. Po vyřazení nevýznamných prediktorů má model následující významné parametry
+jsou pro model nevýznamné. Nevýznamnost lze interpretovat tak, že pro hráče není důležité, na jaké straně mapu začnou hrát (prediktor  \textit{starting\_ct}), jak přesně
+střílí (prediktor \textit{hs})
+{\color{red}
+, ani jak týmově hraje na začátku kole (prediktor \textit{fkdiff}).
+}.
+Po vyřazení nevýznamných prediktorů má model následující významné parametry:
 
-\input{kod/modely/vertigo_pro_hrace_opt.tex}
+\input{kod/modely/player_model_Vertigo_opt.tex}
 
-Přepis funkce je pak následující
+{\color{red}
+Jak lze očekávat, prediktory \textit{kills} a \textit{assists} šanci na výhru zvyšují, zatím co prediktor \textit{deaths} šanci na výhru sníží. S každým zabitím hráče
+na mapě Vertigo se jeho šance na výhru zvýší zhruba 1,2 krát a s každou smrtí se jeho šance na výhru sníží zhruba 0,70 krát.
+}
+Přepis funkce je pak následující:
 
 \begin{align}
     \begin{split}
         &P(1 | X_{kills}, X_{assists}, X_{deaths}) = \frac{1}{1 + e^{-z}} \\
-        &z = 1,893 + 0,184*X_{kills} + 0,301*X_{assists} - 0,352*X_{deaths}
+        &z = 1,971 + 0,183*X_{kills} + 0,308*X_{assists} - 0,357*X_{deaths}.
     \end{split}
 \end{align}
 
+\subsection{Matice záměn pro mapu Vertigo}
+Matice záměn pro 
 {\color{red}
-Každé zabití zvyšuje šanci zhruba $6.63$ krát. Naopak každá smrt hráče šanci na výhru snižuje zhruba $0.70$ krát.
+optimální
+}
+logistický model sestavený pro mapu Vertigo
+{\color{red}
+vypadá následovně:
 }
 
-\newpage
-\subsection{Matice záměn pro mapu Vertigo}
-Matice záměn pro logistický model sestavený pro mapu Vertigo je následující
+\input{kod/matice/player_matice_Vertigo_opt.tex}
 
-\input{kod/matice/vertigo_pro_hrace_matice.tex}
+Model úspěšné predikoval 430 výher
+{\color{red}
+($\sim 76,6\%$)
+}
+a 441 proher 
+{\color{red}
+($\sim 77,8\%$). Celkově model úspěšně predikoval 851 objektů ($\sim 77,2\%$)
+}
 
-Model úspěšné predikoval 415 výher a 441 proher. Z matice záměn pak lze získat výkonnostní statistiky.
+\input{kod/matice_out/player_stats_Vertigo_opt.tex}
 
-\input{kod/matice_out/vertigo_pro_hrace_matice_stats.tex}
-
-Na nových datech model určil správně zhruba 77,7\% pozorování. Model má 80\% senzitivitu, což je více než jeho specificita o zhruba 5 \%. Model je tedy spolehlivější
-pro předpověď výhry hráče.
+Z tabulky statistik \ref{tab:player_stats_Vertigo_opt} je vidět nepatrně lepší výkon při predikci výher (statistika Senzitivita) o necelé jedno procento.
+Model se proto hodí spíše na predikci výher.
 
 \subsection{Interpretace výsledků}
-Model pro mapu Mirage je přesnější a je spolehlivější pro předpověď prohry hráče. Model pro mapu Vertigo má menší přesnost o zhruba 
-2 procentní body a je vhodnější pro predikování výhry se 80 \% senzitivitou.
+Model pro mapu Mirage je spolehlivější pro předpověď prohry hráče. Model pro mapu Vertigo má menší přesnost o zhruba 
+2 procentní body a hodí se spíše k predikci výher hráčů.
 {\color{red}
-Přehled výsledku přes všechny mapy lze nalézt v příloze \ref{chap:ap02}
+Přehled výsledku přes ostatní mapy lze nalézt v příloze \ref{chap:ap02}
 }
 
-Pro logistický model mapy Mirage jsou významné všechny zvolené prediktory. Největší vliv na výhru hráče na mapě Mirage má počet jeho smrtí, kdy s každou další smrtí se šance
-na výhru zmenšuje o zhruba 0,69. Pro mapu Vertigo jsou významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths} a největší vliv na výhru hráče
-má zde také počet smrtí.
+Pro logistický model mapy Mirage není významný prediktor \textit{hs}. Největší vliv na výhru hráče na mapě Mirage má počet jeho smrtí, kdy s každou další smrtí se šance
+na výhru zmenšuje zhruba 0,69 krát. Pro mapu Vertigo jsou významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths} a největší vliv na výhru hráče
+{\color{red}
+má také počet smrtí, kde s každou hráčovou smrtí šance klesne zhruba 0,7 krát.
+}
 
-Rozdíl by mohl být vysvětlen právě stářím jednotlivých map. Jelikož je mapa Mirage už tradiční mapou, mnoho hráčů na ní zná různé triky a strategie. To vede k tomu, že
-každý malý detail hraje velikou roli a všechny vybrané prediktory jsou pro model významné. Naopak mapa Vertigo je relativně nová a pro hráče je nejdůležitější individuální
-výkon. Jelikož hráči mapu tak dobře strategicky neznají, jsou významné pouze statistiky jejich hráčů.
+Rozdíl
+{\color{red}
+ve významnosti prediktorů
+}
+by mohl být vysvětlen právě stářím jednotlivých map. Jelikož je mapa Mirage už tradiční mapou, mnoho hráčů na ní zná různé triky a strategie. To vede k tomu, že
+každý malý detail hraje velikou roli a většina vybraných prediktorů je pro model významná. Naopak mapa Vertigo je relativně nová a pro hráče je nejdůležitější individuální
+výkon. Jelikož hráči mapu tak dobře strategicky neznají, jsou významné pouze charakteristiky hráčů.
+
