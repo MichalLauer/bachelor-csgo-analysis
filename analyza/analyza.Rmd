@@ -416,12 +416,14 @@ g
 
 # Model pro hráče
 ```{r get_model_for_player, options}
-get_player_model <- function(.data, .map, .formula = NA) {
-  if (is.na(.formula)) {
-    .formula = map_winner ~ kills + assists + deaths + hs + fkdiff +
-      starting_ct
-  }
+get_player_model <- function(.data, .map,
+                             .y = "map_winner",
+                             .x = "kills + assists + deaths + hs + fkdiff + starting_ct"
+) {
   
+  .formula = as.formula(sprintf("%s ~ %s",
+                                .y,
+                                .x))
   .data |>
     filter(map == .map) |>
     glm(formula = .formula,
@@ -444,17 +446,21 @@ get_matrix_for_player_model <- function(.model, .validate) {
 ```
 
 ## Vytvoření modelů, tabulek a statistik
-```{ <-  players.models, options}
+```{r players.models}
 players.models <- list()
 players.matrixes <- list()
+players.split <- list()
 
 for (map in maps) {
   set.seed(48754)
   split <- createDataPartition(data$map_winner,
                                p = 0.8,
                                list = F)
+  players.split[[map]] <- split
+  
   train <- data[split, ]
   validate <- data[-split, ]
+  
   model <-  get_player_model(.data = train,
                              .map = map)
   
@@ -484,7 +490,7 @@ for (map in maps) {
                    map))
 
   save_bc_matrix_output(
-    .output = players.matrixes[[map]],
+    .object = players.matrixes[[map]],
     .file = sprintf("player_stats_%s.tex",
                     map),
     .cap = sprintf("Statistiky pro jednotlivé hráče na mapě %s",
@@ -493,70 +499,22 @@ for (map in maps) {
 ```
 
 
-
-
-
-
-
-
-
-
-
-```{r model_for_player_map}
-model.players <- list()
-model.players.conf <- list()
-
-fill_model_player <- function(.map, .formula = map_winner ~ .) {
-  set.seed(123)
-  
-  dataset <- data |>
-    select(kills, assists, deaths, hs, fkdiff, starting_ct,
-           map_winner, map) |>
-    filter(map == .map) |>
-    select(-map)
-  
-  split <- createDataPartition(dataset$map_winner,
-                               p = 0.8, list = F)
-
-  model.players[[.map]] <<-
-    glm(.formula,
-        data = dataset[split, ],
-        family = binomial)
-  
-  model.players.conf[[.map]] <<-
-    confusionMatrix(
-      data = predict(model.players[[.map]],
-                     newdata = dataset[-split, ],
-                     type = "response") |> 
-        round() |> 
-        as.factor(),
-      reference = dataset[-split, ]$map_winner |> 
-        as.factor(),
-      positive = "1"
-    )
-}
-
-for (i in 1:length(maps)) {
-  fill_model_player(maps[i])
-}
-```
-
 ## Mirage
 ```{r mirage_pro_hrace.tex}
-save_bc_model(.model = model.players$Mirage,
+save_bc_model(.model = players.models$Mirage,
               .file = "mirage_pro_hrace.tex")
 ```
 
 ### Matice záměn
 ```{r}
 save_bc_matrix(
-  .matrix = model.players.conf$Mirage$table,
+  .matrix = players.matrixes$Mirage$table,
   .file = "mirage_pro_hrace_matice.tex",
   .cap = "Matice záměn pro mapu Mirage"
 )
 
 save_bc_matrix_output(
-  .output = model.players.conf$Mirage,
+  .object = players.matrixes$Mirage,
   .file = "mirage_pro_hrace_matice_stats.tex",
   .cap = "Statistiky pro mapu Mirage z matice záměn"
 )
@@ -565,24 +523,31 @@ save_bc_matrix_output(
 
 ## Vertigo
 ```{r vertigo_pro_hrace.tex}
-save_bc_model(model.players$Vertigo, "vertigo_pro_hrace.tex")
+save_bc_model(players.models$Vertigo, "vertigo_pro_hrace.tex")
 
-fill_model_player("Vertigo",
-                  map_winner ~ kills + assists + deaths)
+players.models$Vertigo <- 
+  get_player_model(.data = data[players.split$Vertigo, ],
+                   .map = "Vertigo",
+                   .x = "kills + assists + deaths"
+                   )
 
-save_bc_model(model.players$Vertigo, "vertigo_pro_hrace_opt.tex")
+players.matrixes$Vertigo <- 
+  get_matrix_for_player_model(.model = players.models$Vertigo,
+                              .validate = data[-players.split$Vertigo, ])
+
+save_bc_model(players.models$Vertigo, "vertigo_pro_hrace_opt.tex")
 ```
 
 ### Matice záměn
 ```{r }
 save_bc_matrix(
-  .matrix = model.players.conf$Vertigo$table,
+  .matrix = players.matrixes$Vertigo$table,
   .file = "vertigo_pro_hrace_matice.tex",
   .cap = "Matice záměn pro mapu Vertigo"
 )
 
 save_bc_matrix_output(
-  .output = model.players.conf$Vertigo,
+  .object = players.matrixes$Vertigo,
   .file = "vertigo_pro_hrace_matice_stats.tex",
   .cap = "Statistiky pro mapu Vertigo z matice záměn"
 )

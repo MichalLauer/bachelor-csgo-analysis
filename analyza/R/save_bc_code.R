@@ -16,24 +16,15 @@ save_bc_code <- function(.tibble, .file, .cap, .lab, .scale) {
     scalebox = 
   )
   
+  options(OutDec = ".")
+  
   print(xtable,
         compress = FALSE,
         file = .file,
         table.placement = "H",
         include.rownames = F,
-        scalebox = .scale)
+        scalebox = .scale,
+        format.args = list(decimal.mark = ","))
   
-  # .tibble |>
-  #   kbl(
-  #     format = "latex",
-  #     caption = .cap,
-  #     label = .lab,
-  #     align = "c",
-  #     valign = "t",
-  #     position = "H",
-  #     centering = T
-  #   ) |>
-  #   kable_styling(latex_options = "scale_down") |>
-  #   print(file = .file,
-  #         caption.placement = "bottom")
+  options(OutDec = ",")
 }

@@ -186,7 +186,7 @@ ověření kvality modelu.
 
 \subsection{Model pro mapu Mirage}
 
-\input{kod/mirage_pro_hrace.tex}
+\input{kod/modely/mirage_pro_hrace.tex}
 
 % INTERPRETOVAT JAKO POMĚR ŠANCÍ
 Pro model jsou významné všechny prediktory. S rostoucím počtem zabití, asistencí a statistikou fkdiff má hráč větší šanci mapu vyhrát. Naopak s rostoucím počtem smrtí a 
@@ -204,25 +204,25 @@ má na pravděpodobnost výhry počet úmrtí hráče. Přepis funkce pak vypad�
 \subsection{Matice záměn pro mapu Mirage}
 Predikce jsou provedené na validačním podmnožině z datového souboru.
 
-\input{kod/mirage_pro_hrace_matice.tex}
+\input{kod/matice/mirage_pro_hrace_matice.tex}
 
 % V PROCENTECH
 Model predikoval správně 7 022 výher a 6 709 proher. Z matice záměn lze dále vypočítat následující statistiky:
 
-\input{kod/mirage_pro_hrace_matice_stats.tex}
+\input{kod/matice_out/mirage_pro_hrace_matice_stats.tex}
 
 Model určuje zhruba 79,5 \% objektů správně. Specificita je o zhruba 4 \% body vyšší než senzitivita, což značí, že je model úspěšnější při predikci proher
 než výher.
 
 \subsection{Model pro mapu Vertigo}
 
-\input{kod/vertigo_pro_hrace.tex}
+\input{kod/modely/vertigo_pro_hrace.tex}
 
 Pro hráče jsou na mapě Vertigo významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths}. Ostatní prediktory \textit{hs}, \textit{fkdiff} a \textit{starting\_ct}
 jsou pro model nevýznamné. Nevýznamnost lze interpretovat tak, že pro hráče není důležité, na jaké straně mapu začnou hrát (prediktor  \textit{starting\_ct}), ani jak přesně
 střílí (prediktor \textit{HS}). Zde má na výhru hráče největší negativní vliv počet úmrtí. Po vyřazení nevýznamných prediktorů má model následující významné parametry
 
-\input{kod/vertigo_pro_hrace_opt.tex}
+\input{kod/modely/vertigo_pro_hrace_opt.tex}
 
 Přepis funkce je pak následující
 
@@ -233,17 +233,19 @@ Přepis funkce je pak následující
     \end{split}
 \end{align}
 
-Každé zabití zvyšuje šanci na výhru o zhruba $6.63$. Naopak každá smrt hráče šanci na výhru snižuje zhruba $0.70$.
+{\color{red}
+Každé zabití zvyšuje šanci zhruba $6.63$ krát. Naopak každá smrt hráče šanci na výhru snižuje zhruba $0.70$ krát.
+}
 
 \newpage
 \subsection{Matice záměn pro mapu Vertigo}
 Matice záměn pro logistický model sestavený pro mapu Vertigo je následující
 
-\input{kod/vertigo_pro_hrace_matice.tex}
+\input{kod/matice/vertigo_pro_hrace_matice.tex}
 
 Model úspěšné predikoval 415 výher a 441 proher. Z matice záměn pak lze získat výkonnostní statistiky.
 
-\input{kod/vertigo_pro_hrace_matice_stats.tex}
+\input{kod/matice_out/vertigo_pro_hrace_matice_stats.tex}
 
 Na nových datech model určil správně zhruba 77,7\% pozorování. Model má 80\% senzitivitu, což je více než jeho specificita o zhruba 5 \%. Model je tedy spolehlivější
 pro předpověď výhry hráče.

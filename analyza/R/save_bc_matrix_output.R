@@ -1,13 +1,13 @@
-save_bc_matrix_output <- function(.output, .file, .cap) {
+save_bc_matrix_output <- function(.object, .file, .cap) {
   
-  .output <- bind_rows(
+  .object <- bind_rows(
     tibble(
-      statistika = names(.output$overall),
-      hodnota = .output$overall
+      statistika = names(.object$overall),
+      hodnota = .object$overall
     ),
     tibble(
-      statistika = names(.output$byClass),
-      hodnota = .output$byClass
+      statistika = names(.object$byClass),
+      hodnota = .object$byClass
     )
   ) |>
     filter(statistika %in% c("Accuracy", "Sensitivity", "Specificity")) |> 
@@ -33,7 +33,7 @@ save_bc_matrix_output <- function(.output, .file, .cap) {
     .file
   )
   
-  xtable <-  xtable(.output,
+  xtable <-  xtable(.object,
                     caption = .cap,
                     digits = 3)
   print(xtable,
