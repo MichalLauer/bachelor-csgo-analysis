@@ -24,14 +24,19 @@ save_bc_matrix_output <- function(.output, .file, .cap) {
     .cap
   )
   
+  dir <- "../bakalarska-prace/kod/matice_out"
+  if (!dir.exists(dir)) dir.create(dir)
+  
   .file <- paste0(
-    "../bakalarska-prace/kod/",
+    dir,
+    "/",
     .file
   )
   
-  print(xtable(.output,
-               caption = .cap,
-               digits = 3),
+  xtable <-  xtable(.output,
+                    caption = .cap,
+                    digits = 3)
+  print(xtable,
         compress = FALSE,
         file = .file,
         include.rownames = F,

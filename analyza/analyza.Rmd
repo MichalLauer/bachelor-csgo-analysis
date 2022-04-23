@@ -221,12 +221,15 @@ players <- clear_player_map(players.raw, 1) |>
 Pro interpretaci dat použijeme první řádek z transformovaného
 datasetu
 ```{r players-interpretation}
-r <- players[3, ]
+set.seed(12345)
+r <- players |> 
+  slice_sample(n = 6)
 save_bc_code(
   .tibble = r,
   .file = "players_csv_transformovano.tex",
   .cap = "Záznam z transformovaného datového souboru players.csv",
-  .lab = "players_csv_transformovano")
+  .lab = "players_csv_transformovano",
+  .scale = 0.8)
 r
 ```
 
@@ -290,12 +293,15 @@ results <- results |>
   )) |>  
   ungroup()
 
-r <- results[2000,  ]
+set.seed(9574)
+r <- results |> 
+  slice_sample(n = 6)
 save_bc_code(
   .tibble = r,
   .file = "results_csv_transformovano.tex",
   .cap = "Příklad záznamu z transformovaného datového souboru results.csv",
-  .lab = "results_csv_transformovano"
+  .lab = "results_csv_transformovano",
+  .scale = 0.8
 )
 r
 ```
@@ -319,6 +325,16 @@ data <- players |>
   inner_join(results,
             by = c("match_id", "map", "team"))
 
+set.seed(7845)
+r <- data |> 
+  slice_sample(n = 6)
+save_bc_code(
+  .tibble = r,
+  .file = "data_transformovano.tex",
+  .cap = "Datový soubor pro logistické modely",
+  .lab = "data_transformovano",
+  .scale = 0.52)
+r
 ```
 
 ## Kvantitativní proměnné
@@ -399,6 +415,93 @@ g
 ```
 
 # Model pro hráče
+```{r get_model_for_player, options}
+get_player_model <- function(.data, .map, .formula = NA) {
+  if (is.na(.formula)) {
+    .formula = map_winner ~ kills + assists + deaths + hs + fkdiff +
+      starting_ct
+  }
+  
+  .data |>
+    filter(map == .map) |>
+    glm(formula = .formula,
+        data = _,
+        family = binomial)
+}
+
+get_matrix_for_player_model <- function(.model, .validate) {
+  confusionMatrix(
+    data = predict(object = .model,
+                   newdata = .validate,
+                   type = "response") |> 
+      round() |> 
+      as.factor(),
+    reference = .validate$map_winner |> 
+      as.factor(),
+    positive = "1"
+  )
+}
+```
+
+## Vytvoření modelů, tabulek a statistik
+```{ <-  players.models, options}
+players.models <- list()
+players.matrixes <- list()
+
+for (map in maps) {
+  set.seed(48754)
+  split <- createDataPartition(data$map_winner,
+                               p = 0.8,
+                               list = F)
+  train <- data[split, ]
+  validate <- data[-split, ]
+  model <-  get_player_model(.data = train,
+                             .map = map)
+  
+  players.models[[map]] <- model
+  players.matrixes[[map]] <-
+    get_matrix_for_player_model(.model = model,
+                                .validate = validate)
+}
+
+```
+
+### Uložení modelů a tabulek
+```{r players.save, options}
+for (map in maps) {
+  save_bc_model(
+    .model = players.models[[map]],
+    .file = sprintf("player_model_%s.tex",
+                    map),
+    .cap = sprintf("Model pro jednotlivé hráče na mapě %s",
+                   map))
+  
+  save_bc_matrix(
+    .matrix = players.matrixes[[map]]$table,
+    .file = sprintf("player_matice_%s.tex",
+                    map),
+    .cap = sprintf("Matice záměn pro jednotlivé hráče na mapě %s",
+                   map))
+
+  save_bc_matrix_output(
+    .output = players.matrixes[[map]],
+    .file = sprintf("player_stats_%s.tex",
+                    map),
+    .cap = sprintf("Statistiky pro jednotlivé hráče na mapě %s",
+                               map))
+}
+```
+
+
+
+
+
+
+
+
+
+
+
 ```{r model_for_player_map}
 model.players <- list()
 model.players.conf <- list()

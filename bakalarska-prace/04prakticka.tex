@@ -188,6 +188,7 @@ ověření kvality modelu.
 
 \input{kod/mirage_pro_hrace.tex}
 
+% INTERPRETOVAT JAKO POMĚR ŠANCÍ
 Pro model jsou významné všechny prediktory. S rostoucím počtem zabití, asistencí a statistikou fkdiff má hráč větší šanci mapu vyhrát. Naopak s rostoucím počtem smrtí a 
 statistikou hs, šance na výhru klesá. Mapa je pro stranu Counter-Terroristů nevýhodná, a pokud hráč začne mapu na této straně, jeho šance na výhru klesá. Největší vliv
 má na pravděpodobnost výhry počet úmrtí hráče. Přepis funkce pak vypadá následovně
@@ -205,6 +206,7 @@ Predikce jsou provedené na validačním podmnožině z datového souboru.
 
 \input{kod/mirage_pro_hrace_matice.tex}
 
+% V PROCENTECH
 Model predikoval správně 7 022 výher a 6 709 proher. Z matice záměn lze dále vypočítat následující statistiky:
 
 \input{kod/mirage_pro_hrace_matice_stats.tex}
@@ -249,6 +251,9 @@ pro předpověď výhry hráče.
 \subsection{Interpretace výsledků}
 Model pro mapu Mirage je přesnější a je spolehlivější pro předpověď prohry hráče. Model pro mapu Vertigo má menší přesnost o zhruba 
 2 procentní body a je vhodnější pro predikování výhry se 80 \% senzitivitou.
+{\color{red}
+Přehled výsledku přes všechny mapy lze nalézt v příloze \ref{chap:ap02}
+}
 
 Pro logistický model mapy Mirage jsou významné všechny zvolené prediktory. Největší vliv na výhru hráče na mapě Mirage má počet jeho smrtí, kdy s každou další smrtí se šance
 na výhru zmenšuje o zhruba 0,69. Pro mapu Vertigo jsou významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths} a největší vliv na výhru hráče

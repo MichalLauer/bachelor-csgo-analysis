@@ -18,17 +18,22 @@ save_bc_matrix <- function(.matrix, .file, .cap) {
     .cap
   )
   
+  dir <- "../bakalarska-prace/kod/matice"
+  if (!dir.exists(dir)) dir.create(dir)
+  
   .file <- paste0(
-    "../bakalarska-prace/kod/",
+    dir,
+    "/",
     .file
   )
   
-  print(xtable(.matrix,
-               caption = .cap,
-               digits = 3),
+  xtable <- xtable(.matrix,
+                   caption = .cap,
+                   digits = 3)
+  print(xtable,
         compress = FALSE,
         file = .file,
         table.placement = "H",
         format.args = list(decimal.mark = ","))
-    
+  
 }
