@@ -10,6 +10,24 @@ do logistického modelu budou vstupovat. Také lze díky grafům získat povědo
 Poté jsou vytvořené logistické regresní modely, jejich výstup je interpretován a různé modely jsou mezi sebou porovnány.
 }
 
+{\color{red}
+\section{Cíle analýzy}
+Cílem analýzy je vytvořit logistické modely pro předpověď výhry jak pro individuální hráče, tak pro tým. Jelikož se charakteristiky hráčů i zápasů mohou měnit dle mapy,
+na které se zápas odehrává, všechny modely budou tříděné přes kategorie map.
+
+Pro hráče budou sestaveny logistické modely z celého datového souboru přes kategorie map. Modely budou následně porovnány pomocí matice záměn
+a bude porovnána významnost jejich parametrů. Modely budou porovnané na vybraných dvou mapách, a to Mirage a Vertigo. Mirage je klasický mapa, která je
+ve hře od jeho vydání. Vertigo je naopak nejnovější přírůstek do profesionální scény a hráči, v době extrakce datového souboru, mapu ještě plně strategicky 
+neznali. Modely budou porovnánu podle přesnosti predikce a podle různé významnosti prediktorů.
+
+Modely pro týmy budou sestavené prve z celého datového souboru a následně pro dva vybrané týmy. První tým, pro který se vytvoří model, bude tým Astralis. Ten je považován
+za velmi profesionální a v době extrakce datového souboru patří mezi ty nejlepší týmy na světe. Druhým týmem bude český celek eSuba. eSuba je jeden z nejdéle hrajících celků
+v České republice. Modely jsou vytvořené pouze pro dva týmy z toho důvodu, že je celkový počet týmů velmi vysoký a bylo by komplikované 
+porovnávat všechny týmy naráz. Z toho důvodu se budou hledat významné rozdíly mezi dvěma referenčními modely a jedním celkovým. Mezi modely bude porovnaná jak přesnost
+predikce, tak významnost parametrů. Jelikož je původní spojený datový soubor na úrovni hráčů, charakteristiky hráčů se musí agregovat na úroveň týmů a zápasů. Pro tuto
+agregaci bude použit aritmetický nebo geometrický průměr.
+}
+
 \section{Datové soubory}
 Dataset\footnote{https://www.kaggle.com/datasets/mateusdmachado/csgo-professional-matches} obsahuje čtyři 
 {\color{red}
@@ -90,37 +108,13 @@ Zároveň je možné, že kvůli historickým změnám ve hře a na webovém por
 zda tým nehrál sám proti sobě. V případě všech zmíněných chyb jsou chybné záznamy odstraněny.
 }
 
-
-\newpage
-\section{Cíl analýzy}
-{\color{red}
-Cílem analýzy je vytvořit logistické regresní modely, které předpovídají pravděpodobnost výhry daného hráče či týmu. Modely budou následně porovnány a jejich rozdíly
-interpretovány. Pro předpověď se použijí statistiky hráčů
-za každou mapu a výsledné týmové statistiky za každou mapu.
-Prediktory, které budou sloužit pro predikci vítězství daného hráče, jsou:
-\textit{kills}, \textit{assists}, \textit{deaths},
-\textit{hs}, \textit{fkdiff} a \textit{rating}. Za týmové statistiky jsou pak považovány proměnné \textit{starting\_ct} a \textit{run\_mean\_3\_months}. Lze očekávat, že
-prediktory \textit{kills}, \textit{assists}, \textit{hs}, \textit{rating} a \textit{fkdiff} budou šanci na výhru zvyšovat. Naopak prediktor \textit{deaths} by měl
-výslednou šanci na výhru snížit. Prediktory jsou vybrané kvůli tomu, že to jsou ty nejvíce základní a zároveň klíčové charakteristiky, které lze za zápas získat.
-
-První typ logistického modelu bude predikovat výhru zápasu na určité mapě pouze pro jednotlivého hráče. Nebere se v potaz
-výkon spoluhráčů ani průměrný rank týmu za poslední tři měsíce. Cílem modelu je identifikovat, který
-prediktor
-má na určité mapě největší vliv na výhru.
-
-Druhý model se bude soustředit na predikci výhry týmu. K tomu se využijí agregované statistiky hráčů, kteří jsou součástí týmu. Agregace statistik je spočítaná jako
-aritmetický nebo geometrický průměr přes všechny zápasy, kde daná pětice za tým hraje. Cíl druhého modelu je zjistit, jaké prediktory jsou pro předpověď výhry týmu významné.
-Model bude vytvořen jak pro celý datový soubor, tak pro dva určité týmy. Jeden tým bude považován za velmi profesionální a bude patřit mezi ty nejlepší týmy na světě. Druhý
-tým bude naopak patřit k horší skupině týmů. Tři vytvořené modely mezi sebou budou porovnány a jejich rozdíly interpretovány.
-}
-
 \section{Průzkumová analýza dat}
 Průzkumová analýza vizualizuje prediktory, hledá různé vztahy a rozdělení proměnných. Díky průzkumu lze určit, které proměnné není vhodné použít pro tvorbu
 logistického regresního modelu, např. kvůli problému multikolinearity.
 
 \newpage
 \subsection{Korelační matice}
-Pro logistickou regresi je důležité, aby prediktory nebyli lineárně závislé. Kombinaci korelací mezi kvantitativními prediktory lze zjistit z korelační matice.
+Pro logistickou regresi je důležité, aby prediktory nebyly lineárně závislé. Přehled korelací mezi kvantitativními prediktory lze zjistit z korelační matice.
 
 \begin{figure}[H]
     \centering
@@ -129,13 +123,19 @@ Pro logistickou regresi je důležité, aby prediktory nebyli lineárně závisl
     \label{fig:korelacni_matice}
 \end{figure}
 
-Z korelační matice \ref{fig:korelacni_matice} lze vyčíst, že se korelace blíží nule mezi průměrem týmu za poslední tři měsíce a statistikami hráčů. Zároveň je
-vidět středně silná korelace mezi prediktorem \textit{rating} a prediktory \textit{fkdiff}, \textit{deaths} a \textit{kills}. Z tohoto důvodu je
-prediktor \textit{rating} z tvorby modelů vyloučen.
+Z korelační matice \ref{fig:korelacni_matice} lze vyčíst, 
+{\color{red}
+že korelace mezi průměrem týmu za poslední tři měsíce a statistikami hráčů se blíží nule. Z toho plyne, že neexistuje lineární závislost mezi výkonem hráčů a 
+průměrným rankem týmu za poslední tři měsíce.
+}
+Zároveň je vidět silná korelace mezi prediktorem \textit{rating} a prediktory \textit{fkdiff}, \textit{deaths} a \textit{kills}.
+{\color{red}
+Jelikož by díky vysoké korelaci prediktorů vznikl problém multikolinearity, prediktor \textit{rating} ve finálních modelech není použit.
+}
 
 \newpage
-\subsection{Histogram kvantitativních prediktorů}
-Histogram kvantitativních prediktorů umožní zobrazit jejich rozdělení.
+\subsection{Histogramy kvantitativních prediktorů}
+Histogramy kvantitativních prediktorů umožní zobrazit jejich rozdělení.
 
 \begin{figure}[H]
     \centering
@@ -145,12 +145,21 @@ Histogram kvantitativních prediktorů umožní zobrazit jejich rozdělení.
 \end{figure}
 
 Histogram prediktorů \textit{rating}, \textit{hs}, \textit{kills} a \textit{deaths} má normální rozdělení a v proměnné se nenachází mnoho extrémních hodnot.
-Prediktor \textit{fkdiff} má bimodální\footnote{rozdělení má dva vrcholy} rozdělení. Prediktor \textit{assists} je sklonění doprava, což značí velké množství 
-odlehlých či extrémních hodnot.
+Prediktor \textit{fkdiff} má bimodální rozdělení. Prediktor \textit{assists} je 
+{\color{red}
+zešikmení
+}
+doprava, což značí velké množství odlehlých či extrémních hodnot. 
+{\color{red}
+Pro logistickou regresy není předpoklad normálního rozdělení prediktorů. Proto analýza slouží hlavně k získání povědomí o tom, 
+jakých hodnot každý prediktor nabývá a jaké je jejich rozdělení.
+}
 
 \newpage
+{\color{red}
 \subsection{Sloupcový graf výher přes počáteční stranu}
-Strana, na které tým začíná, může ovlivnit výsledek zápasu. Ovlivnění navíc může být rozdílné podle toho, na jaké mapě se zápas odehrává.
+Každá mapa funguje a vypadá jinak, což ovlivňuje mimo jiné i možné strategie. Proto jiné mapy mohou více vyhovovat jiným týmům. Toto způsobuje, že
+tým může mít vyšší procento výhry na mapě, pokud začíná na straně Counter-Terroristů.
 
 \begin{figure}[H]
     \centering
@@ -159,14 +168,21 @@ Strana, na které tým začíná, může ovlivnit výsledek zápasu. Ovlivnění
     \label{fig:sloupcovy_graf_strany}
 \end{figure}
 
-Počáteční strana má největší vliv na mapě Cobblestone, kde necelých 52 procent týmů, co začalo na straně Counter-Terroristů, mapu vyhrálo. Sloupcový graf naopak naznačuje, že 
-je pro týmy nevýhodné začínat na mapě Overpass za stranu Counter-Terroristů. Historicky necelých čtyřicet-devět procent týmu, co na mapě začalo za Counter-Terroristy, mapu prohrálo.
+Z obrázku \ref{fig:sloupcovy_graf_strany} je patrné, že týmu Astralis nevyhovuje začínat mapu Cobblestone na straně Counter-Terroristů. Tým eSuba nemá žádný vyhraný zápas
+při začínající straně Counter-Terroristů na mapě Train. Díky obrázku je vidět, že šanci na výhru ovlivňuje interakce mezi mapou a začínající stranou. Logistický model
+by měl tento vztah reflektovat. 
+}
 
 \section{Modely pro výkon hráče}
-První vytvořený logistický regresní model je založen na individuálních statistikách. Model je vytvořen na datech z obou datových souborů \textit{players.csv} a \textit{results.csv}.
+{\color{red}
+Cílem modelu je predikovat výhru zápasu pro jednotlivé hráče a identifikovat významné prediktory na odlišných mapách.
+}
 Prediktory se týkají pouze výkonu jednotlivých hráčů, model tedy pro předpověď výhry hráče nepoužívá statistiky spoluhráčů. Pro porovnání jsou vybrané mapy Mirage a Vertigo.
 Mapa Mirage je jednou z nejvíce tradičních map a mapa Vertigo je naopak nejnovější přídavek do hry. Díky rozdílným modelům bude možné zkoumat, na čem pravděpodobnost výhry na 
-mapách záleží. Pro vytvoření logistického modelu je použito 80\% náhodně vybraných pozorování. Zbylých 20\% je použito pro validaci a vytvoření matice záměn.
+mapách záleží. Pro vytvoření logistického modelu je použito 80\% náhodně vybraných pozorování. Zbylých 20\% je použito pro
+{\color{red}
+ověření kvality modelu.
+}
 
 \subsection{Model pro mapu Mirage}
 
@@ -193,7 +209,7 @@ Model predikoval správně 7 022 výher a 6 709 proher. Z matice záměn lze dá
 
 \input{kod/mirage_pro_hrace_matice_stats.tex}
 
-Model určuje zhruba 79,5 \% dat správně. Specificita je o zhruba 4 \% body vyšší než senzitivita, což značí, že je model úspěšnější při predikci proher
+Model určuje zhruba 79,5 \% objektů správně. Specificita je o zhruba 4 \% body vyšší než senzitivita, což značí, že je model úspěšnější při predikci proher
 než výher.
 
 \subsection{Model pro mapu Vertigo}

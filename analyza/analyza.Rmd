@@ -372,27 +372,27 @@ g
 ## Winrate za CT
 ```{r winrate}
 g <- data |>
-  group_by(map) |> 
-  filter(map_winner == 1) |> 
+  group_by(team, map) |> 
+  filter(map_winner == 1, team %in% c("Astralis", "eSuba")) |> 
   summarise(ct_won = mean(starting_ct)) |> 
-  ggplot(aes(x = reorder(map, ct_won), y = ct_won, fill = map)) +
-  geom_col(show.legend = F) +
-  geom_text(aes(label = paste0(round(ct_won*100, 2), "%"),
-                y = ct_won + 0.05),
-            size = 4) +
-  scale_y_continuous(labels = scales::percent, limits = c(0, 0.6)) +
+  ggplot(aes(x = map, y = ct_won, fill = map)) +
+  facet_wrap(vars(team), ncol = 1, scales = "free_x") +
+  geom_col(show.legend = F, color = "black") +
+  scale_y_continuous(labels = scales::percent,
+                     limits = c(0, 1)) +
   theme(
-    panel.grid.major.y = element_blank()
+    panel.grid.major.x = element_blank(),
+    strip.background = element_rect(fill = "grey", color = "black")
   ) +
-  coord_flip() +
   labs(
-    title = "Procento vyhraných zápasu, pokud tým začal na mapě za Counter-Terroristy",
-    subtitle = "Omezeno na 0 až 60 procent",
+    title = "Procento vyhraných zápasu, pokud tým začal\nna mapě za Counter-Terroristy",
+    subtitle = "Pouze pro týmy Astralis a eSuba",
     x = "Mapa",
     y = "Procento vyhraných zápasů",
-    caption = "Spojení souboru players.csv a results.csv"
+    caption = "Spojení souboru players.csv a results.csv",
+    fill = "Tým"
   )
-
+  
 save_bc_picture(.graph = g,
                 .file = "sloupce_podle_strany.png")
 g
