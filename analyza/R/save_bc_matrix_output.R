@@ -1,4 +1,4 @@
-save_bc_matrix_output <- function(.object, .file, .cap) {
+save_bc_matrix_output <- function(.object, .file, .cap, .use_cap = T) {
   
   .object <- bind_rows(
     tibble(
@@ -36,6 +36,13 @@ save_bc_matrix_output <- function(.object, .file, .cap) {
   xtable <-  xtable(.object,
                     caption = .cap,
                     digits = 3)
+  
+  if (!.use_cap) {
+    xtable <-  xtable(.object,
+                      digits = 3)
+  }
+  
+
   print(xtable,
         compress = FALSE,
         file = .file,

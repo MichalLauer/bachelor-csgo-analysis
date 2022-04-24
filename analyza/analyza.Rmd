@@ -380,33 +380,51 @@ for (m in maps) {
 data
 ```
 
-### Uložení modelů a tabulek
+## Uložení modelů a tabulek
 ```{r }
-for (map in maps) {
+save_player_map <- function(.map, .use_cap) {
   save_bc_model(
-    .model = players.models[[map]],
+    .model = players.models[[.map]],
     .file = sprintf("player_model_%s.tex",
-                    map),
+                    .map),
     .cap = sprintf("Model pro jednotlivé hráče na mapě %s",
-                   map))
+                   .map),
+    .use_cap = .use_cap)
   
   save_bc_matrix(
-    .matrix = players.matrixes[[map]]$table,
+    .matrix = players.matrixes[[.map]]$table,
     .file = sprintf("player_matice_%s.tex",
-                    map),
+                    .map),
     .cap = sprintf("Matice záměn pro jednotlivé hráče na mapě %s",
-                   map))
+                   .map),
+    .use_cap = .use_cap)
   
   save_bc_matrix_output(
-    .object = players.matrixes[[map]],
+    .object = players.matrixes[[.map]],
     .file = sprintf("player_stats_%s.tex",
-                    map),
+                    .map),
     .cap = sprintf("Statistiky pro jednotlivé hráče na mapě %s",
-                   map))
+                   .map),
+    .use_cap = .use_cap)
+}
+
+for (map in maps) {
+  save_player_map(
+    .map = map,
+    .use_cap = F
+  )  
 }
 ```
 
 ## Mirage
+
+### Uložení neoptimálního modelu
+```{r }
+save_player_map(
+  .map = "Mirage",
+  .use_cap = T
+)
+```
 
 ### Optimalizace
 ```{r }
@@ -418,8 +436,10 @@ players.models$Mirage <-
 players.matrixes$Mirage <- 
   get_conf_matrix(.model = players.models$Mirage,
                   .test = testing(players.split$Mirage))
+```
 
-### Znovuuložení
+### Uložení optimálního modelu
+```{r }
 save_bc_model(.model = players.models$Mirage,
               .file = "player_model_Mirage_opt.tex",
               .cap = "Optimální logistický model pro hráče pro mapu Mirage")
@@ -444,6 +464,14 @@ save_bc_model(.model = players.models$Vertigo,
               .cap = "Logistický model pro hráče pro mapu Vertigo")
 ```
 
+### Uložení neoptimánlího modelu
+```{r }
+save_player_map(
+  .map = "Vertigo",
+  .use_cap = T
+)
+```
+
 ### Optimalizace
 ```{r }
 players.models$Vertigo <- 
@@ -454,7 +482,10 @@ players.models$Vertigo <-
 players.matrixes$Vertigo <- 
   get_conf_matrix(.model = players.models$Vertigo,
                   .test = testing(players.split$Vertigo))
-### Znovuuložení
+```
+
+### Uložení optimálního modelu
+```{r }
 save_bc_model(.model = players.models$Vertigo,
               .file = "player_model_Vertigo_opt.tex",
               .cap = "Optimální logistický model pro hráče pro mapu Vertigo")
@@ -572,7 +603,8 @@ for (t in teams) {
     .file = sprintf("team_model_%s.tex",
                     t),
     .cap = sprintf("Model %s",
-                   cap))
+                   cap)
+  )
   
   save_bc_matrix(
     .matrix = teams.matrixes[[t]]$table,

@@ -1,4 +1,4 @@
-save_bc_model <- function(.model, .file, .cap) {
+save_bc_model <- function(.model, .file, .cap, .use_cap = T) {
   lab <- paste0(
     "\\label{tab:",
     str_remove_all(.file, ".tex$"),
@@ -19,9 +19,15 @@ save_bc_model <- function(.model, .file, .cap) {
     .file
   )
   
-  xtable <- xtable(.model,
-                   caption = .cap,
-                   digits = 3)
+  xtable <-  xtable(.model,
+                    caption = .cap,
+                    digits = 3)
+  
+  if (!.use_cap) {
+    xtable <-  xtable(.model,
+                      digits = 3)
+  }
+  
   
   print(xtable,
         compress = FALSE,

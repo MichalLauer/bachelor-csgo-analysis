@@ -1,4 +1,4 @@
-save_bc_matrix <- function(.matrix, .file, .cap) {
+save_bc_matrix <- function(.matrix, .file, .cap, .use_cap = T) {
   rownames = c("Pozitivní predikce", "Negativní predikce")
   colnames = c("Původní pozitivní", "Původní negativní")
   
@@ -27,9 +27,15 @@ save_bc_matrix <- function(.matrix, .file, .cap) {
     .file
   )
   
-  xtable <- xtable(.matrix,
-                   caption = .cap,
-                   digits = 3)
+  xtable <-  xtable(.matrix,
+                    caption = .cap,
+                    digits = 3)
+  
+  if (!.use_cap) {
+    xtable <-  xtable(.matrix,
+                      digits = 3)
+  }
+  
   print(xtable,
         compress = FALSE,
         file = .file,
