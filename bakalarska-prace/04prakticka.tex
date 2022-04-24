@@ -8,6 +8,10 @@ V této části se dále nachází popis dat a transformace dat. Nejprve jsou p�
 se kterými se pracuje. Následně jsou použité grafy, které jsou představené v sekci \ref{sec:vizualizace_dat}. Pomocí vizualizace dat lze představit proměnné, které
 do logistického modelu budou vstupovat. Také lze díky grafům získat povědomí, jak datový soubor vypadá a jaké mají proměnné rozdělení.
 Poté jsou vytvořené logistické regresní modely, jejich výstup je interpretován a různé modely jsou mezi sebou porovnány.
+
+Každý model je trénován na 80\% dat. Pro interpretaci významnosti prediktorů je použit Waldův test, který je součástí každé tabulky
+ve sloupci $Pr(>|z|)$. Alfa pro určení hladiny významnosti je stanovena jako $\alpha = 0.05$. Pro matici záměn je model otestován na validačních datech, 
+které činí 20\% původního datového souboru.
 }
 
 {\color{red}
@@ -42,7 +46,7 @@ sjednocena pro týmy v zápase. Charakteristiky se agregují pomocí aritmetick�
 informace, které jsou již z probíhajících zápasů a z volby map. Tyto informace pro predikci výhry ještě před začátkem zápasu nelze využít. Žádný z těchto
 zbylých dvou souborů (\textit{picks.csv}, \textit{economy.csv}) proto v bakalářské práci není použit.
 
-\subsection{soubor players.csv}
+\subsection{Soubor players.csv}
 {\color{red}
 Datový soubor
 }
@@ -81,7 +85,7 @@ má 10 proměnných. Interpretace je následující:
     \item \textbf{rating} --- shrnutí více charakteristik za jeden zápas do jednoho ukazatele výkonu\footnote{\url{https://www.hltv.org/news/20695/introducing-rating-20}}
 \end{itemize}
 
-\subsection{soubor results.csv}
+\subsection{Soubor results.csv}
 Druhý datový soubor, který je pro analýzu použit, obsahuje výsledky daných zápasů. Soubor se původně skládá z 45 772 záznamů a 19 proměnných. Datový soubor 
 \textit{results.csv} obsahuje na rozdíl od datového souboru \textit{players.csv} jedno chybné pozorování. Dle něho hrál tým sám proti sobě, což nedává smysl.
 Jelikož je zápas na webovém portálu zadán správně, nejspíše se jedná o neznámou chybu, která nastala při exportu dat z webového portálu.
@@ -182,10 +186,7 @@ Cílem modelu je predikovat výhru zápasu pro jednotlivé hráče a identifikov
 }
 Prediktory se týkají pouze výkonu jednotlivých hráčů, model tedy pro předpověď výhry hráče nepoužívá charakteristiky spoluhráčů. Pro porovnání jsou vybrané mapy Mirage a Vertigo.
 Mapa Mirage je jednou z nejvíce tradičních map a mapa Vertigo je naopak nejnovější přídavek do hry. Díky rozdílným modelům bude možné zkoumat, na čem pravděpodobnost výhry na 
-mapách záleží. Pro vytvoření logistického modelu je použito 80\% náhodně vybraných pozorování. Zbylých 20\% je použito pro
-{\color{red}
-ověření kvality modelu.
-}
+mapách záleží.
 
 \subsection{Model pro mapu Mirage}
 
