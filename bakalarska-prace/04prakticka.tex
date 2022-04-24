@@ -209,7 +209,7 @@ Model lze zapsat také pomocí logistické funkce.
     \label{eq:player_funkce_Mirage}
 \end{align}
 
-\subsection{Matice záměn pro mapu Mirage}
+\subsubsection{Matice záměn pro mapu Mirage}
 Predikce jsou provedené na validačním podmnožině a na optimalizovaném modelu z tabulky \ref{tab:player_model_Mirage_opt}.
 
 \input{kod/matice/player_matice_Mirage_opt.tex}
@@ -256,7 +256,7 @@ Přepis funkce je pak následující:
     \end{split}
 \end{align}
 
-\subsection{Matice záměn pro mapu Vertigo}
+\subsubsection{Matice záměn pro mapu Vertigo}
 Matice záměn pro 
 {\color{red}
 optimální
@@ -310,24 +310,105 @@ nebo pomocí průměru geometrického. Ostatní charakteristiky zápasu jako po�
 navíc prediktor \textit{run\_mean\_3\_months}, která ukazuje klouzavý průměr ranku daného týmu za poslední tři měsíce. Dále do modelu důležité zakomponovat interakci
 mezi počáteční stranou (\textit{starting\_ct}) a hranou mapou (\textit{map}). Příklad tabulky s agregovanými charakteristikami je v přiložené tabulce \ref{tab:data_agregovana}.
 Pro trénink a validaci je rozdělený původní datový soubor v poměru 8:2.
+
 \subsection{Celkový model}
+
 \input{kod/modely/team_model_All.tex}
 
 První vytvořený model je sestavený na celém trénovacím datovém souboru. Pro model jsou významné všechny agregované prediktory, tedy jmenovitě \textit{mean\_kills},
-\textit{mean\_assists}, \textit{mean\_deaths}, \textit{mean\_hs},\textit{mean\_fkdiff} a \textit{run\_mean\_3\_months}. Interakce mezi prediktory \textit{map} a
-\textit{starting\_ct} není významná u map Vertigo a Cache.
+\textit{mean\_assists}, \textit{mean\_deaths}, \textit{mean\_hs},\textit{mean\_fkdiff} a \textit{team\_rank}. Interakce mezi prediktory \textit{map} a
+\textit{starting\_ct} není významná u map Vertigo, Cache a Nuke.
 
 Agregované charakteristiky hráče \textit{mean\_kills} a \textit{mean\_assists} šanci na výhru týmu zvyšují. Pokud se průměr zabitých nepřátel za tým zvýší o jednotku,
-šance na výhru týmu se zvýší zhruba 3,89 krát. Pokud se průměr smrtí hráčů za tým zvýší o jednotku, šance na výhru se sníží zhruba 0,24 krát. Všechny statisticky
+šance na výhru týmu se zvýší zhruba 3,95 krát. Pokud se průměr smrtí hráčů za tým zvýší o jednotku, šance na výhru se sníží zhruba 0,25 krát. Všechny statisticky
 významné interakce mezi prediktory \textit{map} a \textit{starting\_ct} naznačují, že je pro hráče nevýhodné začínat na straně Counter-Terroristů. Jejich šance
-na výhru se vždy sníží, a to nejvíce na mapě Overpass, kde se šance sníží zhruba 0,62 krát. Model lze zapsat jako přepis funkce následovně:
+na výhru se vždy sníží, a to nejvíce na mapě Overpass, kde se šance sníží zhruba 0,62 krát. Zajímavý je koeficient u prediktoru \textit{team\_rank}, který říká,
+že s růstem ranku týmu se šance na výhru sníží zhruba 0,99 krát. To lze vysvětlit tím, že lepší týmy hrají proti lepším týmům a jejich 
+šance na výhru je nižší. Model lze zapsat jako přepis funkce následovně:
 
 \begin{align}
     \begin{split}
-        &P(1 | X_{mean_kills}, X_{mean_assists}, X_{mean_deaths}, X_{mean_hs}, X_{mean_fkdiff}, X_{run_mean_3_months}, \\
-        &X_{mapCache*starting_ct}, X_{mapCobblestone*starting_ct}, X_{mapDust2*starting_ct}, X_{mapInferno*starting_ct}, X_{mapMirage*starting_ct}, \\
-        &X_{mapNuke*starting_ct}, X_{mapOverpass*starting_ct}, X_{mapTrain*starting_ct}, X_{mapVertigo*starting_ct}) = \frac{1}{1 + e^{-z}} \\
-        &z = 1,971 + 0,183*X_{kills} + 0,308*X_{assists} - 0,357*X_{deaths}.
+        P(1 | &X_{mean\_kills}, X_{mean\_assists}, X_{mean\_deaths}, X_{mean\_hs}, X_{mean\_fkdiff}, X_{run\_mean\_3\_months}, \\
+              &X_{mapCache*starting\_ct}, X_{mapCobblestone*starting\_ct}, X_{mapDust2*starting\_ct}, X_{mapInferno*starting\_ct}, \\
+              &X_{mapMirage*starting\_ct}, X_{mapNuke*starting\_ct}, X_{mapOverpass*starting\_ct}, X_{mapTrain*starting\_ct}, \\
+              &X_{mapVertigo*starting\_ct}) = \frac{1}{1 + e^{-z}} \\
+        z = &1,360 + 1,360*X_{mean\_kills} + 0,138*X_{mean\_assists} - 1,392*X_{mean\_deaths} - \\
+            &- 0,512*X_{mean\_hs} -  0,053*X_{mean\_fkdiff} -0,001*X_{run\_mean\_3\_months} - \\
+            &- 0,058*X_{mapCache*starting\_ct} - 0,266*X_{mapCobblestone*starting\_ct} - \\
+            &- 0,322*X_{mapDust2*starting\_ct} - 0,302*X_{mapInferno*starting\_ct} - \\
+            & -0,301*X_{mapMirage*starting\_ct} - 0,246*X_{mapNuke*starting\_ct} - \\
+            &- 0,470*X_{mapOverpass*starting\_ct} - 0,175*X_{mapTrain*starting\_ct} + \\
+            &+ 0,098*X_{mapVertigo*starting\_ct})
     \end{split}
 \end{align}
 
+\subsubsection{Matice záměn pro obecný model}
+Model je vyhodnocen na validační podmnožině, která činní 20\% původního datového souboru.
+
+\input{kod/matice/team_matice_All.tex}
+
+Model úspěšně predikoval 8 274 výher ($\sim 94,1\%$) a 8 203 proher ($\sim 94,0\%$). Celkem model predikoval správně 16 477 objektů ($\sim 94,1\%$).
+
+\input{kod/matice_out/team_stats_All.tex}
+
+Všechny výkonnostní statistiky z matice záměn jsou identické v řádu setin procent. Z tabulky \ref{tab:team_stats_All} nelze jednoznačně určit, zda je tým
+vhodnější na predikci výher či proher.
+
+\subsection{Model pro tým Astralis}
+Tým Astralis je v době extrakce dat jedním z nejlepších týmu na světě. Vyhrál několik prestižních majorů a v roce 2022 se tým Astralis považuje za nejlepší tým
+ve hře \ac{CS:GO} všech dob.
+
+\input{kod/modely/team_model_Astralis.tex}
+
+Významné prediktory pro tým Astralis jsou pouze \textit{mean\_kills} a \textit{mean\_deaths}.  Pro tým není statistický významné, jaký je průměrný počet asistencí
+(\textit{mean\_assists}), jaké je průměrné procento zabití do hlav (\textit{mean\_hs}), jaký je průměrný výkon hráčů na začátku mapy (\textit{mean\_fkdiff}) ani klouzavý
+průměr ranku týmu za poslední tři měsíce (\textit{run\_mean\_3\_months}). Tým Astralis navíc neovlivňuje počáteční strana, mají tedy stejnou šanci na výhru bez ohledu na 
+začínající stranu.
+
+\input{kod/modely/team_model_Astralis_opt.tex}
+
+Tabulka \ref{tab:team_model_Astralis_opt} obsahuje již optimální parametry pro model týmu Astralis. S každým dalším průměrným zabitím se zvýší šance
+týmu Astralis na výhru 3,85 krát. S každou další průměrnou smrtí se šance na výhru týmu sníží zhruba 0,23 krát.
+
+\subsubsection{Matice záměn pro tým Astralis}
+
+\input{kod/matice/team_matice_Astralis_opt.tex}
+
+Optimální model správně predikoval 54 výher ($\sim 93,1\%$) a 108 proher ($\sim 93,9\%$). Celkem optimální model predikoval správně 162 objektů ($\sim 93,6\%$).
+
+\input{kod/matice_out/team_stats_Astralis_opt.tex}
+
+\subsection{Model pro tým Sprout}
+Tým Sprout byl v době extrakce dat čistě Německý tým a patřil k průměrnému profesionálnímu týmu. Na žebříčků týmu se obvykle řadil kolem třicátého místa.
+
+\input{kod/modely/team_model_Sprout.tex}
+
+Z tabulky modelu \ref{tab:team_model_Sprout} je vidět, že významné prediktory pro tým jsou pouze \textit{mean\_kills} a \textit{mean\_deaths}. Pro tým není významné,
+na jaké straně začíná mapu (interakce \textit{map*starting\_ct}), jaký je jeho rank (\textit{team\_rank}), jak přesně průměrné střílí hráči týmu (\textit{mean\_hs}),
+jak jsou průměrné hráči dobří na začátku kola (\textit{mean\_fkdiff}) ani kolik mají průměrně asistencí (\textit{mean\_assists}).
+
+\input{kod/modely/team_model_Sprout_opt.tex}
+
+S každým dalším průměrným zabitím (\textit{mean\_kills}) se šance na výhru týmu zvýší zhruba 4.95 krát. S každou další průměrnou smrtí (\textit{mean\_deaths})
+se šance na výhru sníží zhruba 0,23 krát
+
+\subsubsection{Matice záměn pro tým Sprout}
+
+\input{kod/matice/team_matice_Sprout_opt.tex}
+
+Optimální model korektně předpověděl 54 výher ($\sim 93,1\%$) a 62 proher ($\sim 96,9\%$). Model úspěšně předpověděl celkem 116 objektů ($\sim 95,1\%$)
+
+\input{kod/matice_out/team_stats_Sprout_opt.tex}
+
+Jelikož je senzitivita modelu o zhruba 4 procentní body větší, model se více hodí na předpověď výhry týmu Sprout.
+
+\subsection{Interpretace výsledků}
+Pro celkový model jsou kromě interakcí $mapCache:starting\_ct$, $mapNuke:starting\_ct$ a $mapVertigo:starting\_ct$ významné prediktory. Největší vliv na výhru má
+prediktor \textit{mean\_deaths}, která šanci snižuje zhruba 0,25 krát. U všech významných kombinací mezi prediktory \textit{map} a \textit{starting\_ct} je koeficient
+záporný. To naznačuje, že tým má menší šanci na výhru, pokud mapu začne na straně Counter-Terroristů. Největší negativní vliv je u mapy Overpass, kde se šance
+sníží až 0,65 krát.
+
+Oba dva referenční modely mají stejné významné prediktory, a to \textit{mean\_kills} a \textit{mean\_deaths}. Pro žádný tým není významné, na jaké mapě začíná a jeho šanci
+na výhru to nijak neovlivňuje. Z modelů lze usoudit, že nejlepší tým na světě a průměrný profesionální tým má stejné významné prediktory. Rozdíl mezi referenčními modely a 
+celkovým modelem by bylo možné vysvětlit např. vlivem neprofesionálních týmů. Porovnávání neprofesionálních či polo-profesionálních týmu je složitější, jelikož týmy 
+hrají méně zápasů, a není zaručeno, že mají dostatek zápasu na každé mapě. Datový soubor by bylo nutné tím pádem velmi omezit.
