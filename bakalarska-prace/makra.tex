@@ -4,13 +4,12 @@
 \usepackage[a-2u]{pdfx}     % výsledné PDF bude ve standardu PDF/A-2u
 
 %%% Nastavení pro použití samostatné bibliografické databáze.
+%%% https://github.com/michal-h21/biblatex-iso690
 \usepackage[
    backend=biber
-%  ,style=iso-authoryear
-  ,style=authoryear
+  ,style=iso-authoryear
   ,sortlocale=cs_CZ
   ,bibencoding=UTF8
-  %,block=ragged
 ]{biblatex}
 \let\cite\parencite
 \bibliography{literatura}

@@ -189,7 +189,7 @@ Korelační matice je velmi užitečná v regresní analýze kvůli předpokladu
 vysvětlujících proměnných v analýze.
 }
 Pokud jsou při tvorbě modelu prediktory korelované,
-vzniká problém tzn. multikolinearity. Při multikolinearitě se zhoršuje přesnost a vypovídací hodnota koeficientů \cite{Kleinbaum2010}.
+vzniká problém tzn. multikolinearity. Při multikolinearitě se zhoršuje přesnost a vypovídací hodnota koeficientů \cite{kleinbaum_logistic_2010}.
 V takovém případě je potřeba zvýšit počet pozorování nebo z modelu určité prediktory odebrat. 
 
 \begin{figure}[H]
@@ -235,7 +235,7 @@ vzhledem k definovaným prediktorům lze zapsat jako
     P(Y = 1 \mid X_1, X_2, ..., X_k) = \frac{1}{1 + e^{- \left( \alpha + \sum_{i=1}^k \beta_i X_i \right) }},
 \end{equation}
 
-kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru. \cite{Kleinbaum2010}
+kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru. \cite{kleinbaum_logistic_2010}
 
 \subsection{Interpretace parametrů}
 Parametry $\alpha$ a $\beta_i$ značí logaritmus šance. $\alpha$ je logaritmus šance v případě, že všechny prediktory
@@ -274,7 +274,7 @@ Pro logistickou regresi má věrohodnostní funkce tvar
 
 kde $n$ je počet pozorování a $m_1$ je počet příznivých ($Y = 1$) jevů. Funkce předpokládá, že datový soubor je seřazen tak, že prvních $m_1$ výskytů
 jsou jevy příznivé. $P(X_i)$ poté značí logistickou funkci \ref{eq:logisticka_funkce}. Pro vypočtení optimálního parametru $\beta_i$ je nutné vypočítat
-maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lze tedy získat derivací funkce $L(\theta)$ vzhledem k parametru $\beta_i$. \cite{Kleinbaum2010}
+maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lze tedy získat derivací funkce $L(\theta)$ vzhledem k parametru $\beta_i$. \cite{kleinbaum_logistic_2010}
 
 \begin{equation}
     \frac{\partial L(\theta)}{\partial \beta_i} = 0
@@ -381,4 +381,4 @@ a směrodatné chyby koeficientu $S_{\hat{\beta_i}}$
 {\color{red}
 Testové kritérium
 }
-$Z$ má za platnosti nulové hypotézy normální $N(0, 1)$ a její mocnina, $Z^2$, má chi-kvadrát rozdělení s jedním stupněm volnosti \cite{Kleinbaum2010}.
+$Z$ má za platnosti nulové hypotézy normální $N(0, 1)$ a její mocnina, $Z^2$, má chi-kvadrát rozdělení s jedním stupněm volnosti \cite{kleinbaum_logistic_2010}.
