@@ -1,14 +1,15 @@
-\chapter{Závěr}
-... Uzavření bakalářské práce
+\chapter*{Závěr}
+Bakalářská práce se zabírala predikcí výher zápasů ve hře \ac{CSGO} pro hráče i pro týmy. Významnost modelů byla zjištěna pomocí Waldova testu a hladiny významnosti
+$\alpha = 0.05$. Predikce modelů byla vyhodnocena pomocí matice záměn a statistik Přesnost, Senzitivita a Specificita.
 
-\section{Závěrečné vyhodnocení modelu}
-... Výsledné vyhodnocení modelu pomocí všech statistik
+Pro práci s modely bylo prve nutné data spojit do jednoho datového souboru. Modely byly vytvořené pomocí trénovací množiny dat, která činila 80\% ze 
+spojeného datového souboru. Validační množina pak tvořila zbylých 20\% dat. Ta byla použita k tvorbě matice záměn.
 
-\section{Interpretace modelu do reálného světa}
-... Přenesení modelu do reálného světa
+Modely pro hráče byly vytvořené přes všechny kategorie map a modely pro mapu Mirage a Vertigo mezi sebou byli porovnané. Modely se lišily hlavně tím, zda se hodí pro 
+predikci výher či proher. Model pro mapu Mirage je díky své vyšší specificitě vhodný pro identifikaci proher. Model pro mapu Vertigo má naopak vyšší senzitivitu
+a hodí se spíše pro predikci výhry hráče. Každý model má také jiné významné prediktory, což značí, že každá se specifikuje jiným stylem hraním.
 
-\section{Použití modelu v reálném světě}
-... Použití modelu v reálném světě
-
-\section{Místo pro budoucí vylepšení}
-...
+Modely pro celé týmy byly vytvořeny tři. Celkový model měl významnou většinu prediktorů. Jeho přesnost, senzitivita i specificita jsou velmi podobné a model díky tomu
+predikuje stejně úspěšně jak výhry, tak prohry. Model pro referenční tým Astralis má významné pouze dva prediktory \textit{mean\_kills} a \textit{mean\_deaths}. Statistiky
+z matice záměn naznačují, že se model hodí spíše k predikci výher. Model referenčního týmu Sprout má významné statistiky také pouze \textit{mean\_kills} a \textit{mean\_deaths}.
+Z matice záměn lze usoudit, že se model hodí spíše k predikci výher týmu.
