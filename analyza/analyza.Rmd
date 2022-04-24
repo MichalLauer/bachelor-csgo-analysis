@@ -151,7 +151,15 @@ players <- clear_player_map(players.raw, 1) |>
   # Odstranění zápasů, kde není počet záznamů rovný 
   # 10 (Bo1), 20 (Bo2) nebo 30 (Bo3)
   filter(n() %% 10 == 0) |>
-  ungroup()
+  ungroup() |> 
+  mutate(
+    match_id = as.integer(match_id),
+    player_id = as.integer(player_id),
+    kills = as.integer(kills),
+    assists = as.integer(assists),
+    deaths = as.integer(deaths),
+    fkdiff = as.integer(fkdiff)
+  )
 ```
 
 
@@ -164,7 +172,7 @@ save_bc_code(
   .file = "players_csv_transformovano.tex",
   .cap = "Záznam z transformovaného datového souboru players.csv",
   .lab = "tab:players_csv_transformovano",
-  .scale = 0.8)
+  .scale = 0.90)
 r
 ```
 
@@ -186,7 +194,13 @@ results.raw <- read_csv("data/results.csv",
 
 ```{r ,cache=TRUE}
 results <- clear_results_team(results.raw, 1) |>
-  rbind(clear_results_team(results.raw, 2))
+  rbind(clear_results_team(results.raw, 2)) |> 
+  mutate(
+    match_id = as.integer(match_id),
+    map_winner = as.integer(map_winner),
+    starting_ct = as.integer(starting_ct),
+    team_rank = as.integer(team_rank)
+  )
 
 set.seed(9574)
 r <- results |> 
@@ -197,7 +211,7 @@ save_bc_code(
   .file = "results_csv_transformovano.tex",
   .cap = "Příklad záznamu z transformovaného datového souboru results.csv",
   .lab = "tab:results_csv_transformovano",
-  .scale = 0.8
+  .scale = 1
 )
 r
 ```
@@ -216,7 +230,7 @@ save_bc_code(
   .file = "data_transformovano.tex",
   .cap = "Datový soubor pro logistické modely",
   .lab = "tab:data_transformovano",
-  .scale = 0.52)
+  .scale = 0.6)
 r
 ```
 
@@ -271,13 +285,13 @@ g
 ## Winrate za CT
 ```{r }
 g <- data |>
-  mutate(cat = ifelse(!team %in% c("Astralis", "eSuba"),
+  mutate(cat = ifelse(!team %in% c("Astralis", "Sprout"),
                       "Všechny záznamy",
                       paste0("Tým ", team)),
          cat = factor(cat,
                       levels = c("Všechny záznamy",
                                  "Tým Astralis",
-                                 "Tým eSuba"))) |> 
+                                 "Tým Sprout"))) |> 
   group_by(cat, map) |> 
   filter(map_winner == 1) |> 
   summarise(ct_won = mean(starting_ct)) |> 
@@ -485,7 +499,7 @@ get_team_data <- function(.data, .filter) {
       mean_fkdiff = mean(fkdiff),
       map_winner = mean(map_winner),
       starting_ct = mean(starting_ct),
-      team_rank = mean(team_rank) ,
+      team_rank = mean(team_rank),
       .groups = "drop" 
     ) |> 
     # Kontrola, že všichni hráčí mají zadaný stejný výsledek

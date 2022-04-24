@@ -4,7 +4,7 @@ Cílem praktické části je prozkoumat dva typy modelů. První typ modelu bude
 modelu bude identifikovat významné charakteristiky hráčů na vybraných mapách a následně rozdíly interpretovat. V druhém modelu bude zkoumaná výhra týmu v zápase.
 V tomto typu modelu se jako prediktory použijí agregované charakteristiky hráčů jednotlivých týmu. Pro agregaci bude použit buď aritmetický nebo geometrický průměr. 
 
-V této části se dále nachází popis dat, transformace dat, a tvorba logických regresních modelů. Nejprve jsou představené datové soubory,
+V této části se dále nachází popis dat a transformace dat. Nejprve jsou představené datové soubory,
 se kterými se pracuje. Následně jsou použité grafy, které jsou představené v sekci \ref{sec:vizualizace_dat}. Pomocí vizualizace dat lze představit proměnné, které
 do logistického modelu budou vstupovat. Také lze díky grafům získat povědomí, jak datový soubor vypadá a jaké mají proměnné rozdělení.
 Poté jsou vytvořené logistické regresní modely, jejich výstup je interpretován a různé modely jsou mezi sebou porovnány.
@@ -13,16 +13,18 @@ Poté jsou vytvořené logistické regresní modely, jejich výstup je interpret
 {\color{red}
 \section{Cíle analýzy}
 Cílem analýzy je vytvořit logistické modely pro předpověď výhry jak pro individuální hráče, tak pro tým. Jelikož se charakteristiky hráčů i zápasů mohou měnit dle mapy,
-na které se zápas odehrává, všechny modely budou tříděné přes kategorie map.
+na které se zápas odehrává, modely pro individuální hráče jsou tříděné přes kategorie map. Modely pro předpověď výhry týmu používají interakci mezi mapou a začínající
+stranou.
 
 Pro hráče budou sestaveny logistické modely z celého datového souboru přes kategorie map. Modely budou následně porovnány pomocí matice záměn
 a bude porovnána významnost jejich parametrů. Modely budou porovnané na vybraných dvou mapách, a to Mirage a Vertigo. Mirage je klasický mapa, která je
 ve hře od jeho vydání. Vertigo je naopak nejnovější přírůstek do profesionální scény a hráči, v době extrakce datového souboru, mapu ještě plně strategicky 
 neznali. Modely budou porovnánu podle přesnosti predikce a podle různé významnosti prediktorů.
 
-Modely pro týmy budou sestavené prve z celého datového souboru a následně pro dva vybrané týmy. První tým, pro který se vytvoří model, bude tým Astralis. Ten je považován
-za velmi profesionální a v době extrakce datového souboru patří mezi ty nejlepší týmy na světe. Druhým týmem bude český celek eSuba. eSuba je jeden z nejdéle hrajících celků
-v České republice. Modely jsou vytvořené pouze pro dva týmy z toho důvodu, že je celkový počet týmů velmi vysoký a bylo by komplikované 
+Modely pro týmy budou sestavené prve z celého datového souboru a následně pro dva vybrané referenční týmy. První tým, pro který se vytvoří model, bude tým Astralis.
+Ten je dlouhodobě považován za jeden z nejlepších týmu na světě. Druhým týmem bude německý celek Sprout. Tým Sprout se řadí v době
+extrakce dat k profesionálnímu týmu s průměrným třicátým místem na světovém žebříčku. Modely jsou vytvořené pouze pro dva týmy z toho důvodu, že je celkový
+ počet týmů velmi vysoký a bylo by komplikované 
 porovnávat všechny týmy naráz. Z toho důvodu se budou hledat významné rozdíly mezi dvěma referenčními modely a jedním celkovým. Mezi modely bude porovnaná jak přesnost
 predikce, tak významnost parametrů. Jelikož je původní spojený datový soubor na úrovni hráčů, charakteristiky hráčů se musí agregovat na úroveň týmů a zápasů. Pro tuto
 agregaci bude použit aritmetický nebo geometrický průměr.
@@ -31,14 +33,14 @@ agregaci bude použit aritmetický nebo geometrický průměr.
 \section{Datové soubory}
 Dataset\footnote{https://www.kaggle.com/datasets/mateusdmachado/csgo-professional-matches} obsahuje čtyři 
 {\color{red}
-datové soubory
+datové soubory,
 }
-, které popisují zápasy ve hře
+které popisují zápasy ve hře
 \ac{CSGO}. K potřebám této bakalářské práce budou použity pouze soubory \textit{players.csv} a \textit{results.csv}. Datové soubory jsou následně spojeny do jedné tabulky,
 která obsahuje charakteristiky všech hráčů v právě jednom zápase, potřebné informace o zápase a výsledek (zda hráč zápas vyhrál či nikoliv). Data jsou následně dle potřeby
 sjednocena pro týmy v zápase. Charakteristiky se agregují pomocí aritmetického nebo geometrického průměru. Zbylé dva soubory obsahují
 informace, které jsou již z probíhajících zápasů a z volby map. Tyto informace pro predikci výhry ještě před začátkem zápasu nelze využít. Žádný z těchto
-dvou souborů proto v práci není použit.
+zbylých dvou souborů (\textit{picks.csv}, \textit{economy.csv}) proto v bakalářské práci není použit.
 
 \subsection{soubor players.csv}
 {\color{red}
@@ -48,16 +50,16 @@ Datový soubor
 {\color{red}
 charakteristiky
 }
-jednotlivých hráčů v daném zápase. Původní datový soubor obsahuje 101 proměnných a 379 680 pozorování.
-V původním datovém souboru se jeden řádek (pozorování) rovná statistikám jednoho hráče za celý zápas
+jednotlivých hráčů v daném zápase. Původní datový soubor obsahuje 101 proměnných a 383 317 pozorování.
+V původním datovém souboru se jeden řádek (pozorování) rovná charakteristikám jednoho hráče za celý zápas
 {\color{red}
 , který se může odehrávat až na třech mapách.
 }
-Pro potřeby bakalářské práce je tak nutné získat statistiky hráčů
-za jednotlivé mapy. Proto je původní datový soubor transformován do podoby, kde se jedno pozorování rovná statistikám
-právě jednoho hráče na právě jedné mapě, a to bez ohledu, kolik map se v daném zápase hrálo. Jinak řečeno, transformovaný datový soubor nebere v potaz, zda
+Pro potřeby bakalářské práce je tak nutné získat charakteristiky hráčů
+za jednotlivé mapy. Proto je původní datový soubor transformován do podoby, kde se jedno pozorování rovná charakteristikám
+právě jednoho hráče na právě jedné mapě, a to bez ohledu na to, kolik map se v daném zápase hrálo. Jinak řečeno, transformovaný datový soubor nebere v potaz, zda
 se daná mapa hrála jako první, druhá, či třetí.
-Transformovaný dataset má 10 proměnných a 643 620 pozorování. Příklad jednotlivých pozorování v transformovaném
+Transformovaný datový soubor má 10 proměnných a 634 650 pozorování. Příklad jednotlivých pozorování v transformovaném
 datovém souboru je v přiložené tabulce \ref{tab:players_csv_transformovano}.
 
 \newpage
@@ -76,15 +78,15 @@ má 10 proměnných. Interpretace je následující:
     \item \textbf{deaths} --- počet smrtí hráče v zápase na dané mapě
     \item \textbf{hs} --- procento zabití, které lze označit jako headshot\footnote{hráč zabil nepřítele střelou do hlavy}
     \item \textbf{fkdiff} --- rozdíl, kolikrát hráč zabil jako první nepřítele versus kolikrát byl zabit jako první
-    \item \textbf{rating} --- shrnutí více statistik za jeden zápas do jednoho ukazatele výkonu\footnote{\url{https://www.hltv.org/news/20695/introducing-rating-20}}
+    \item \textbf{rating} --- shrnutí více charakteristik za jeden zápas do jednoho ukazatele výkonu\footnote{\url{https://www.hltv.org/news/20695/introducing-rating-20}}
 \end{itemize}
 
 \subsection{soubor results.csv}
-Druhý datový soubor, který je pro analýzu použit, obsahuje výsledky daných zápasů. Soubor se původně skládá z 45 773 záznamů a 19 proměnných. Dataset obsahuje na rozdíl
-od datového souboru \textit{players.csv} jedno chybné pozorování. Dle něho hrál tým sám proti sobě, což nedává smysl. Jelikož je zápas na webovém portálu zadán
-správně, nejspíše se jedná o neznámou chybu, která nastala při exportu dat z webového portálu.
+Druhý datový soubor, který je pro analýzu použit, obsahuje výsledky daných zápasů. Soubor se původně skládá z 45 772 záznamů a 19 proměnných. Datový soubor 
+\textit{results.csv} obsahuje na rozdíl od datového souboru \textit{players.csv} jedno chybné pozorování. Dle něho hrál tým sám proti sobě, což nedává smysl.
+Jelikož je zápas na webovém portálu zadán správně, nejspíše se jedná o neznámou chybu, která nastala při exportu dat z webového portálu.
 
-Po transformacích vznikne tabulka o 8 proměnných a 91 436 záznamech. Každé pozorování identifikuje výsledek jednoho týmu v jednom zápase
+Po transformacích vznikne tabulka o 7 proměnných a 91 502 záznamech. Každé pozorování identifikuje výsledek jednoho týmu v jednom zápase
 na jedné mapě. Příklad je zobrazen v přiložené tabulce \ref{tab:results_csv_transformovano}. Jednotlivé proměnné lze interpretovat následovně:
 \begin{itemize}
     \item \textbf{date} --- datum, kdy se hrál zápas
@@ -94,17 +96,16 @@ na jedné mapě. Příklad je zobrazen v přiložené tabulce \ref{tab:results_c
     \item \textbf{map\_winner} --- binární značení, zda tým vyhrál (1) či prohrál (0)
     \item \textbf{starting\_ct} --- binární značení, zda tým začal zápas na straně Counter-Teroristů (1) či Teroristů (0)
     \item \textbf{team\_rank} --- rank týmu v okamžik, kdy se zápas hrál\footnote{\url{https://www.hltv.org/news/16061/introducing-csgo-team-ranking}}
-    \item \textbf{run\_mean\_3\_months} --- klouzavý průměr týmu za poslední tři měsíce
 \end{itemize}
 
 \subsection{Omezení datového souboru}
 {\color{red}
 Všechny datové soubory obsahují pozorování o zápasech a charakteristikách hráčů od konce roku 2015 do začátku roku 2020. Jelikož pro finální modely je nutné datové soubory
 \textit{players.csv} a \textit{results.csv} sjednotit, může se stát, že se vytvoří zápas bez hráčů. Může také nastat situace, kdy zápas nebude mít přiřazených právě 
-deset různých hráčů. To může nastat když tým nemá v zápasu právě 5 hráčů. Tým může mít méně než 5 hráčů z toho důvodu, že je např.
+deset různých hráčů. Tým může mít méně než 5 hráčů z toho důvodu, že je např.
 amatérsky\footnote{neprofesionální, tím pádem nemusí mít všichni hráči na webovém portálu založená profil}. Více hráčů může hrát za tým v případě, že tým použil náhradníka.
-Zároveň je možné, že kvůli historickým změnám ve hře a na webovém portálu nebude možné získat všechny potřebné charakteristiky hráčů. Také je nutné kontrolovat,
-zda tým nehrál sám proti sobě. V případě všech zmíněných chyb jsou chybné záznamy odstraněny.
+Zároveň je možné, že kvůli historickým změnám ve hře a na webovém portálu nebude možné získat všechny potřebné charakteristiky hráčů. V případě všech zmíněných chyb jsou
+chybné záznamy odstraněny.
 }
 
 \section{Průzkumová analýza dat}
@@ -124,8 +125,8 @@ Pro logistickou regresi je důležité, aby prediktory nebyly lineárně závisl
 
 Z korelační matice \ref{fig:korelacni_matice} lze vyčíst, 
 {\color{red}
-že korelace mezi průměrem týmu za poslední tři měsíce a statistikami hráčů se blíží nule. Z toho plyne, že neexistuje lineární závislost mezi výkonem hráčů a 
-průměrným rankem týmu za poslední tři měsíce.
+že korelace mezi rankem týmu a charakteristikami hráčů se blíží nule. Z toho plyne, že neexistuje lineární závislost mezi výkonem hráče a 
+rankem týmu.
 }
 Zároveň je vidět silná korelace mezi prediktorem \textit{rating} a prediktory \textit{fkdiff}, \textit{deaths} a \textit{kills}.
 {\color{red}
@@ -143,14 +144,17 @@ Histogramy kvantitativních prediktorů umožní zobrazit jejich rozdělení.
     \label{fig:histogram_prediktoru}
 \end{figure}
 
-Histogram prediktorů \textit{rating}, \textit{hs}, \textit{kills} a \textit{deaths} má normální rozdělení a v proměnné se nenachází mnoho extrémních hodnot.
+{\color{red}
+Histogram prediktorů z obrázku \ref{fig:histogram_prediktoru} ukazuje, že přediktory \textit{rating}, \textit{hs}, \textit{kills} a \textit{deaths} mají normální rozdělení
+a v prediktorech se nenachází mnoho extrémních hodnot.
+}
 Prediktor \textit{fkdiff} má bimodální rozdělení. Prediktor \textit{assists} je 
 {\color{red}
 zešikmení
 }
 doprava, což značí velké množství odlehlých či extrémních hodnot. 
 {\color{red}
-Pro logistickou regresy není předpoklad normálního rozdělení prediktorů. Proto analýza slouží hlavně k získání povědomí o tom, 
+Pro logistickou regresi není předpoklad normálního rozdělení prediktorů Analýza proto slouží k získání povědomí o tom, 
 jakých hodnot každý prediktor nabývá a jaké je jejich rozdělení.
 }
 
@@ -167,16 +171,16 @@ tým může mít vyšší procento výhry na mapě, pokud začíná na straně C
     \label{fig:sloupcovy_graf_strany}
 \end{figure}
 
-Z obrázku \ref{fig:sloupcovy_graf_strany} je patrné, že týmu Astralis nevyhovuje začínat mapu Cobblestone na straně Counter-Terroristů. Tým eSuba nemá žádný vyhraný zápas
-při začínající straně Counter-Terroristů na mapě Train. Díky obrázku je vidět, že šanci na výhru ovlivňuje interakce mezi mapou a začínající stranou. Logistický model
-by měl tento vztah reflektovat. 
+Z obrázku \ref{fig:sloupcovy_graf_strany} je patrné, že týmu Astralis nevyhovuje začínat mapu Cobblestone na straně Counter-Terroristů. Tým Sprout má největší procento
+vyhraných zápasů pri počáteční straně jako Counter-Terroristé na mapě Vertigo. Nejmenší pak na mapě Mirage. Při pohledu na sloupcový graf pro všechny týmy lze vyčíst,
+že celkově počáteční strana nemá vliv. Díky obrázku \ref{fig:sloupcovy_graf_strany} je vidět, že šanci na výhru ovlivňuje interakce mezi mapou a začínající stranou. 
 }
 
 \section{Predikce výhry hráče}
 {\color{red}
 Cílem modelu je predikovat výhru zápasu pro jednotlivé hráče a identifikovat významné prediktory na odlišných mapách.
 }
-Prediktory se týkají pouze výkonu jednotlivých hráčů, model tedy pro předpověď výhry hráče nepoužívá statistiky spoluhráčů. Pro porovnání jsou vybrané mapy Mirage a Vertigo.
+Prediktory se týkají pouze výkonu jednotlivých hráčů, model tedy pro předpověď výhry hráče nepoužívá charakteristiky spoluhráčů. Pro porovnání jsou vybrané mapy Mirage a Vertigo.
 Mapa Mirage je jednou z nejvíce tradičních map a mapa Vertigo je naopak nejnovější přídavek do hry. Díky rozdílným modelům bude možné zkoumat, na čem pravděpodobnost výhry na 
 mapách záleží. Pro vytvoření logistického modelu je použito 80\% náhodně vybraných pozorování. Zbylých 20\% je použito pro
 {\color{red}
@@ -195,16 +199,16 @@ Z tabulky \ref{tab:player_model_Mirage} je vidět, že pro model není významn�
 
 {\color{red}
 Tabulka \ref{tab:player_model_Mirage_opt} představuje model se všemi významnými prediktory. Prediktory \textit{kills}, \textit{assists} a \textit{fkdiff} šanci na výhru
-hráče zvyšují. S každým zabitím hráč zvyšuje šanci na výhru zhruba 1,1 krát. Naopak prediktory \textit{deaths} a \textit{starting\_ct} šanci snižují. S každou hráčovou smrtí
-se šance na výhru snižuje zhruba 0,69 krát. Pokud hráči začnou mapu na straně Counter-Terroristů, jejich šance na výhru se sníží zhruba 0,81 krát. 
+hráče zvyšují. S každým zabitím hráč zvyšuje šanci na výhru zhruba 1,2 krát. Naopak prediktory \textit{deaths} a \textit{starting\_ct} šanci snižují. S každou hráčovou smrtí
+se šance na výhru snižuje zhruba 0,69 krát. Pokud hráči začnou mapu na straně Counter-Terroristů, jejich šance na výhru se sníží zhruba 0,82 krát. 
 Model lze zapsat také pomocí logistické funkce.
 }
 
 \begin{align}
     \begin{split}
-        &P(1 | X_{kills}, X_{assists}, X_{deaths}, X_{fkdiff}, X_{starting_ct}) = \frac{1}{1 + e^{-z}} \\
+        &P(1 | X_{kills}, X_{assists}, X_{deaths}, X_{fkdiff}, X_{starting_{ct}}) = \frac{1}{1 + e^{-z}} \\
         &z = 2,399 + 0,180*X_{kills} + 0,305*X_{assists} - 0,371*X_{deaths} + \\
-        &+ 0,017*X_{fkdiff} - 0,203*X_{starting_ct}
+        &+ 0,017*X_{fkdiff} - 0,203*X_{starting_{ct}}
     \end{split}
     \label{eq:player_funkce_Mirage}
 \end{align}
@@ -214,11 +218,11 @@ Predikce jsou provedené na validačním podmnožině a na optimalizovaném mode
 
 \input{kod/matice/player_matice_Mirage_opt.tex}
 
-Model predikoval správně 7 022 výher 
+Model predikoval správně 7 007 výher 
 {\color{red}
 ($\sim 81,4\%$)
 }
-a 6 709 proher
+a 6 689 proher
 {\color{red}
 ($\sim 77,2\%$). Celkově model určil správně 13 696 objektů ($\sim 79,3\%$).
 }
@@ -237,8 +241,8 @@ Pro hráče jsou na mapě Vertigo významné pouze prediktory \textit{kills}, \t
 jsou pro model nevýznamné. Nevýznamnost lze interpretovat tak, že pro hráče není důležité, na jaké straně mapu začnou hrát (prediktor  \textit{starting\_ct}), jak přesně
 střílí (prediktor \textit{hs})
 {\color{red}
-, ani jak týmově hraje na začátku kole (prediktor \textit{fkdiff}).
-}.
+, ani jak týmově hraje na začátku kola (prediktor \textit{fkdiff}).
+}
 Po vyřazení nevýznamných prediktorů má model následující významné parametry:
 
 \input{kod/modely/player_model_Vertigo_opt.tex}
@@ -305,40 +309,40 @@ výkon. Jelikož hráči mapu tak dobře strategicky neznají, jsou významné p
 
 \newpage
 \section{Predikce výhry týmu}
-Cílem modelů je predikovat výhru na základě agregovaných charakteristik hráče za tým v zápase. Charakteristiky jsou agregované buď pomocí aritmetického průměru,
+Cílem modelů je predikovat výhru na základě agregovaných charakteristik hráčů za tým na mapě. Charakteristiky jsou agregované buď pomocí aritmetického průměru,
 nebo pomocí průměru geometrického. Ostatní charakteristiky zápasu jako počáteční strana či výherní tým nejsou nijak změněny. V modelu pro predikci týmu vystupuje
-navíc prediktor \textit{run\_mean\_3\_months}, která ukazuje klouzavý průměr ranku daného týmu za poslední tři měsíce. Dále do modelu důležité zakomponovat interakci
-mezi počáteční stranou (\textit{starting\_ct}) a hranou mapou (\textit{map}). Příklad tabulky s agregovanými charakteristikami je v přiložené tabulce \ref{tab:data_agregovana}.
+navíc prediktor \textit{team\_rank}, který ukazuje rank daného týmu na mapě. Dále je v modelu zakomponovaná interakce
+mezi počáteční stranou (\textit{starting\_ct}) a hranou mapou (\textit{map}). Příklad tabulky s agregovanými charakteristikami je v příloze \ref{tab:data_agregovana}.
 Pro trénink a validaci je rozdělený původní datový soubor v poměru 8:2.
 
 \subsection{Celkový model}
 
 \input{kod/modely/team_model_All.tex}
 
-První vytvořený model je sestavený na celém trénovacím datovém souboru. Pro model jsou významné všechny agregované prediktory, tedy jmenovitě \textit{mean\_kills},
+První vytvořený model je sestavený na celém trénovacím datovém souboru. Pro model jsou významné všechny prediktory bez interakce, jmenovitě \textit{mean\_kills},
 \textit{mean\_assists}, \textit{mean\_deaths}, \textit{mean\_hs},\textit{mean\_fkdiff} a \textit{team\_rank}. Interakce mezi prediktory \textit{map} a
 \textit{starting\_ct} není významná u map Vertigo, Cache a Nuke.
 
 Agregované charakteristiky hráče \textit{mean\_kills} a \textit{mean\_assists} šanci na výhru týmu zvyšují. Pokud se průměr zabitých nepřátel za tým zvýší o jednotku,
-šance na výhru týmu se zvýší zhruba 3,95 krát. Pokud se průměr smrtí hráčů za tým zvýší o jednotku, šance na výhru se sníží zhruba 0,25 krát. Všechny statisticky
-významné interakce mezi prediktory \textit{map} a \textit{starting\_ct} naznačují, že je pro hráče nevýhodné začínat na straně Counter-Terroristů. Jejich šance
+šance na výhru týmu se zvýší zhruba 3,96 krát. Pokud se průměr smrtí hráčů za tým zvýší o jednotku, šance na výhru se sníží zhruba 0,25 krát. Všechny statisticky
+významné interakce mezi prediktory \textit{map} a \textit{starting\_ct} naznačují, že je pro tým nevýhodné začínat na straně Counter-Terroristů. Jejich šance
 na výhru se vždy sníží, a to nejvíce na mapě Overpass, kde se šance sníží zhruba 0,62 krát. Zajímavý je koeficient u prediktoru \textit{team\_rank}, který říká,
 že s růstem ranku týmu se šance na výhru sníží zhruba 0,99 krát. To lze vysvětlit tím, že lepší týmy hrají proti lepším týmům a jejich 
 šance na výhru je nižší. Model lze zapsat jako přepis funkce následovně:
 
 \begin{align}
     \begin{split}
-        P(1 | &X_{mean\_kills}, X_{mean\_assists}, X_{mean\_deaths}, X_{mean\_hs}, X_{mean\_fkdiff}, X_{run\_mean\_3\_months}, \\
+        P(1 | &X_{mean\_kills}, X_{mean\_assists}, X_{mean\_deaths}, X_{mean\_hs}, X_{mean\_fkdiff}, X_{team\_rank}, \\
               &X_{mapCache*starting\_ct}, X_{mapCobblestone*starting\_ct}, X_{mapDust2*starting\_ct}, X_{mapInferno*starting\_ct}, \\
               &X_{mapMirage*starting\_ct}, X_{mapNuke*starting\_ct}, X_{mapOverpass*starting\_ct}, X_{mapTrain*starting\_ct}, \\
               &X_{mapVertigo*starting\_ct}) = \frac{1}{1 + e^{-z}} \\
-        z = &1,360 + 1,360*X_{mean\_kills} + 0,138*X_{mean\_assists} - 1,392*X_{mean\_deaths} - \\
-            &- 0,512*X_{mean\_hs} -  0,053*X_{mean\_fkdiff} -0,001*X_{run\_mean\_3\_months} - \\
-            &- 0,058*X_{mapCache*starting\_ct} - 0,266*X_{mapCobblestone*starting\_ct} - \\
-            &- 0,322*X_{mapDust2*starting\_ct} - 0,302*X_{mapInferno*starting\_ct} - \\
-            & -0,301*X_{mapMirage*starting\_ct} - 0,246*X_{mapNuke*starting\_ct} - \\
-            &- 0,470*X_{mapOverpass*starting\_ct} - 0,175*X_{mapTrain*starting\_ct} + \\
-            &+ 0,098*X_{mapVertigo*starting\_ct})
+        z = &0,322 + 1,376*X_{mean\_kills} + 0,143*X_{mean\_assists} - 1,402*X_{mean\_deaths} - \\
+            &- 0,615*X_{mean\_hs} - 0,064*X_{mean\_fkdiff} - 0,001*X_{team\_rank} - \\
+            &- 0,040*X_{mapCache*starting\_ct} - 0,282*X_{mapCobblestone*starting\_ct} - \\
+            &- 0,318*X_{mapDust2*starting\_ct} - 0,272*X_{mapInferno*starting\_ct} - \\
+            &- 0,239*X_{mapMirage*starting\_ct} - 0,113*X_{mapNuke*starting\_ct} - \\
+            &- 0,418*X_{mapOverpass*starting\_ct} - 0,177*X_{mapTrain*starting\_ct} + \\
+            &+ 0,259*X_{mapVertigo*starting\_ct}
     \end{split}
 \end{align}
 
@@ -355,20 +359,29 @@ Všechny výkonnostní statistiky z matice záměn jsou identické v řádu seti
 vhodnější na predikci výher či proher.
 
 \subsection{Model pro tým Astralis}
-Tým Astralis je v době extrakce dat jedním z nejlepších týmu na světě. Vyhrál několik prestižních majorů a v roce 2022 se tým Astralis považuje za nejlepší tým
-ve hře \ac{CS:GO} všech dob.
+Tým Astralis je v době extrakce dat jedním z nejlepších týmu na světě. Vyhrál několik prestižních majorů a i v roce 2022 se tým Astralis považuje za nejlepší tým
+ve hře \ac{CSGO} všech dob.
 
 \input{kod/modely/team_model_Astralis.tex}
 
 Významné prediktory pro tým Astralis jsou pouze \textit{mean\_kills} a \textit{mean\_deaths}.  Pro tým není statistický významné, jaký je průměrný počet asistencí
-(\textit{mean\_assists}), jaké je průměrné procento zabití do hlav (\textit{mean\_hs}), jaký je průměrný výkon hráčů na začátku mapy (\textit{mean\_fkdiff}) ani klouzavý
-průměr ranku týmu za poslední tři měsíce (\textit{run\_mean\_3\_months}). Tým Astralis navíc neovlivňuje počáteční strana, mají tedy stejnou šanci na výhru bez ohledu na 
+(\textit{mean\_assists}), jaké je průměrné procento zabití do hlav (\textit{mean\_hs}), jaký je průměrný výkon hráčů na začátku mapy (\textit{mean\_fkdiff}) ani 
+rank týmu v daném zápase (\textit{team\_rank}). Tým Astralis navíc neovlivňuje počáteční strana, mají tedy stejnou šanci na výhru bez ohledu na 
 začínající stranu.
 
 \input{kod/modely/team_model_Astralis_opt.tex}
 
-Tabulka \ref{tab:team_model_Astralis_opt} obsahuje již optimální parametry pro model týmu Astralis. S každým dalším průměrným zabitím se zvýší šance
-týmu Astralis na výhru 3,85 krát. S každou další průměrnou smrtí se šance na výhru týmu sníží zhruba 0,23 krát.
+Tabulka \ref{tab:team_model_Astralis_opt} popisuje již optimální parametry pro model týmu Astralis. S každým dalším průměrným zabitím se zvýší šance
+týmu Astralis na výhru zhruba 3,85 krát. S každou další průměrnou smrtí se šance na výhru týmu sníží zhruba 0,23 krát. 
+Před začátkem zápasu, tedy při nulových prediktorech \textit{mean\_kills} a \textit{mean\_deaths}, je šance na výhru týmu Astralis zhruba 9,75 větší, než jeho
+prohra. Optimální model lze zapsat jako přepis rovnice.
+
+\begin{align}
+    \begin{split}
+        P(1 | &X_{mean\_kills},  X_{mean\_deaths}) = \frac{1}{1 + e^{-z}} \\
+        z = &2,277 + 1,349*X_{mean\_kills} - 1,457*X_{mean\_deaths}
+    \end{split}
+\end{align}
 
 \subsubsection{Matice záměn pro tým Astralis}
 
@@ -379,7 +392,7 @@ Optimální model správně predikoval 54 výher ($\sim 93,1\%$) a 108 proher ($
 \input{kod/matice_out/team_stats_Astralis_opt.tex}
 
 \subsection{Model pro tým Sprout}
-Tým Sprout byl v době extrakce dat čistě Německý tým a patřil k průměrnému profesionálnímu týmu. Na žebříčků týmu se obvykle řadil kolem třicátého místa.
+Tým Sprout byl v době extrakce dat čistě Německý tým a patřil k průměrným profesionálnímu týmům. Na žebříčků týmu se obvykle řadil kolem třicátého místa.
 
 \input{kod/modely/team_model_Sprout.tex}
 
@@ -389,8 +402,15 @@ jak jsou průměrné hráči dobří na začátku kola (\textit{mean\_fkdiff}) a
 
 \input{kod/modely/team_model_Sprout_opt.tex}
 
-S každým dalším průměrným zabitím (\textit{mean\_kills}) se šance na výhru týmu zvýší zhruba 4.95 krát. S každou další průměrnou smrtí (\textit{mean\_deaths})
-se šance na výhru sníží zhruba 0,23 krát
+S každým dalším průměrným zabitím (\textit{mean\_kills}) se šance na výhru týmu zvýší zhruba 4,95 krát. S každou další průměrnou smrtí (\textit{mean\_deaths})
+se šance na výhru sníží zhruba 0,23 krát. Ještě před začátkem zápasu je šance na prohru týmu zhruba 0.12 krát větší, než na jeho výhru.
+
+\begin{align}
+    \begin{split}
+        P(1 | &X_{mean\_kills},  X_{mean\_deaths}) = \frac{1}{1 + e^{-z}} \\
+        z = &-2,098 + 1,600*X_{mean\_kills} - 1,485*X_{mean\_deaths}
+    \end{split}
+\end{align}
 
 \subsubsection{Matice záměn pro tým Sprout}
 
@@ -403,12 +423,16 @@ Optimální model korektně předpověděl 54 výher ($\sim 93,1\%$) a 62 proher
 Jelikož je senzitivita modelu o zhruba 4 procentní body větší, model se více hodí na předpověď výhry týmu Sprout.
 
 \subsection{Interpretace výsledků}
-Pro celkový model jsou kromě interakcí $mapCache:starting\_ct$, $mapNuke:starting\_ct$ a $mapVertigo:starting\_ct$ významné prediktory. Největší vliv na výhru má
+Pro celkový model jsou kromě interakcí $mapCache:starting\_ct$, $mapNuke:starting\_ct$ a $mapVertigo:starting\_ct$ významné všechny prediktory. Největší vliv na výhru má
 prediktor \textit{mean\_deaths}, která šanci snižuje zhruba 0,25 krát. U všech významných kombinací mezi prediktory \textit{map} a \textit{starting\_ct} je koeficient
 záporný. To naznačuje, že tým má menší šanci na výhru, pokud mapu začne na straně Counter-Terroristů. Největší negativní vliv je u mapy Overpass, kde se šance
 sníží až 0,65 krát.
 
+Tým Astralis má před začátkem zápasu, tedy při nulových prediktorech, šanci na výhru zhruba 9,75 větší, než na prohru. Vzhledem k tomu, že tým byl dlouhodobě považován
+za jeden z nejlepších týmu na světě a v roce 2022 je mnoha hráči považován za nejlepší tým všech dob, je výsledek očekávaný. Tým Sprout má před začátkem zápasu 
+šanci na prohru zhruba 0,25 krát větší, než na výhru. Tým je průměrně umístěn na třicátém místě, díky čemuž hraje převážně proti nejlepším padesáti týmům na světě.
+
 Oba dva referenční modely mají stejné významné prediktory, a to \textit{mean\_kills} a \textit{mean\_deaths}. Pro žádný tým není významné, na jaké mapě začíná a jeho šanci
-na výhru to nijak neovlivňuje. Z modelů lze usoudit, že nejlepší tým na světě a průměrný profesionální tým má stejné významné prediktory. Rozdíl mezi referenčními modely a 
+na výhru to nijak neovlivňuje. Z modelů lze usoudit, že nejlepší tým na světě a průměrný profesionální tým má stejné významné prediktory.Rozdíl mezi referenčními modely a 
 celkovým modelem by bylo možné vysvětlit např. vlivem neprofesionálních týmů. Porovnávání neprofesionálních či polo-profesionálních týmu je složitější, jelikož týmy 
 hrají méně zápasů, a není zaručeno, že mají dostatek zápasu na každé mapě. Datový soubor by bylo nutné tím pádem velmi omezit.

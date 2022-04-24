@@ -80,10 +80,10 @@ Pro vypočtení počtu skupin má šířka skupiny následující tvar:
 
 \begin{equation}
     \label{eq:sirka_histogramu}
-    w = \frac{max(x) - min(x)}{k}
+    w = \frac{max(X) - min(X)}{k}
 \end{equation}
 
-kde $x$ je zobrazovaná proměnná, $k$ je počet skupin a $w$ je výsledná šířka intervalu. 
+kde $X$ je zobrazovaná proměnná, $k$ je počet skupin a $w$ je výsledná šířka intervalu. 
 Nutné je však podotknout, že není pravidlem se danými výpočty řídit a výsledný
 sloupcový graf je nutné přizpůsobit
 {\color{red}
@@ -97,14 +97,17 @@ konkrétnímu datovému souboru.
     \label{fig:histogram_mtcars_sturges}
 \end{figure}
 
+{\color{red}
+Obrázek \ref{fig:histogram_mtcars_sturges} ukazuje histogram proměnné míle za galon. Počet sloupců je vypočítán podle Sturgesova pravidla \ref{eq:sturgesovo_pravidlo} 
+}
+
 \subsection{Krabičkový graf}
 \subsubsection{Five-number summary}
 Five-number summary je číselná tabulka, která pomocí pěti různých čísel shrnuje seřazenou číselnou řadu. Základní statistický nástroj pro
 vytvoření takové tabulky jsou kvantily. Hodnota $P$-tého percentilu označuje číslo, které rozděluje seřazenou číselnou řadu na dva intervaly. 
 První interval obsahuje $P*100\%$ číselné řady a druhý analogicky $(1-P)*100\%$. Různé hodnoty percentilů mohou mít specifičtější pojmenování a značí se $Q_P$.
 Percentil $P = 0,5$ se označuje jako medián a rozděluje seřazenou číselnou řadu na polovinu. Percentily, kde $P = 0,25$ nebo $P = 0,75$, se označují
-jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použité při tvorbě Five-number summary tabulky. Jako příklad je
-uvedena následující tabulka
+jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použité při tvorbě Five-number summary tabulky.
 
 \begin{table}[H]
     \centering
@@ -118,6 +121,9 @@ uvedena následující tabulka
     \caption{\label{tab:five-number_summary}Five-number summary tabulka hmotnosti vozidla (lb/1000)}
 \end{table}
 
+{\color{red}
+Příkladem Five-number summary je tabulka \ref{tab:five-number_summary},
+}
 kde $Q_{0}$ a $Q_{1,00}$ označují minimum a maximum číselné řady. Kvartily $Q_{1}$, $Q_{2}$ (medián) a $Q_{3}$ jsou čísla, která rozděluji časovou řadu na na čtvrtiny. V prvním
 případě, tedy $Q_1 = Q_{0,25}$, je 25\% čísel menší než 1,513 a 75\% dat větší. Pro kvantil $Q_3 = Q_{0,75}$ je 75\% čísel menších než 3,61 a 25\% větších. $Q_{0,50}$ označuje medián.
 

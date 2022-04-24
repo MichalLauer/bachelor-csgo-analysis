@@ -9,6 +9,16 @@ save_bc_code <- function(.tibble, .file, .cap, .lab, .scale) {
     .file
   )
   
+  # Protože xtable neumí vypsat datum, převede se na text
+  if ("date" %in% colnames(.tibble)) {
+    .tibble <- .tibble |> 
+      mutate(
+        across(
+          .cols = "date",
+          .fns = as.character))
+    
+  }
+  
   xtable <- xtable(
     .tibble,
     caption = .cap,
