@@ -447,13 +447,13 @@ save_bc_model(.model = players.models$Mirage,
 save_bc_matrix(
   .matrix = players.matrixes$Mirage$table,
   .file = "player_matice_Mirage_opt.tex",
-  .cap = "Matice záměn pro mapu Mirage"
+  .cap = "Optimální matice záměn pro mapu Mirage"
 )
 
 save_bc_matrix_output(
   .object = players.matrixes$Mirage,
   .file = "player_stats_Mirage_opt.tex",
-  .cap = "Statistiky pro mapu Mirage z matice záměn"
+  .cap = "Optimální statistiky pro mapu Mirage z matice záměn"
 )
 ```
 
@@ -493,13 +493,13 @@ save_bc_model(.model = players.models$Vertigo,
 save_bc_matrix(
   .matrix = players.matrixes$Vertigo$table,
   .file = "player_matice_Vertigo_opt.tex",
-  .cap = "Matice záměn pro mapu Vertigo"
+  .cap = "Optimální matice záměn pro mapu Vertigo"
 )
 
 save_bc_matrix_output(
   .object = players.matrixes$Vertigo,
   .file = "player_stats_Vertigo_opt.tex",
-  .cap = "Statistiky pro mapu Vertigo z matice záměn"
+  .cap = "Optimální statistiky pro mapu Vertigo z matice záměn"
 )
 ```
 
