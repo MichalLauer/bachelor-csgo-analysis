@@ -294,11 +294,15 @@ Model se pak otestuje
 }
 na druhé množině dat, na kterou nebyl natrénovaný. Druhá množina se většinou nazývá \textit{validační} nebo \textit{testovací}. 
 {\color{red}
-Způsobů, jak datový soubor
+Pokud je následně model vyhodnocen např. pomocí matice záměn, jsou zachycené variace, na které model není připraven a lze tak objektivněji určit kvalitu
+modelu. Způsobů, jak datový soubor
 }
-rozdělit, je mnoho. Existuje například $k$-fold validace, kdy se trénovací množina dat rozdělí na $k$ podmnožin. Pro každou podmnožinu se pak vytvoří
-model, který se následně validuje na validační množině dat. Model s nejlepším výkonem je následně vybrán a použit.
-
+rozdělit, je mnoho. Existuje například $k$-fold validace, kdy se trénovací množina dat rozdělí na $k$ 
+{\color{red}
+náhodných podmnožin. Jedna podmnožina dat se použije pro validaci a zbylých $k-1$ podmnožin se požije pro trénování.
+Celý proces se opakuje $k$ krát, tedy každá podmnožina bude právě jednou použita pro testování. Výsledné statistiky lze zprůměrovat a použít jako hodnocení
+daného modelu.
+}
 
 \subsection{Matice záměn}
 Matice záměn je nástroj pro vyhodnocení predikcí modelu. Matice je o velikosti $2 \times 2$. Pro potřeby logistické regrese se matice skládá ze dvou řádku a dvou sloupců.
