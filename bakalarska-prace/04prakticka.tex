@@ -1,5 +1,4 @@
 \chapter{Praktická část}
-{\color{red}
 Cílem praktické části je prozkoumat dva typy modelů. První typ modelu bude predikovat výhru zápasu pro jednotlivé hráče přes kategorie map. Hlavním cílem 
 modelu bude identifikovat významné charakteristiky hráčů na vybraných mapách a následně rozdíly interpretovat. V druhém modelu bude zkoumaná výhra týmu v zápase.
 V tomto typu modelu se jako prediktory použijí agregované charakteristiky hráčů jednotlivých týmu. Pro agregaci bude použit buď aritmetický nebo geometrický průměr. 
@@ -12,9 +11,8 @@ Poté jsou vytvořené logistické regresní modely, jejich výstup je interpret
 Každý model je trénován na 80\% dat. Pro interpretaci významnosti prediktorů je použit Waldův test, který je součástí každé tabulky
 ve sloupci $Pr(>|z|)$. Alfa pro určení hladiny významnosti je stanovena jako $\alpha = 0.05$. Pro matici záměn je model otestován na validačních datech, 
 které činí 20\% původního datového souboru.
-}
 
-{\color{red}
+
 \section{Cíle analýzy}
 Cílem analýzy je vytvořit logistické modely pro předpověď výhry jak pro individuální hráče, tak pro tým. Jelikož se charakteristiky hráčů i zápasů mohou měnit dle mapy,
 na které se zápas odehrává, modely pro individuální hráče jsou tříděné přes kategorie map. Modely pro předpověď výhry týmu používají interakci mezi mapou a začínající
@@ -32,13 +30,11 @@ počet týmů velmi vysoký a bylo by komplikované
 porovnávat všechny týmy naráz. Z toho důvodu se budou hledat významné rozdíly mezi dvěma referenčními modely a jedním celkovým. Mezi modely bude porovnaná jak přesnost
 predikce, tak významnost parametrů. Jelikož je původní spojený datový soubor na úrovni hráčů, charakteristiky hráčů se musí agregovat na úroveň týmů a zápasů. Pro tuto
 agregaci bude použit aritmetický nebo geometrický průměr.
-}
+
 
 \section{Datové soubory}
 Dataset\footnote{https://www.kaggle.com/datasets/mateusdmachado/csgo-professional-matches} obsahuje čtyři 
-{\color{red}
 datové soubory,
-}
 které popisují zápasy ve hře
 \ac{CSGO}. K potřebám této bakalářské práce budou použity pouze soubory \textit{players.csv} a \textit{results.csv}. Datové soubory jsou následně spojeny do jedné tabulky,
 která obsahuje charakteristiky všech hráčů v právě jednom zápase, potřebné informace o zápase a výsledek (zda hráč zápas vyhrál či nikoliv). Data jsou následně dle potřeby
@@ -47,18 +43,12 @@ informace, které jsou již z probíhajících zápasů a z volby map. Tyto info
 zbylých dvou souborů (\textit{picks.csv}, \textit{economy.csv}) proto v bakalářské práci není použit.
 
 \subsection{Soubor players.csv}
-{\color{red}
 Datový soubor
-}
 \textit{players.csv} obsahuje 
-{\color{red}
 charakteristiky
-}
 jednotlivých hráčů v daném zápase. Původní datový soubor obsahuje 101 proměnných a 383 317 pozorování.
 V původním datovém souboru se jeden řádek (pozorování) rovná charakteristikám jednoho hráče za celý zápas
-{\color{red}
 , který se může odehrávat až na třech mapách.
-}
 Pro potřeby bakalářské práce je tak nutné získat charakteristiky hráčů
 za jednotlivé mapy. Proto je původní datový soubor transformován do podoby, kde se jedno pozorování rovná charakteristikám
 právě jednoho hráče na právě jedné mapě, a to bez ohledu na to, kolik map se v daném zápase hrálo. Jinak řečeno, transformovaný datový soubor nebere v potaz, zda
@@ -68,9 +58,7 @@ datovém souboru je v přiložené tabulce \ref{tab:players_csv_transformovano}.
 
 \newpage
 Transformovaný 
-{\color{red}
 datový soubor
-}
 má 10 proměnných. Interpretace je následující:
 \begin{itemize}
     \item \textbf{match\_id} --- identifikátor zápasu
@@ -104,14 +92,13 @@ na jedné mapě. Příklad je zobrazen v přiložené tabulce \ref{tab:results_c
 
 \newpage
 \subsection{Omezení datového souboru}
-{\color{red}
 Všechny datové soubory obsahují pozorování o zápasech a charakteristikách hráčů od konce roku 2015 do začátku roku 2020. Jelikož pro finální modely je nutné datové soubory
 \textit{players.csv} a \textit{results.csv} sjednotit, může se stát, že se vytvoří zápas bez hráčů. Může také nastat situace, kdy zápas nebude mít přiřazených právě 
 deset různých hráčů. Tým může mít méně než 5 hráčů z toho důvodu, že je např.
 amatérsky\footnote{neprofesionální, tím pádem nemusí mít všichni hráči na webovém portálu založená profil}. Více hráčů může hrát za tým v případě, že tým použil náhradníka.
 Zároveň je možné, že kvůli historickým změnám ve hře a na webovém portálu nebude možné získat všechny potřebné charakteristiky hráčů. V případě všech zmíněných chyb jsou
 chybné záznamy odstraněny.
-}
+
 
 \newpage
 \section{Průzkumová analýza dat}
@@ -129,14 +116,9 @@ Pro logistickou regresi je důležité, aby prediktory nebyly lineárně závisl
 \end{figure}
 
 Z korelační matice \ref{fig:korelacni_matice} lze vyčíst, 
-{\color{red}
 že korelace mezi rankem týmu a charakteristikami hráčů se blíží nule. Z toho plyne, že neexistuje lineární závislost mezi výkonem hráče a 
-rankem týmu.
-}
-Zároveň je vidět silná korelace mezi prediktorem \textit{rating} a prediktory \textit{fkdiff}, \textit{deaths} a \textit{kills}.
-{\color{red}
+rankem týmu. Zároveň je vidět silná korelace mezi prediktorem \textit{rating} a prediktory \textit{fkdiff}, \textit{deaths} a \textit{kills}.
 Jelikož by díky vysoké korelaci prediktorů vznikl problém multikolinearity, prediktor \textit{rating} ve finálních modelech není použit.
-}
 
 \newpage
 \subsection{Histogramy kvantitativních prediktorů}
@@ -149,22 +131,14 @@ Histogramy kvantitativních prediktorů umožní zobrazit jejich rozdělení.
     \label{fig:histogram_prediktoru}
 \end{figure}
 
-{\color{red}
 Histogram prediktorů z obrázku \ref{fig:histogram_prediktoru} ukazuje, že přediktory \textit{rating}, \textit{hs}, \textit{kills} a \textit{deaths} mají normální rozdělení
 a v prediktorech se nenachází mnoho extrémních hodnot.
-}
 Prediktor \textit{fkdiff} má bimodální rozdělení. Prediktor \textit{assists} je 
-{\color{red}
-zešikmení
-}
-doprava, což značí velké množství odlehlých či extrémních hodnot. 
-{\color{red}
+zešikmení doprava, což značí velké množství odlehlých či extrémních hodnot. 
 Pro logistickou regresi není předpoklad normálního rozdělení prediktorů Analýza proto slouží k získání povědomí o tom, 
 jakých hodnot každý prediktor nabývá a jaké je jejich rozdělení.
-}
 
 \newpage
-{\color{red}
 \subsection{Sloupcový graf výher přes počáteční stranu}
 Každá mapa funguje a vypadá jinak, což ovlivňuje mimo jiné i možné strategie. Proto jiné mapy mohou více vyhovovat jiným týmům. Toto způsobuje, že
 tým může mít vyšší procento výhry na mapě, pokud začíná na straně Counter-Terroristů.
@@ -179,12 +153,9 @@ tým může mít vyšší procento výhry na mapě, pokud začíná na straně C
 Z obrázku \ref{fig:sloupcovy_graf_strany} je patrné, že týmu Astralis nevyhovuje začínat mapu Cobblestone na straně Counter-Terroristů. Tým Sprout má největší procento
 vyhraných zápasů pri počáteční straně jako Counter-Terroristé na mapě Vertigo. Nejmenší pak na mapě Mirage. Při pohledu na sloupcový graf pro všechny týmy lze vyčíst,
 že celkově počáteční strana nemá vliv. Díky obrázku \ref{fig:sloupcovy_graf_strany} je vidět, že šanci na výhru ovlivňuje interakce mezi mapou a začínající stranou. 
-}
 
 \section{Predikce výhry hráče}
-{\color{red}
 Cílem modelu je predikovat výhru zápasu pro jednotlivé hráče a identifikovat významné prediktory na odlišných mapách.
-}
 Prediktory se týkají pouze výkonu jednotlivých hráčů, model tedy pro předpověď výhry hráče nepoužívá charakteristiky spoluhráčů. Pro porovnání jsou vybrané mapy Mirage a Vertigo.
 Mapa Mirage je jednou z nejvíce tradičních map a mapa Vertigo je naopak nejnovější přídavek do hry. Díky rozdílným modelům bude možné zkoumat, na čem pravděpodobnost výhry na 
 mapách záleží.
@@ -193,18 +164,14 @@ mapách záleží.
 
 \input{kod/modely/player_model_Mirage.tex}
 
-{\color{red}
 Z tabulky \ref{tab:player_model_Mirage} je vidět, že pro model není významný prediktor \textit{hs}. Prediktor je proto odebrán a model je znovu natrénován na stejných datech.
-}
 
 \input{kod/modely/player_model_Mirage_opt.tex}
 
-{\color{red}
 Tabulka \ref{tab:player_model_Mirage_opt} představuje model se všemi významnými prediktory. Prediktory \textit{kills}, \textit{assists} a \textit{fkdiff} šanci na výhru
 hráče zvyšují. S každým zabitím hráč zvyšuje šanci na výhru zhruba 1,2 krát. Naopak prediktory \textit{deaths} a \textit{starting\_ct} šanci snižují. S každou hráčovou smrtí
 se šance na výhru snižuje zhruba 0,69 krát. Pokud hráči začnou mapu na straně Counter-Terroristů, jejich šance na výhru se sníží zhruba 0,82 krát. 
 Model lze zapsat také pomocí logistické funkce.
-}
 
 \begin{align*}
     \begin{split}
@@ -220,47 +187,30 @@ Predikce jsou provedené na validačním podmnožině a na optimalizovaném mode
 
 \input{kod/matice/player_matice_Mirage_opt.tex}
 
-{\color{red}
 Z matice \ref{tab:player_matice_Mirage_opt} je vidět, že
-}
-model predikoval správně 7 007 výher 
-{\color{red}
-($\sim 81,4\%$)
-}
-a 6 689 proher
-{\color{red}
-($\sim 77,2\%$). Celkově model určil správně 13 696 objektů ($\sim 79,3\%$).
-}
+model predikoval správně 7 007 výher ($\sim 81,4\%$) a 6 689 proher ($\sim 77,2\%$). Celkově model určil správně 13 696 objektů ($\sim 79,3\%$).
 
 \input{kod/matice_out/player_stats_Mirage_opt.tex}
 
-{\color{red}
 Výsledné statistiky jsou shrnuté v tabulce \ref{tab:player_stats_Mirage_opt}. Díky vyšší specificitě modelu o zhruba $4\%$ je model
 vhodnější na predikci prohry hráče.
-}
 
 \subsection{Model pro mapu Vertigo}
 
 \input{kod/modely/player_model_Vertigo.tex}
 
-{\color{red}
 Parametry modelu jsou zobrazené v tabulce \ref{tab:player_model_Vertigo}
-}
 Pro hráče jsou na mapě Vertigo významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths}. Ostatní prediktory \textit{hs}, \textit{fkdiff} a \textit{starting\_ct}
 jsou pro model nevýznamné. Nevýznamnost lze interpretovat tak, že pro hráče není důležité, na jaké straně mapu začnou hrát (prediktor  \textit{starting\_ct}), jak přesně
 střílí (prediktor \textit{hs})
-{\color{red}
 , ani jak týmově hraje na začátku kola (prediktor \textit{fkdiff}).
-}
 Po vyřazení nevýznamných prediktorů má model následující významné parametry:
 
 \input{kod/modely/player_model_Vertigo_opt.tex}
 
-{\color{red}
 Parametry modelu jsou zobrazené v tabulce \ref{tab:player_model_Vertigo_opt}
 ParaJak lze očekávat, prediktory \textit{kills} a \textit{assists} šanci na výhru zvyšují, zatím co prediktor \textit{deaths} šanci na výhru sníží. S každým zabitím hráče
 na mapě Vertigo se jeho šance na výhru zvýší zhruba 1,2 krát a s každou smrtí se jeho šance na výhru sníží zhruba 0,70 krát.
-}
 Přepis funkce je pak následující:
 
 \begin{align*}
@@ -274,17 +224,8 @@ Přepis funkce je pak následující:
 
 \input{kod/matice/player_matice_Vertigo_opt.tex}
 
-{\color{red}
 Matice záměn pro optimalizovaný model je v tabulce \ref{tab:player_matice_Vertigo_opt}
-}
-Model úspěšné predikoval 430 výher
-{\color{red}
-($\sim 76,6\%$)
-}
-a 421 proher 
-{\color{red}
-($\sim 77,8\%$). Celkově model úspěšně predikoval 851 objektů ($\sim 77,2\%$)
-}
+Model úspěšné predikoval 430 výher ($\sim 76,6\%$) a 421 proher ($\sim 77,8\%$). Celkově model úspěšně predikoval 851 objektů ($\sim 77,2\%$)
 
 \input{kod/matice_out/player_stats_Vertigo_opt.tex}
 
@@ -294,20 +235,14 @@ Model se proto hodí spíše na predikci výher.
 \subsection{Interpretace výsledků}
 Model pro mapu Mirage je spolehlivější pro předpověď prohry hráče. Model pro mapu Vertigo má menší přesnost o zhruba 
 2 procentní body a hodí se spíše k predikci výher hráčů.
-{\color{red}
 Přehled výsledku přes ostatní mapy lze nalézt v příloze \ref{chap:ap02}
-}
 
 Pro logistický model mapy Mirage není významný prediktor \textit{hs}. Největší vliv na výhru hráče na mapě Mirage má počet jeho smrtí, kdy s každou další smrtí se šance
 na výhru zmenšuje zhruba 0,69 krát. Pro mapu Vertigo jsou významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths} a největší vliv na výhru hráče
-{\color{red}
 má také počet smrtí, kde s každou hráčovou smrtí šance klesne zhruba 0,7 krát.
-}
 
 Rozdíl
-{\color{red}
 ve významnosti prediktorů
-}
 by mohl být vysvětlen právě stářím jednotlivých map. Jelikož je mapa Mirage už tradiční mapou, mnoho hráčů na ní zná různé triky a strategie. To vede k tomu, že
 každý malý detail hraje velikou roli a většina vybraných prediktorů je pro model významná. Naopak mapa Vertigo je relativně nová a pro hráče je nejdůležitější individuální
 výkon. Jelikož hráči mapu tak dobře strategicky neznají, jsou významné pouze charakteristiky hráčů.
