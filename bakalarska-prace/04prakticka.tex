@@ -1,5 +1,5 @@
 \chapter{Praktická část}
-Cílem praktické části je prozkoumat dva typy modelů. První typ modelu bude predikovat výhru zápasu pro jednotlivé hráče přes kategorie map. Hlavním cílem 
+Cílem praktické části je prozkoumat dva typy modelů. První typ modelu bude predikovat výhru zápasu pro jednotlivé hráče pro jednotlivé mapy. Hlavním cílem 
 modelu bude identifikovat významné charakteristiky hráčů na vybraných mapách a následně rozdíly interpretovat. V druhém modelu bude zkoumaná výhra týmu v zápase.
 V tomto typu modelu se jako prediktory použijí agregované charakteristiky hráčů jednotlivých týmu. Pro agregaci bude použit buď aritmetický nebo geometrický průměr. 
 
@@ -8,9 +8,9 @@ se kterými se pracuje. Následně jsou použité grafy, které jsou představen
 do logistického modelu budou vstupovat. Také lze díky grafům získat povědomí, jak datový soubor vypadá a jaké mají proměnné rozdělení.
 Poté jsou vytvořené logistické regresní modely, jejich výstup je interpretován a různé modely jsou mezi sebou porovnány.
 
-Každý model je trénován na 80\% dat. Pro interpretaci významnosti prediktorů je použit Waldův test, který je součástí každé tabulky
-ve sloupci $Pr(>|z|)$. Alfa pro určení hladiny významnosti je stanovena jako $\alpha = 0.05$. Pro matici záměn je model otestován na validačních datech, 
-které činí 20\% původního datového souboru.
+Každý model je trénován na 80 \% dat. Pro interpretaci významnosti prediktorů je použit Waldův test, který je v posledním sloupci $Pr(>|z|)$ každé tabulky.
+Alfa, které se také říká hladina významnosti, je stanovena jako $\alpha = 0,05$. Pro matici záměn je model otestován na validačních datech, 
+které činí 20 \% původního datového souboru.
 
 
 \section{Cíle analýzy}
@@ -18,21 +18,23 @@ Cílem analýzy je vytvořit logistické modely pro předpověď výhry jak pro 
 na které se zápas odehrává, modely pro individuální hráče jsou tříděné přes kategorie map. Modely pro předpověď výhry týmu používají interakci mezi mapou a začínající
 stranou.
 
-Pro hráče budou sestaveny logistické modely z celého datového souboru přes kategorie map. Modely budou následně porovnány pomocí matice záměn
+Pro hráče budou sestaveny logistické modely z celého datového souboru přes kategorie map. Modely budou následně porovnány pomocí statistik vycházejících
+z matice záměn
 a bude porovnána významnost jejich parametrů. Modely budou porovnané na vybraných dvou mapách, a to Mirage a Vertigo. Mirage je klasický mapa, která je
 ve hře od jeho vydání. Vertigo je naopak nejnovější přírůstek do profesionální scény a hráči, v době extrakce datového souboru, mapu ještě plně strategicky 
-neznali. Modely budou porovnánu podle přesnosti predikce a podle různé významnosti prediktorů.
+neznali. Modely budou porovnánu podle přesnosti predikce a podle toho, jaké prediktory jsou pro model významné.
 
-Modely pro týmy budou sestavené prve z celého datového souboru a následně pro dva vybrané referenční týmy. První tým, pro který se vytvoří model, bude tým Astralis.
+Modely pro týmy budou sestavené nejprve z celého datového souboru a následně pro dva vybrané referenční týmy. První tým, pro který se vytvoří model, bude tým Astralis.
 Ten je dlouhodobě považován za jeden z nejlepších týmu na světě. Druhým týmem bude německý celek Sprout. Tým Sprout se řadí v době
 extrakce dat k profesionálnímu týmu s průměrným třicátým místem na světovém žebříčku. Modely jsou vytvořené pouze pro dva týmy z toho důvodu, že je celkový
 počet týmů velmi vysoký a bylo by komplikované 
 porovnávat všechny týmy naráz. Z toho důvodu se budou hledat významné rozdíly mezi dvěma referenčními modely a jedním celkovým. Mezi modely bude porovnaná jak přesnost
 predikce, tak významnost parametrů. Jelikož je původní spojený datový soubor na úrovni hráčů, charakteristiky hráčů se musí agregovat na úroveň týmů a zápasů. Pro tuto
-agregaci bude použit aritmetický nebo geometrický průměr.
+agregaci bude použit aritmetický nebo geometrický průměr. Aritmetický průměr bude použit u prediktorů, u kterých dává smysl jejich úhrn. Může to být například počet zabití 
+nebo počet smrtí. Geometrický průměr je pak použit u prediktorů, kde dává smysl součin, což může být například procento zabití nepřátel do hlavy.
 
 
-\section{Datové soubory}
+\section{Příprava dat}
 Dataset\footnote{https://www.kaggle.com/datasets/mateusdmachado/csgo-professional-matches} obsahuje čtyři 
 datové soubory,
 které popisují zápasy ve hře
@@ -43,9 +45,7 @@ informace, které jsou již z probíhajících zápasů a z volby map. Tyto info
 zbylých dvou souborů (\textit{picks.csv}, \textit{economy.csv}) proto v bakalářské práci není použit.
 
 \subsection{Soubor players.csv}
-Datový soubor
-\textit{players.csv} obsahuje 
-charakteristiky
+Datový soubor \textit{players.csv} obsahuje charakteristiky
 jednotlivých hráčů v daném zápase. Původní datový soubor obsahuje 101 proměnných a 383 317 pozorování.
 V původním datovém souboru se jeden řádek (pozorování) rovná charakteristikám jednoho hráče za celý zápas
 , který se může odehrávat až na třech mapách.
@@ -57,9 +57,7 @@ Transformovaný datový soubor má 10 proměnných a 634 650 pozorování. Pří
 datovém souboru je v přiložené tabulce \ref{tab:players_csv_transformovano}.
 
 \newpage
-Transformovaný 
-datový soubor
-má 10 proměnných. Interpretace je následující:
+Transformovaný datový soubor má 10 proměnných. Interpretace je následující:
 \begin{itemize}
     \item \textbf{match\_id} --- identifikátor zápasu
     \item \textbf{player\_id} --- identifikátor hráče
@@ -122,7 +120,6 @@ Jelikož by díky vysoké korelaci prediktorů vznikl problém multikolinearity,
 
 \newpage
 \subsection{Histogramy kvantitativních prediktorů}
-Histogramy kvantitativních prediktorů umožní zobrazit jejich rozdělení.
 
 \begin{figure}[H]
     \centering
@@ -131,7 +128,7 @@ Histogramy kvantitativních prediktorů umožní zobrazit jejich rozdělení.
     \label{fig:histogram_prediktoru}
 \end{figure}
 
-Histogram prediktorů z obrázku \ref{fig:histogram_prediktoru} ukazuje, že přediktory \textit{rating}, \textit{hs}, \textit{kills} a \textit{deaths} mají normální rozdělení
+Histogramy prediktorů z obrázku \ref{fig:histogram_prediktoru} ukazuje, že přediktory \textit{rating}, \textit{hs}, \textit{kills} a \textit{deaths} mají normální rozdělení
 a v prediktorech se nenachází mnoho extrémních hodnot.
 Prediktor \textit{fkdiff} má bimodální rozdělení. Prediktor \textit{assists} je 
 zešikmení doprava, což značí velké množství odlehlých či extrémních hodnot. 
@@ -188,11 +185,11 @@ Predikce jsou provedené na validačním podmnožině a na optimalizovaném mode
 \input{kod/matice/player_matice_Mirage_opt.tex}
 
 Z matice \ref{tab:player_matice_Mirage_opt} je vidět, že
-model predikoval správně 7 007 výher ($\sim 81,4\%$) a 6 689 proher ($\sim 77,2\%$). Celkově model určil správně 13 696 objektů ($\sim 79,3\%$).
+model predikoval správně 7 007 výher ($\sim 81,4 \%$) a 6 689 proher ($\sim 77,2 \%$). Celkově model určil správně 13 696 objektů ($\sim 79,3 \%$).
 
 \input{kod/matice_out/player_stats_Mirage_opt.tex}
 
-Výsledné statistiky jsou shrnuté v tabulce \ref{tab:player_stats_Mirage_opt}. Díky vyšší specificitě modelu o zhruba $4\%$ je model
+Výsledné statistiky jsou shrnuté v tabulce \ref{tab:player_stats_Mirage_opt}. Díky vyšší specificitě modelu o zhruba $4 \%$ je model
 vhodnější na predikci prohry hráče.
 
 \subsection{Model pro mapu Vertigo}
@@ -225,7 +222,7 @@ Přepis funkce je pak následující:
 \input{kod/matice/player_matice_Vertigo_opt.tex}
 
 Matice záměn pro optimalizovaný model je v tabulce \ref{tab:player_matice_Vertigo_opt}
-Model úspěšné predikoval 430 výher ($\sim 76,6\%$) a 421 proher ($\sim 77,8\%$). Celkově model úspěšně predikoval 851 objektů ($\sim 77,2\%$)
+Model úspěšné predikoval 430 výher ($\sim 76,6 \%$) a 421 proher ($\sim 77,8 \%$). Celkově model úspěšně predikoval 851 objektů ($\sim 77,2 \%$)
 
 \input{kod/matice_out/player_stats_Vertigo_opt.tex}
 
@@ -286,12 +283,12 @@ na výhru se vždy sníží, a to nejvíce na mapě Overpass, kde se šance sní
 \end{align*}
 
 \subsubsection{Matice záměn pro obecný model}
-Model je vyhodnocen na validační podmnožině, která činní 20\% původního datového souboru.
+Model je vyhodnocen na validační podmnožině, která činní 20 \% původního datového souboru.
 
 \input{kod/matice/team_matice_All.tex}
 
-Dle matice \ref{tab:team_matice_All} model úspěšně predikoval 8 274 výher ($\sim 94,1\%$) a 8 203 proher ($\sim 94,0\%$). Celkem
-model predikoval správně 16 477 objektů ($\sim 94,1\%$).
+Dle matice \ref{tab:team_matice_All} model úspěšně predikoval 8 274 výher ($\sim 94,1 \%$) a 8 203 proher ($\sim 94,0 \%$). Celkem
+model predikoval správně 16 477 objektů ($\sim 94,1 \%$).
 
 \input{kod/matice_out/team_stats_All.tex}
 
@@ -327,8 +324,8 @@ prohra. Optimální model lze zapsat jako přepis rovnice.
 
 \input{kod/matice/team_matice_Astralis_opt.tex}
 
-Optimální model správně predikoval dle matice \ref{tab:team_matice_Astralis_opt} 54 výher ($\sim 93,1\%$) a 108 proher ($\sim 93,9\%$). Celkem optimální
-model predikoval správně 162 objektů ($\sim 93,6\%$). Statistiky jsou zobrazené v tabulce \ref{tab:team_stats_Astralis_opt} níže.
+Optimální model správně predikoval dle matice \ref{tab:team_matice_Astralis_opt} 54 výher ($\sim 93,1 \%$) a 108 proher ($\sim 93,9 \%$). Celkem optimální
+model predikoval správně 162 objektů ($\sim 93,6 \%$). Statistiky jsou zobrazené v tabulce \ref{tab:team_stats_Astralis_opt} níže.
 
 \input{kod/matice_out/team_stats_Astralis_opt.tex}
 
@@ -358,8 +355,8 @@ zhruba 0.12 krát větší, než na jeho výhru.
 
 \input{kod/matice/team_matice_Sprout_opt.tex}
 
-Optimální model dle matice \ref{tab:team_matice_Sprout_opt} korektně předpověděl 54 výher ($\sim 93,1\%$) a 62 proher ($\sim 96,9\%$). Model úspěšně předpověděl
-celkem 116 objektů ($\sim 95,1\%$)
+Optimální model dle matice \ref{tab:team_matice_Sprout_opt} korektně předpověděl 54 výher ($\sim 93,1 \%$) a 62 proher ($\sim 96,9 \%$). Model úspěšně předpověděl
+celkem 116 objektů ($\sim 95,1 \%$)
 
 \input{kod/matice_out/team_stats_Sprout_opt.tex}
 

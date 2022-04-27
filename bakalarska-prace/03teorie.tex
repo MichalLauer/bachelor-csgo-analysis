@@ -29,7 +29,7 @@ se pak položí sledovaná statistika.
 Sledovat můžeme nejen četnost, ale i průměr či kteroukoli jinou statistiku, kterou bude možné na ose zobrazit.
 
 Nejčastější se pomocí sloupcového grafu porovnává absolutní četnost přes kategorie. Řazení kategorií se dále odvíjí podle toho, zda je
-daná proměnná ordinální či nominální. V případě nominální proměnné se sloupce řadí podle absolutní četnost, a to od nejvyšší po nejnižší.
+daná proměnná ordinální či nominální. V případě nominální proměnné se sloupce řadí podle absolutní četnosti, a to od nejvyšší po nejnižší.
 V případě ordinální proměnné se zachovává přirozené řazení. Příklad sloupcového grafu je zobrazen na obrázku 
 
 \ref{fig:sloupcovy_graf_mtcars}
@@ -49,8 +49,7 @@ Histogram je speciální typ sloupcového grafu. Hlavní rozdíl je v tom, že p
 Pro histogram je třeba data sloučit do skupin o určité šířce. Správný výběr počtu skupin je kritický, jelikož může velmi
 silně ovlivnit interpretaci dat. Pokud se vybere příliš malý počet skupin, data se seskupí a může se ztratit důležitý vztah. Pokud se ovšem
 vybere moc velký počet skupin, v datech bude obtížné najít nějaký obecný vztah či trend,
-
-viz obrázek \ref{fig:histogram_porovnani_mtcars}
+viz obrázek \ref{fig:histogram_porovnani_mtcars}.
 
 \begin{figure}[H]
     \centering
@@ -87,10 +86,10 @@ konkrétnímu datovému souboru.
     \label{fig:histogram_mtcars_sturges}
 \end{figure}
 
-Obrázek \ref{fig:histogram_mtcars_sturges} ukazuje histogram proměnné míle za galon. Počet sloupců je vypočítán podle Sturgesova pravidla \ref{eq:sturgesovo_pravidlo} 
+Obrázek \ref{fig:histogram_mtcars_sturges} ukazuje histogram proměnné míle za galon. Počet sloupců je vypočítán podle Sturgesova pravidla \ref{eq:sturgesovo_pravidlo}. 
 
 \subsection{Krabičkový graf}
-\subsubsection{Five-number summary}
+\subsubsection{Pětčíselné shrnutí}
 Five-number summary je číselná tabulka, která pomocí pěti různých čísel shrnuje seřazenou číselnou řadu. Základní statistický nástroj pro
 vytvoření takové tabulky jsou kvantily. Hodnota $P$-tého percentilu označuje číslo, které rozděluje seřazenou číselnou řadu na dva intervaly. 
 První interval obsahuje $P*100\%$ číselné řady a druhý analogicky $(1-P)*100\%$. Různé hodnoty percentilů mohou mít specifičtější pojmenování a značí se $Q_P$.
@@ -156,18 +155,19 @@ r = \frac{n \sum_{i=1}^n x_i y_i - \sum_{i=1}^n x_i \sum_{i=1}^n y_i}
 \end{equation*}
 
 Čím větší je absolutní hodnota korelace mezi proměnnou $X$ a $Y$, tím lépe lze pomocí jedné proměnné vysvětlit proměnnou druhou. Kladnost, případně zápornost korelace
-značí pak směr vztahu. Pokud je korelace záporná, tedy $r < 0$, s růstem jedné proměnné klesá proměnná druhá. Naopak při kladné korelace, tedy $r > 0$, s růstem
-jedné proměnné roste i druhá.
+pak značí směr vztahu, tedy zda proměnná $X$ s růstem proměnné $Y$ klesá či stoupá. Pokud je korelace záporná, tedy $r < 0$, s růstem jedné proměnné klesá proměnná druhá.
+Naopak při kladné korelace, tedy $r > 0$, s růstem jedné proměnné roste i druhá.
 
 Pokud se korelace $r$ vychází kolem nuly, neexistuje lineární závislost mezi proměnnou $X$ a $Y$. Důležité je také podotknout, že korelace neznamená kauzalitu. Pokud
 existuje kladná korelace mezi proměnnou $X$ a $Y$, neznamená to, že růst jedné proměnné způsobil růst druhé proměnné.  
 
 
 \subsubsection{Korelační matice}
-Korelační matice je nástroj, díky kterému lze zobrazit korelaci mezi více jak dvěma páry proměnných. Matice může být zobrazená pomocí grafu.
-Korelační matice je velmi užitečná v regresní analýze kvůli předpokladu nezávislosti vysvětlujících proměnných v analýze.
+Korelační matice je nástroj, díky kterému lze zobrazit korelaci mezi více jak dvěma páry proměnných. Matice může být zobrazená pomocí grafu a
+je velmi užitečná v regresní analýze kvůli předpokladu nezávislosti vysvětlujících proměnných.
 Pokud jsou při tvorbě modelu prediktory korelované, vzniká problém tzn. multikolinearity. Při multikolinearitě se zhoršuje přesnost a 
-vypovídací hodnota koeficientů \cite{kleinbaum_logistic_2010}. V takovém případě je potřeba zvýšit počet pozorování nebo z modelu určité prediktory odebrat. 
+vypovídací hodnota koeficientů \cite{kleinbaum_logistic_2010}. V takovém případě je potřeba zvýšit počet pozorování nebo z modelu jeden z vysoce 
+korelovaných prediktorů odebrat. 
 
 \begin{figure}[H]
     \centering
@@ -211,7 +211,7 @@ vzhledem k definovaným prediktorům lze zapsat jako
     P(Y = 1 \mid X_1, X_2, ..., X_k) = \frac{1}{1 + e^{- \left( \alpha + \sum_{i=1}^k \beta_i X_i \right) }},
 \end{equation}
 
-kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru. \cite{kleinbaum_logistic_2010}
+kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru \cite{kleinbaum_logistic_2010}.
 
 \subsection{Interpretace parametrů}
 Parametry $\alpha$ a $\beta_i$ značí logaritmus šance. $\alpha$ je logaritmus šance v případě, že všechny prediktory
@@ -225,54 +225,50 @@ Pro přechod z přirozeného logaritmu šance na šanci lze využít vztahu
 \textit{šance } = e^{\beta_i}.
 \end{equation*}
 
-Šance je podíl dvou pravděpodobností. Pokud bychom měli šanci jevu A oproti jevu B $2 : 1$, značí to, že výskyt jevu A je dvakrát tak pravděpodobný
-jako výskyt jevu B a jev A se vyskytuje ve $\frac{2}{3}$ případů. Šance $e^{\beta_i}$ tedy značí vztah mezi prediktorem $X_i$ a vysvětlovanou proměnnou $Y$. Pokud je
-šance kladná, značí to, že s vyšší hodnotou prediktoru $X_i$ se zvyšuje šance že $P(Y = 1)$. Pokud je naopak nižší, pravděpodobnost se zmenšuje. Pokud je potřeba
+Šance je podíl dvou pravděpodobností. Pokud bychom měli šanci jevu A oproti jevu B $2 : 1$, značí to, že výskyt jevu A je dvakrát pravděpodobnější než
+výskyt jevu B a jev A se vyskytuje ve $\frac{2}{3}$ případů. Šance $e^{\beta_i}$ tedy značí vztah mezi prediktorem $X_i$ a vysvětlovanou proměnnou $Y$. Pokud je
+šance kladná, značí to, že s vyšší hodnotou prediktoru $X_i$ se zvyšuje šance že $Y = 1$. Pokud je naopak nižší, pravděpodobnost se zmenšuje. Pokud je potřeba
 interpretovat pravděpodobnost jako šanci, použije se logitová funkce
 
 \begin{equation*}
     \label{eq:logitova_funkce}
-    \textit{šance jevu A} = \frac{p}{1 - p}
+    \textit{šance jevu A} = \frac{p}{1 - p},
 \end{equation*}
 
 kde $p$ je pravděpodobnost výskytu jevu A.
 
-\subsection{Největší pravděpodobnost}
+\subsection{Maximální pravděpodobnost}
 Parametry logistického modelu v rovnici \ref{eq:pravdepodobnost_y} jsou pouze teoretické a je třeba je odhadnout. Již vypočtené odhady
-se proto neznačí pouze $\beta$, ale $\hat{\beta}$. Pro odhad parametrů se při logistické regresi používá metoda maximální věrohodnosti. Pro výpočet
-maximální věrohodnosti se počítá věrohodnostní funkce $L(\theta)$ kde $\theta$ jsou parametry logistického modelu $\alpha, \beta_1, ..., \beta_k$.
+se proto neznačí pouze $\beta_i$, ale $\hat{\beta_i}$. Pro odhad parametrů se při logistické regresi používá metoda maximální věrohodnosti. Pro výpočet
+maximální věrohodnosti se používá věrohodnostní funkce $L(\theta)$ kde $\theta$ jsou parametry logistického modelu $\alpha, \beta_1, ..., \beta_k$.
 Pro logistickou regresi má věrohodnostní funkce tvar
 
 \begin{equation*}
     \label{eq:pravdepodobnostni_fce}
-    L(\theta) = \Pi_{l = 1}^{m_1} P(X_i) \Pi_{l = m_1 + 1}^{n} 1 - P(X_i),
+    L(\theta) = \Pi_{l = 1}^{m_1} P(X_i) \Pi_{l = m_1 + 1}^{n} (1 - P(X_i)),
 \end{equation*}
 
 kde $n$ je počet pozorování a $m_1$ je počet příznivých ($Y = 1$) jevů. Funkce předpokládá, že datový soubor je seřazen tak, že prvních $m_1$ výskytů
 jsou jevy příznivé. $P(X_i)$ poté značí logistickou funkci \ref{eq:logisticka_funkce}. Pro vypočtení optimálního parametru $\beta_i$ je nutné vypočítat
-maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lze tedy získat derivací funkce $L(\theta)$ vzhledem k parametru $\beta_i$. \cite{kleinbaum_logistic_2010}
+maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lze tedy získat derivací funkce $L(\theta)$ vzhledem k parametru $\beta_i$
+\cite{kleinbaum_logistic_2010}.
 
 \begin{equation*}
     \frac{\partial L(\theta)}{\partial \beta_i} = 0
 \end{equation*}
 
-
 \subsection{Křížová validace}
-Při tvorbě logistické modelu může dojít k takzvanému přeučení modelu. To znamená, že výsledný model je velmi přizpůsobený na data, ze kterých byl vytvořen, a nebude
+Při tvorbě logistického modelu může dojít k takzvanému přeučení modelu. To znamená, že výsledný model je velmi přizpůsobený na data, ze kterých byl vytvořen, a nebude
 připravený na náhodnou variaci, která může v nových datech nastat. Z tohoto důvodu se datový soubor rozděluje na dvě podmnožiny. Jedna podmnožina, většinou zvaná
 \textit{trénovací},
-slouží k sestavení a natrénování modelu. 
-Model se pak otestuje 
-
-na druhé množině dat, na kterou nebyl natrénovaný. Druhá množina se většinou nazývá \textit{validační} nebo \textit{testovací}. 
-Pokud je následně model vyhodnocen např. pomocí matice záměn, jsou zachycené variace, na které model není připraven a lze tak objektivněji určit kvalitu
-modelu. Způsobů, jak datový soubor
-
+slouží k sestavení a natrénování modelu. Model se pak otestuje
+na druhé množině dat, na které nebyl natrénovaný. Druhá množina dat se většinou nazývá \textit{validační} nebo \textit{testovací}. 
+Pokud je následně model použit na \textit{testovací} množinu dat a výsledky jsou vyhodnocené např. pomocí matice záměn, jsou zachycené variace,
+na které model není připraven a lze tak objektivněji určit kvalitu modelu. Způsobů, jak datový soubor
 rozdělit, je mnoho. Existuje například $k$-fold validace, kdy se trénovací množina dat rozdělí na $k$ 
-náhodných podmnožin. Jedna podmnožina dat se použije pro validaci a zbylých $k-1$ podmnožin se požije pro trénování.
+náhodných podmnožin. Jedna podmnožina dat se použije pro validaci a zbylých $k-1$ podmnožin se použije pro trénování.
 Celý proces se opakuje $k$ krát, tedy každá podmnožina bude právě jednou použita pro testování. Výsledné statistiky lze zprůměrovat a použít jako hodnocení
 daného modelu.
-
 
 \subsection{Matice záměn}
 Matice záměn je nástroj pro vyhodnocení predikcí modelu. Matice je o velikosti $2 \times 2$. Pro potřeby logistické regrese se matice skládá ze dvou řádku a dvou sloupců.
@@ -301,7 +297,7 @@ původních a predikovaných hodnot vznikne matice \ref{tab:matice_zamen}. Každ
     \item \textbf{Falešně negativní} --- počet predikcí rovných nule, kde byla původní hodnota rovná jedné.
 \end{itemize}
 
-Z matice lze následně vypočítat mnoho statistik. Pro vyhodnocení regresního modelu lze použít např. přesnost, která se vypočítá jako počet všech správných predikcí nad
+Z matice záměn lze následně vypočítat mnoho statistik. Pro vyhodnocení regresního modelu lze použít např. přesnost, která se vypočítá jako počet všech správných predikcí nad
 počtem všech provedených predikcí $n$.
 
 \begin{equation*}
@@ -309,27 +305,28 @@ počtem všech provedených predikcí $n$.
 \end{equation*}
 
 
-Přesnost říká, jaké procento objektů
-bylo klasifikováno správně. Pokud je ovšem poměr původních pozitivních a negativních hodnot velmi nevyrovnaný, tato statistika
-není vhodná. Toto se může stát například v lékařství při identifikaci nemocného pacienta. Zde většinou dochází k velkému nepoměru mezi počtem nemocných a počtem zdravých.
-V takovém případě lze použít statistiku zvanou senzitivita. Ta se rovná poměru správných pozitivních predikcí a úhrnu všech pozitivních predikcí
+Přesnost říká, jaké procento objektů bylo klasifikováno správně. Pokud je ovšem poměr původních pozitivních a negativních hodnot velmi nevyrovnaný,
+tato statistika není vhodná. V případě velké nevyrovnanosti predikovaných hodnot přesnost zkresluje schopnost modelu predikovat méně zastoupenou predikovanou hodnotu. 
+Toto se může stát například v lékařství při identifikaci nemocného pacienta. Zde většinou dochází k velkému nepoměru mezi počtem nemocných a počtem zdravých.
+V takovém případě lze použít statistiku zvanou senzitivita. Ta se rovná poměru správných pozitivních predikcí a úhrnu všech pozitivních predikcí, neboli
 
 \begin{equation*}
-    \textit{Senzitivita = } \frac{\text{Skutečně pozitivní}}{\text{Skutečně pozitivní} + \text{Falešně pozitivní}}
+    \textit{Senzitivita = } \frac{\text{Skutečně pozitivní}}{\text{Skutečně pozitivní} + \text{Falešně pozitivní}}.
 \end{equation*}
 
 Senzitivita tedy určuje poměr správně klasifikovaných pozitivních případů a všech pozitivně klasifikovaných případů. Pokud by bylo vhodné preferovat
-spíše negativní klasifikace, tedy zdravé pacienty, lze použit statistiku zvanou specificita.
+spíše negativní klasifikace, tedy zdravé pacienty, lze použit statistiku zvanou specificita a je definovaná jako
 
 \begin{equation*}
-    \textit{Specificita = } \frac{\text{Skutečně negativní}}{\text{Skutečně negativní} + \text{Falešně negativní}}
+    \textit{Specificita = } \frac{\text{Skutečně negativní}}{\text{Skutečně negativní} + \text{Falešně negativní}}.
 \end{equation*}
 
 \subsection{Testování hypotéz}
-Cílem testovací hypotézy je zjistit, zda neznámý parametr $\theta$ patří do nějaké prostoru $\Omega_0$. Testuje se nultá hypotéza, značená $H_0$, která říká, že
-parametr do prostoru $\theta$ do prostoru $\Omega_0$ patří. Proti ní je postavená hypotéza alternativní, značená $H_1$, která tvrdí, že parametr $\theta$ do prostoru
-$\Omega_0$ nepatří. Pro tetování je nutné zvolit parametr $\alpha$, který značí hodnotu chyby prvního druhu. Chyba prvního druhu stanovuje, jaká je pravděpodobnost, že se zamítne
-testovaná nultá hypotéza $H_0$ za předpokladu, že je $H_0$ pravdivá \cite{hardle_applied_2015}.
+Cílem testovací hypotézy je zjistit, zda neznámý parametr $\theta$ patří do nějaké prostoru $\Omega_0$. V případě testování parametrů logistického modelu bude
+neznámý parametr $\theta$ roven parametru $\beta_i$. Prostor $\Omega_0$ je pak populace. Testuje se nulová hypotéza, značená $H_0$, která říká, že
+parametr $\theta$ do prostoru $\Omega_0$ patří. Proti ní je postavená hypotéza alternativní, značená $H_1$, která tvrdí, že parametr $\theta$ do prostoru
+$\Omega_0$ nepatří. Pro testování je nutné zvolit parametr $\alpha$, který značí maximální hodnotu chyby prvního druhu. Chyba prvního druhu stanovuje, jaká je 
+pravděpodobnost, že se zamítne testovaná nulová hypotéza $H_0$ za předpokladu, že je $H_0$ pravdivá \cite{hardle_applied_2015}.
 
 \begin{equation*}
     P(\text{Zamítnutní }H_0 | H_0\text{ je platná}) = \alpha
@@ -366,4 +363,4 @@ a směrodatné chyby koeficientu $S_{\hat{\beta_i}}$
 
 
 Testové kritérium
-$Z$ má za platnosti nulové hypotézy normální $N(0, 1)$ a její mocnina, $Z^2$, má chi-kvadrát rozdělení s jedním stupněm volnosti \cite{kleinbaum_logistic_2010}.
+$Z$ má za platnosti nulové hypotézy normální $N(0, 1)$ a její druhá mocnina, $Z^2$, má chí-kvadrát rozdělení s jedním stupněm volnosti \cite{kleinbaum_logistic_2010}.
