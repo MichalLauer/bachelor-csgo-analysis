@@ -1,6 +1,10 @@
 save_bc_picture <- function(.graph, .file) {
+  
+  # Nastavení správné cesty
+  .file = paste(PICTURES_DIR, .file, sep = "/")
+  
   ggsave(
-    paste0(bc.pictures_dir, .file),
+    .file,
     plot = .graph,
     bg = "white",
     width = 150,

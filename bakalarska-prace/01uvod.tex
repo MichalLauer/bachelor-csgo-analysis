@@ -1,31 +1,23 @@
 \chapter{Úvod}
 Esport je označení pro elektronický sport. Obsahuje všechny důležité oblasti jako klasický sport (např. turnaje, trénování, investice, stadiony, či sázení)
-s tím rozdílem, že se hraje na nějakém zařízení (počítač, konzole, mobil).
-Je to jedno z nejrychleji rostoucích odvětví v dnešní době. V roce 2021 se tržní hodnota esportu pohybovala kolem jedné miliardy dolarů --- skoro
-50\% nárůst oproti roku 2020. Lze předpovídat, že v roce 2024 esport překročí hodnotu 1,5 miliardy dolarů \cite{gough_global_2022}.
-Dalo by se spekulovat, že za takový velký nárůst je zodpovědná 
-pandemie koronaviru v letech 2019 --- 2022. Kombinace rozvoje počítačových her a generace, která je na práci s počítačem zvyklá od mala, vzniklo výborně prostředí
-pro organický růst esportu. Většina populace byla nucena zůstat doma a to otevřelo dveře
+s tím rozdílem, že se hraje na nějakém zařízení (počítač, konzole, mobil). Je to jedno z nejrychleji rostoucích odvětví v dnešní době. V roce 2021 se tržní hodnota
+esportu pohybovala kolem jedné miliardy dolarů --- skoro 50\% nárůst oproti roku 2020. Lze předpovídat, že v roce 2024 esport překročí hodnotu 1,5 miliardy dolarů.
+Dalo by se spekulovat, že za takový velký nárůst je zodpovědná pandemie koronaviru v letech 2019 --- 2022. Kombinace rozvoje počítačových her a generace, která je na
+práci s počítačem zvyklá od mala, vzniklo výborné prostředí pro organický růst esportu. Většina populace byla nucena zůstat doma a to otevřelo dveře
 se s esportem přirozeně seznámit a nějakým způsobem se ho účastnit (online divák, soutěžící, organizátor, fanoušek...). 
-Hrají se různé kategorie her jako např. \ac{MOBA}\footnote{tzn. MOBA, kde hráči hrají v jedné online aréně proti sobě},
-karetní hry, \ac{FPS} či \ac{BR}.
 
-Práce se zaměřuje primární na esportový titul \acf{CSGO}. Je to jeden z nejdéle hraných esportových titulů, boří mnohé divácké
-rekordy\footnote{\scriptsize \url{https://www.invenglobal.com/articles/15619/csgo-major-breaks-viewership-records-overtakes-the-international}}
-a je aktuálně nejhranějším \ac{FPS} esport titulem. \ac{CSGO} vyniká nejen detailní herní mechanikou, ale i bohatou a zajímavou historií. Hra
-je unikátní i tím, že obsahuje mnoho různých módů\footnote{rozšíření, jak hru hrát. Každý mód má svá vlastní pravidla, mapy, či herní fanoušky}
-a hráč může strávit mnoho hodin pouze objevováním komunitních serverů, hraním klasických zápasů či trénováním na offline mapách.
+Práce se zaměřuje primárně na esportový titul \acf{CSGO}. Je to jeden z nejdéle hraných esportových titulů, boří mnohé divácké rekordy a je aktuálně nejhranějším
+\ac{FPS} esport titulem. \ac{CSGO} vyniká nejen detailní herní mechanikou, ale i bohatou a zajímavou historií. Hra je unikátní i tím, že obsahuje mnoho různých
+módů\footnote{rozšíření, jak hru hrát. Každý mód má svá vlastní pravidla, mapy, či herní fanoušky} a hráč může strávit mnoho hodin pouze objevováním komunitních
+serverů, hraním klasických zápasů či trénováním na offline mapách.
 
-Finální cíl práce je vytvořit logistický regresní model, který předpovídá výsledky zápasů. Pro tvorbu kvalitního modelu bude kritické zvolit vhodné prediktory.
-Pro predikci jsou použity prediktory, které se nacházejí ve dvou samostatných datových souborech\footnote{\url{https://www.kaggle.com/mateusdmachado/csgo-professional-matches}} 
-, které podávají informace jak už o zápase (např. datum, výsledek zápasu, výsledek jednotlivých map, typ zápasu) a hráčích 
-(např. charakteristiky za zápas). Pro potřeby logistického regresního modelu jsou datové soubory sjednocené.
-V práci bude vytvořeno více specializovaných regresních modelů. První typ modelu bude pracovat s charakteristikami hráče a bude předpovídat výhru v zápase pouze podle nich.
-Druhý typ modelu bude pomocí agregace dat predikovat výhru jak pro všechny týmy, tak pro vybrané referenční týmy.
+Finálním cílem práce je vytvořit vícerozměrný logistický regresní model, který předpovídá výsledky zápasů. Pro tvorbu kvalitního modelu bude kritické zvolit vhodné
+charakteristiky hráčů a jednotlivých týmů. Pro predikci jsou použity charakteristiky, které se nacházejí ve dvou samostatných datových
+souborech, které podávají informace jak už o zápase (např. datum, výsledek zápasu, výsledek jednotlivých map, typ zápasu) a hráčích (např. charakteristiky za zápas). 
 
-Výsledné modely jsou v závěru mezi sebou porovnány. Logistický model je preferován kvůli své snadné interpretaci a 
-dobré aplikaci v reálném životě. Výsledky představených modelů se dají využít v sázkových kancelářích
-a lze předpovídat, kdo vyhraje zápas, kdo vyhraje mapu, jaký hráč bude mít nejlepší charakteristiky, či zda si hráč koupí určitou zbraň.
+Predikovat výhru hráče a týmu je důležité zejména v oblasti sázení, která je s esportem úzce spojená. Přesné predikce a kvalitní modely sázkovým kancelářím umožňují
+stanovovat výhodné a profitabilní kurzy. Kurzy pak nemusí být pouze na výhru či prohru, ale např. na charakteristiky hráčů či hranou mapu. Logistický model je 
+pro predikci výhry či prohry preferován kvůli své snadné interpretaci.
 
 Práce je rozdělená do tří částí. V první části je kladen důraz na esport, jeho vývoj, a na esportový titul \ac{CSGO}. Jsou zde také představená pravidla, podle kterých se
 hra hraje. V druhé části jsou popsány popisné a statistické metody. Jsou zde definované grafické nástroje pro popis datového souboru, logistického

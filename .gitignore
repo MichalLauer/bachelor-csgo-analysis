@@ -16,8 +16,12 @@ analyza/analyza_cache/
 
 # Bakalářská práce
 bakalarska-prace/kod/
+bakalarska-prace/matice/
+bakalarska-prace/modely/
 bakalarska-prace/obrazky/
-bakalarska-prace/backup/
+bakalarska-prace/statistiky/
+bakalarska-prace/tabulky/
+bakalarska-prace/prace.pdf
 
 # LaTeX
 *.xmpi

@@ -1,53 +1,42 @@
-save_bc_matrix_output <- function(.object, .file, .cap, .use_cap = T) {
+save_bc_matrix_output <- function(.matrix, .file, .cap, .lab) {
   
-  .object <- bind_rows(
+  .matrix <- bind_rows(
     tibble(
-      statistika = names(.object$overall),
-      hodnota = .object$overall
+      statistika = names(.matrix$overall),
+      hodnota = .matrix$overall
     ),
     tibble(
-      statistika = names(.object$byClass),
-      hodnota = .object$byClass
+      statistika = names(.matrix$byClass),
+      hodnota = .matrix$byClass
     )
   ) |>
     filter(statistika %in% c("Accuracy", "Sensitivity", "Specificity")) |> 
     mutate(statistika = c("Přesnost", "Senzitivita", "Specificita"))
-
-  lab <- paste0(
-    "\\label{tab:",
-    str_remove_all(.file, ".tex$"),
-    "}"
-  )
   
-  .cap <- paste0(
-    lab,
-    .cap
-  )
-  
-  dir <- "../bakalarska-prace/kod/matice_out"
-  if (!dir.exists(dir)) dir.create(dir)
-  
-  .file <- paste0(
-    dir,
-    "/",
-    .file
-  )
-  
-  xtable <-  xtable(.object,
-                    caption = .cap,
-                    digits = 3)
-  
-  if (!.use_cap) {
-    xtable <-  xtable(.object,
-                      digits = 3)
+  # if .lab is NA, extract it from the file name
+  if (is.na(.lab)) {
+    .lab <- sprintf("tab:%s", str_extract(.file, "^.*(?=\\.tex)"))
   }
   
-
+  # Create xtable
+  xtable <- xtable(
+    .matrix,
+    caption = .cap,
+    label = .lab,
+    digits = 4 
+  )
+  
+  # pokud je .lab NULL, model nesmí mít label
+  if (is.null(.lab)) {
+    xtable <- xtable(.matrix,
+                     digits = 4 )
+  }
+  
+  # Setup file path
+  .file = paste(STATS_DIR, .file, sep = "/")
+  
   print(xtable,
-        compress = FALSE,
-        file = .file,
-        include.rownames = F,
-        table.placement = "H",
-        format.args = list(decimal.mark = ","))
+        file = .file
+  )
   
 }

@@ -69,9 +69,9 @@ kde $k$ je přibližný počet skupin a $n$ je počet pozorování. Druhý param
 Ta by měla být ideálně stejná pro všechny skupiny. Pokud tomu tak není, histogram může být zavádějící a čtenář mu nemusí plně rozumět.
 Pro vypočtení počtu skupin má šířka skupiny následující tvar:
 
-\begin{equation*}
+\begin{equation}
     w = \frac{max(X) - min(X)}{k}
-\end{equation*}
+\end{equation}
 
 kde $X$ je zobrazovaná proměnná, $k$ je počet skupin a $w$ je výsledná šířka intervalu. 
 Nutné je však podotknout, že není pravidlem se danými výpočty řídit a výsledný
@@ -89,12 +89,12 @@ konkrétnímu datovému souboru.
 Obrázek \ref{fig:histogram_mtcars_sturges} ukazuje histogram proměnné míle za galon. Počet sloupců je vypočítán podle Sturgesova pravidla \ref{eq:sturgesovo_pravidlo}. 
 
 \subsection{Krabičkový graf}
-\subsubsection{Pětčíselné shrnutí}
-Five-number summary je číselná tabulka, která pomocí pěti různých čísel shrnuje seřazenou číselnou řadu. Základní statistický nástroj pro
+\subsubsection{Pětičíselné shrnutí}
+Pětičíselné shrnutí je číselná tabulka, která pomocí pěti různých čísel shrnuje seřazenou číselnou řadu. Základní statistický nástroj pro
 vytvoření takové tabulky jsou kvantily. Hodnota $P$-tého percentilu označuje číslo, které rozděluje seřazenou číselnou řadu na dva intervaly. 
 První interval obsahuje $P*100\%$ číselné řady a druhý analogicky $(1-P)*100\%$. Různé hodnoty percentilů mohou mít specifičtější pojmenování a značí se $Q_P$.
 Percentil $P = 0,5$ se označuje jako medián a rozděluje seřazenou číselnou řadu na polovinu. Percentily, kde $P = 0,25$ nebo $P = 0,75$, se označují
-jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použité při tvorbě Five-number summary tabulky.
+jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použité při tvorbě tabulky.
 
 \begin{table}[H]
     \centering
@@ -105,17 +105,17 @@ jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použ
         1,513 & 2,58125 & 3,325 & 3,61 & 5,424\\
         \hline
     \end{tabular}
-    \caption{\label{tab:five-number_summary}Five-number summary tabulka hmotnosti vozidla (lb/1000)}
+    \caption{\label{tab:five-number_summary}pětičíselné shrnutí hmotnosti vozidla (lb/1000)}
 \end{table}
 
 
-Příkladem Five-number summary je tabulka \ref{tab:five-number_summary},
+Příkladem pětičíselné shrnutí je tabulka \ref{tab:five-number_summary},
 
 kde $Q_{0}$ a $Q_{1,00}$ označují minimum a maximum číselné řady. Kvartily $Q_{1}$, $Q_{2}$ (medián) a $Q_{3}$ jsou čísla, která rozděluji časovou řadu na na čtvrtiny. V prvním
 případě, tedy $Q_1 = Q_{0,25}$, je 25\% čísel menší než 1,513 a 75\% dat větší. Pro kvantil $Q_3 = Q_{0,75}$ je 75\% čísel menších než 3,61 a 25\% větších. $Q_{0,50}$ označuje medián.
 
 \subsubsection{Krabičkový graf}
-Krabičkový graf je grafické zobrazení a rozšíření Five-number summary tabulky. Kromě grafického zobrazení 
+Krabičkový graf je grafické zobrazení a rozšíření pětičíselné shrnutí. Kromě grafického zobrazení 
 pěti kvantilů  ukazuje odlehlé a extrémní hodnoty.
 V Krabičkovém grafu se také nachází obdélník, který ukazuje mezikvartilové rozpětí (IQR), tedy prostředních 50 \% dat. V obdélníku se také nachází černá čára, která značí medián.
 Z prostředního obdélníku vedou oběma směry čáry, jejichž konce značí hranici pro odlehlá pozorování. Pokud datový soubor neobsahuje žádná odlehlá pozorování, konec těchto čar
@@ -149,10 +149,10 @@ v intervalu $\langle Q_3 + 1,5IQR, Q_3 + 3IQR \rangle$.
 \subsubsection{Korelace}
 Korelace popisuje směr a sílu vztahu mezi dvěma proměnnými $X$ a $Y$. Značí se $r$ a nabývá hodnot $\langle -1; 1 \rangle$.
 
-\begin{equation*}
+\begin{equation}
 r = \frac{n \sum_{i=1}^n x_i y_i - \sum_{i=1}^n x_i \sum_{i=1}^n y_i}
 {\sqrt{(\overline{x^2} - \overline{x}^2)(\overline{y^2} - \overline{y}^2)}}
-\end{equation*}
+\end{equation}
 
 Čím větší je absolutní hodnota korelace mezi proměnnou $X$ a $Y$, tím lépe lze pomocí jedné proměnné vysvětlit proměnnou druhou. Kladnost, případně zápornost korelace
 pak značí směr vztahu, tedy zda proměnná $X$ s růstem proměnné $Y$ klesá či stoupá. Pokud je korelace záporná, tedy $r < 0$, s růstem jedné proměnné klesá proměnná druhá.
@@ -195,13 +195,13 @@ logistické regrese se tato funkce nazývá logistická a je definovaná jako
 Obor hodnot funkce je interval $\langle 0, 1 \rangle$. Proměnná $z$ je lineární kombinace prediktorů  $X_1, X_2, ..., X_k$, 
 jejich koeficientů $\beta_1, \beta_2, ..., \beta_k$ a parametru $\alpha$.
 
-\begin{equation*}
+\begin{equation}
     \label{eq:linearni_kombinace_z}
     \begin{split}
         z &= \alpha + \beta_1 X_1 + ... + \beta_2 X_2 +\beta_k X_k \\
           &= \alpha + \sum_{i=1}^k \beta_i X_i
     \end{split}
-\end{equation*}
+\end{equation}
 
 Mějme tedy binární vysvětlovanou proměnnou $Y$, u které hodnota $1$ značí výskyt jevu. Pravděpodobnost, že jev nastane
 vzhledem k definovaným prediktorům lze zapsat jako
@@ -213,6 +213,12 @@ vzhledem k definovaným prediktorům lze zapsat jako
 
 kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru \cite{kleinbaum_logistic_2010}.
 
+\subsection{Interakce mezi prediktory}
+Prediktory mohou na výslednou pravděpodobnost působit i dohromady, tzn. interakcí. Jako příklad lze uvést model, který predikuje \textit{nehodu} podle
+číselného prediktoru \textit{rychlost} a dichotomického prediktoru \textit{dálnice}. Šance na nehodu může být ovlivněná jak rychlostí, tak tím, zda je 
+řidič na dálnici. 
+
+
 \subsection{Interpretace parametrů}
 Parametry $\alpha$ a $\beta_i$ značí logaritmus šance. $\alpha$ je logaritmus šance v případě, že všechny prediktory
 jsou teoreticky rovné $0$. Parametr $\beta_i$ značí logaritmus šance pro prediktor $X_i$
@@ -221,19 +227,19 @@ V případě, že všechny prediktory jsou konstantní a prediktor $X_i$ se změ
 daného prediktoru, značená jedničkou, změní výslednou šanci právě o odhadnutý parametr $\beta$.
 Pro přechod z přirozeného logaritmu šance na šanci lze využít vztahu
 
-\begin{equation*}
+\begin{equation}
 \textit{šance } = e^{\beta_i}.
-\end{equation*}
+\end{equation}
 
 Šance je podíl dvou pravděpodobností. Pokud bychom měli šanci jevu A oproti jevu B $2 : 1$, značí to, že výskyt jevu A je dvakrát pravděpodobnější než
 výskyt jevu B a jev A se vyskytuje ve $\frac{2}{3}$ případů. Šance $e^{\beta_i}$ tedy značí vztah mezi prediktorem $X_i$ a vysvětlovanou proměnnou $Y$. Pokud je
 šance kladná, značí to, že s vyšší hodnotou prediktoru $X_i$ se zvyšuje šance že $Y = 1$. Pokud je naopak nižší, pravděpodobnost se zmenšuje. Pokud je potřeba
 interpretovat pravděpodobnost jako šanci, použije se logitová funkce
 
-\begin{equation*}
+\begin{equation}
     \label{eq:logitova_funkce}
     \textit{šance jevu A} = \frac{p}{1 - p},
-\end{equation*}
+\end{equation}
 
 kde $p$ je pravděpodobnost výskytu jevu A.
 
@@ -243,19 +249,19 @@ se proto neznačí pouze $\beta_i$, ale $\hat{\beta_i}$. Pro odhad parametrů se
 maximální věrohodnosti se používá věrohodnostní funkce $L(\theta)$ kde $\theta$ jsou parametry logistického modelu $\alpha, \beta_1, ..., \beta_k$.
 Pro logistickou regresi má věrohodnostní funkce tvar
 
-\begin{equation*}
+\begin{equation}
     \label{eq:pravdepodobnostni_fce}
     L(\theta) = \Pi_{l = 1}^{m_1} P(X_i) \Pi_{l = m_1 + 1}^{n} (1 - P(X_i)),
-\end{equation*}
+\end{equation}
 
 kde $n$ je počet pozorování a $m_1$ je počet příznivých ($Y = 1$) jevů. Funkce předpokládá, že datový soubor je seřazen tak, že prvních $m_1$ výskytů
 jsou jevy příznivé. $P(X_i)$ poté značí logistickou funkci \ref{eq:logisticka_funkce}. Pro vypočtení optimálního parametru $\beta_i$ je nutné vypočítat
 maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lze tedy získat derivací funkce $L(\theta)$ vzhledem k parametru $\beta_i$
 \cite{kleinbaum_logistic_2010}.
 
-\begin{equation*}
+\begin{equation}
     \frac{\partial L(\theta)}{\partial \beta_i} = 0
-\end{equation*}
+\end{equation}
 
 \subsection{Křížová validace}
 Při tvorbě logistického modelu může dojít k takzvanému přeučení modelu. To znamená, že výsledný model je velmi přizpůsobený na data, ze kterých byl vytvořen, a nebude
@@ -300,9 +306,9 @@ původních a predikovaných hodnot vznikne matice \ref{tab:matice_zamen}. Každ
 Z matice záměn lze následně vypočítat mnoho statistik. Pro vyhodnocení regresního modelu lze použít např. přesnost, která se vypočítá jako počet všech správných predikcí nad
 počtem všech provedených predikcí $n$.
 
-\begin{equation*}
+\begin{equation}
     \textit{Přesnost = } \frac{\text{Skutečně pozitivní} + \text{Skutečně negativní}}{n}
-\end{equation*}
+\end{equation}
 
 
 Přesnost říká, jaké procento objektů bylo klasifikováno správně. Pokud je ovšem poměr původních pozitivních a negativních hodnot velmi nevyrovnaný,
@@ -310,16 +316,16 @@ tato statistika není vhodná. V případě velké nevyrovnanosti predikovaných
 Toto se může stát například v lékařství při identifikaci nemocného pacienta. Zde většinou dochází k velkému nepoměru mezi počtem nemocných a počtem zdravých.
 V takovém případě lze použít statistiku zvanou senzitivita. Ta se rovná poměru správných pozitivních predikcí a úhrnu všech pozitivních predikcí, neboli
 
-\begin{equation*}
+\begin{equation}
     \textit{Senzitivita = } \frac{\text{Skutečně pozitivní}}{\text{Skutečně pozitivní} + \text{Falešně pozitivní}}.
-\end{equation*}
+\end{equation}
 
 Senzitivita tedy určuje poměr správně klasifikovaných pozitivních případů a všech pozitivně klasifikovaných případů. Pokud by bylo vhodné preferovat
 spíše negativní klasifikace, tedy zdravé pacienty, lze použit statistiku zvanou specificita a je definovaná jako
 
-\begin{equation*}
+\begin{equation}
     \textit{Specificita = } \frac{\text{Skutečně negativní}}{\text{Skutečně negativní} + \text{Falešně negativní}}.
-\end{equation*}
+\end{equation}
 
 \subsection{Testování hypotéz}
 Cílem testovací hypotézy je zjistit, zda neznámý parametr $\theta$ patří do nějaké prostoru $\Omega_0$. V případě testování parametrů logistického modelu bude
@@ -328,15 +334,15 @@ parametr $\theta$ do prostoru $\Omega_0$ patří. Proti ní je postavená hypot�
 $\Omega_0$ nepatří. Pro testování je nutné zvolit parametr $\alpha$, který značí maximální hodnotu chyby prvního druhu. Chyba prvního druhu stanovuje, jaká je 
 pravděpodobnost, že se zamítne testovaná nulová hypotéza $H_0$ za předpokladu, že je $H_0$ pravdivá \cite{hardle_applied_2015}.
 
-\begin{equation*}
+\begin{equation}
     P(\text{Zamítnutní }H_0 | H_0\text{ je platná}) = \alpha
-\end{equation*}
+\end{equation}
 
 Existuje také chyba druhého typu $\beta$, která značí pravděpodobnost nezamítnutí neplatné nulové hypotézy.
 
-\begin{equation*}
+\begin{equation}
     P(\text{Nezamítnutí }H_0 | H_0\text{ je neplatná}) = \beta
-\end{equation*}
+\end{equation}
 
 Chyby nelze eliminovat a je nutné je s nimi při testování hypotézy počítat. Pro parametr $\alpha$ se ustálily hodnoty $0.1, 0.05$ a $0.01$.
 
@@ -357,9 +363,9 @@ testové kritérium
 $Z$, který se vypočítá jako poměr testovaného parametru $\beta_i$
 a směrodatné chyby koeficientu $S_{\hat{\beta_i}}$
 
-\begin{equation*}
+\begin{equation}
     Z = \frac{\hat{\beta_i}}{S_{\hat{\beta_i}}}.
-\end{equation*}
+\end{equation}
 
 
 Testové kritérium
