@@ -1,32 +1,4 @@
 
-\subsubsection{Matice záměn pro mapu Vertigo}
-
-\input{kod/matice/player_matice_Vertigo_opt.tex}
-
-Matice záměn pro optimalizovaný model je v tabulce \ref{tab:player_matice_Vertigo_opt}
-Model úspěšné predikoval 430 výher ($\sim 76,6 \%$) a 421 proher ($\sim 77,8 \%$). Celkově model úspěšně predikoval 851 objektů ($\sim 77,2 \%$)
-
-\input{kod/matice_out/player_stats_Vertigo_opt.tex}
-
-Z tabulky statistik \ref{tab:player_stats_Vertigo_opt} je vidět nepatrně lepší výkon při predikci výher (statistika Senzitivita) o necelé jedno procento.
-Model se proto hodí spíše na predikci výher.
-
-\subsection{Interpretace výsledků}
-Model pro mapu Mirage je spolehlivější pro předpověď prohry hráče. Model pro mapu Vertigo má menší přesnost o zhruba 
-2 procentní body a hodí se spíše k predikci výher hráčů.
-Přehled výsledku přes ostatní mapy lze nalézt v příloze \ref{chap:ap02}
-
-Pro logistický model mapy Mirage není významný prediktor \textit{hs}. Největší vliv na výhru hráče na mapě Mirage má počet jeho smrtí, kdy s každou další smrtí se šance
-na výhru zmenšuje zhruba 0,69 krát. Pro mapu Vertigo jsou významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths} a největší vliv na výhru hráče
-má také počet smrtí, kde s každou hráčovou smrtí šance klesne zhruba 0,7 krát.
-
-Rozdíl
-ve významnosti prediktorů
-by mohl být vysvětlen právě stářím jednotlivých map. Jelikož je mapa Mirage už tradiční mapou, mnoho hráčů na ní zná různé triky a strategie. To vede k tomu, že
-každý malý detail hraje velikou roli a většina vybraných prediktorů je pro model významná. Naopak mapa Vertigo je relativně nová a pro hráče je nejdůležitější individuální
-výkon. Jelikož hráči mapu tak dobře strategicky neznají, jsou významné pouze charakteristiky hráčů.
-
-\newpage
 \section{Predikce výhry týmu}
 Cílem modelů je predikovat výhru na základě agregovaných charakteristik hráčů za tým na mapě. Charakteristiky jsou agregované buď pomocí aritmetického průměru,
 nebo pomocí průměru geometrického. Ostatní charakteristiky zápasu jako počáteční strana či výherní tým nejsou nijak změněny. V modelu pro predikci týmu vystupuje
