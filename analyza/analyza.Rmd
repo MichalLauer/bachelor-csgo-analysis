@@ -662,8 +662,28 @@ for (.map in setdiff(maps, c("Mirage", "Vertigo"))) {
 
 ```
 
+# Model pro všechny týmy
 
+## Optimalizovaný model
+```{r }
+global.model <- 
+  glm(
+    formula = map_winner ~ mean_kills + mean_assists + mean_deaths +
+      mean_hs + mean_fkdiff + team_rank + starting_ct:map,
+    data = data.aggregated,
+    family = binomial
+  )
+```
 
+### Uložení LaTeX tabulky
+```{r }
+save_bc_model(
+  .model = global.model,
+  .file = "Global_model.tex",
+  .cap = "Výstup z programu R pro logistický model pro všechny týmy",
+  .lab = NA
+)
+```
 
 
 

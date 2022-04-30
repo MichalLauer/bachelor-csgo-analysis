@@ -77,14 +77,14 @@ na jedné mapě. Příklad je zobrazen v přiložené tabulce \ref{tab:results_c
     \item \textbf{team\_rank} --- rank týmu v okamžik, kdy se zápas hrál\footnote{\url{https://www.hltv.org/news/16061/introducing-csgo-team-ranking}}
 \end{itemize}
 
-\subsection{Datový soubor pro modelování} \label{spojent_datovy_soubor}
+\subsection{Datový soubor pro modelování} \label{sec:spojent_datovy_soubor}
 Pro modelování je nutné vytvořit jeden datový soubor, na kterém bude model sestaven. Datový model je získán spojením představených souborů
 \textit{players.csv} a \textit{results.csv}. Datové soubory jsou spojené pomocí proměnných \textit{match\_id}, \textit{team} a \textit{map}. Při propojování
 souborů jsou smazané záznamy, které nejsou reprezentovány v obou souborech. To znamená, že charakteristiky hráčů v zápase, pro který není výsledek, jsou smazané.
 Stejně jsou smazané zápasy, pro které nejsou zadané charakteristiky hráčů. Spojený datový soubor je pak na úrovni jednotlivých hráčů a ukazuje jejich charakteristiky
 v právě jednom zápase na právě jedné mapě. Příklad spojeného datového souboru je v přiložené tabulce \ref{tab:data_spojena}.
 
-\subsection{Agregovaný datový soubor}
+\subsection{Agregovaný datový soubor} \label{sec:agregovany_datovy_soubor}
 Spojený datový soubor obsahuje charakteristiky hráčů na úrovni jednotlivých zápasů. To je vhodné pro první logistický model, který se zabývá predikcí a identifikací
 významných prediktorů pro individuální hráče. Pro predikci výhry týmu a identifikaci významných prediktorů pro tým je nutné data agregovat. Agregace charakteristik, u kterých
 to dává věcný smysl, je použit aritmetický průměr. Pro statistiky, u kterých dává věcný smysl násobení, je použit průměr geometrický. Jako příklad lze uvést charakteristika 
@@ -277,3 +277,61 @@ jsou významné všechny prediktory. To z mapy Vertigo, která má významné po
 pro všechny mapy, které se hrají už nějakou dobu, je důležitý jak výkon hráče, tak sehranost týmu. Jelikož je mapa Vertigo nová, je na začátku svého
 vývoje a pro hráče je stále relativně neznámá. Jelikož je na mapě Vertigo méně významná sehranost, zkušenosti a spolupráce v týmu, měli by jí preferovat
 nové či semi-profesionální týmy. Mapu také mohou využít profesionální týmy, které spoléhají spíše na individuální výkon hráčů, než na týmové strategie.
+
+\newpage
+\section{Predikce výhry týmu}
+Cílem modelů je predikovat výhru na základě agregovaných charakteristik hráčů za tým na mapě. Tento typ modelu se hodí zejména v sázkových kancelářích. Díky referenčním
+modelům lze určit šanci, že určitý tým vyhraje. To umožní kancelářím stanovit výdělečný kurz pro zápas ještě před tím, než vůbec začal. Matematický přepis modelu
+je následující:
+
+\begin{align}
+    \begin{split}
+        P(1 | &X_{mean\_kills}, X_{mean\_assists}, X_{mean\_deaths}, X_{mean\_hs}, X_{mean\_fkdiff}, X_{team\_rank}, \\
+              &X_{mapCache*starting\_ct}, X_{mapCobblestone*starting\_ct}, X_{mapDust2*starting\_ct}, X_{mapInferno*starting\_ct}, \\
+              &X_{mapMirage*starting\_ct}, X_{mapNuke*starting\_ct}, X_{mapOverpass*starting\_ct}, X_{mapTrain*starting\_ct}, \\
+              &X_{mapVertigo*starting\_ct}) = \frac{1}{1 + e^{-z}} \\
+        z = &\beta_0 + \beta_1*X_{mean\_kills} + \beta_2*X_{mean\_assists} + \beta_3*X_{mean\_deaths} + \\
+            &+ \beta_4*X_{mean\_hs} + \beta_5*X_{mean\_fkdiff} + \beta_6*X_{team\_rank} + \\
+            &+ \beta_7*X_{mapCache*starting\_ct} + \beta_8*X_{mapCobblestone*starting\_ct} + \\
+            &+ \beta_9*X_{mapDust2*starting\_ct} +\beta_{10}*X_{mapInferno*starting\_ct} + \\
+            &+ \beta_{11}*X_{mapMirage*starting\_ct} + \beta_{12}*X_{mapNuke*starting\_ct} + \\
+            &+ \beta_{13}*X_{mapOverpass*starting\_ct} + \beta_{14}*X_{mapTrain*starting\_ct} + \\
+            &+ \beta_{15}*X_{mapVertigo*starting\_ct}
+    \end{split}
+\end{align}
+
+Prediktory \textit{mean\_kills}, \textit{mean\_assists}, \textit{mean\_deaths}, \textit{mean\_hs}, \textit{mean\_fkdiff} jsou průměrné charakteristiky hráčů v týmu na dané mapě
+v daném zápase a lze očekávat, že šanci na výhru ovlivňují. Dále do modelu vstupuje prediktor \textit{team\_rank}, který značí rank týmu v daném zápase. Model následně
+obsahuje interakci mezi proměnnou \textit{map} a \textit{starting\_ct}. Interakce je z toho důvodu, že vliv počáteční strany je na každé mapě jiný. Přesněji jsou prediktory
+definované v sekci \ref{sec:agregovany_datovy_soubor}
+
+\subsection{Celkový model}
+
+\input{modely/Global_model.tex}
+
+Parametry celkového modelu se nachází v tabulce \ref{tab:Global_model}. První vytvořený model je sestavený na celém trénovacím datovém souboru. Pro model jsou
+významné všechny prediktory bez interakce, jmenovitě \textit{mean\_kills}, \textit{mean\_assists}, \textit{mean\_deaths}, \textit{mean\_hs},\textit{mean\_fkdiff} a
+\textit{team\_rank}. Interakce mezi prediktory \textit{map} a \textit{starting\_ct} není významná u map Vertigo, Cache a Nuke.
+
+Agregované charakteristiky hráče \textit{mean\_kills} a \textit{mean\_assists} šanci na výhru týmu zvyšují. Pokud se průměr zabitých nepřátel za tým zvýší o jednotku,
+šance na výhru týmu se zvýší zhruba 3,96 krát. Pokud se průměr smrtí hráčů za tým zvýší o jednotku, šance na výhru se sníží zhruba 0,25 krát. Všechny statisticky
+významné interakce mezi prediktory \textit{map} a \textit{starting\_ct} naznačují, že je pro tým nevýhodné začínat na straně Counter-Terroristů. Jejich šance
+na výhru se vždy sníží, a to nejvíce na mapě Overpass, kde se šance sníží zhruba 0,62 krát. Zajímavý je koeficient u prediktoru \textit{team\_rank}, který říká,
+že s růstem ranku týmu se šance na výhru sníží zhruba 0,99 krát. To lze vysvětlit tím, že lepší týmy hrají proti lepším týmům a jejich 
+šance na výhru je nižší. Model lze zapsat jako přepis funkce následovně:
+
+\begin{align}
+    \begin{split}
+        P(1 | &X_{mean\_kills}, X_{mean\_assists}, X_{mean\_deaths}, X_{mean\_hs}, X_{mean\_fkdiff}, X_{team\_rank}, \\
+              &X_{mapCache*starting\_ct}, X_{mapCobblestone*starting\_ct}, X_{mapDust2*starting\_ct}, X_{mapInferno*starting\_ct}, \\
+              &X_{mapMirage*starting\_ct}, X_{mapNuke*starting\_ct}, X_{mapOverpass*starting\_ct}, X_{mapTrain*starting\_ct}, \\
+              &X_{mapVertigo*starting\_ct}) = \frac{1}{1 + e^{-z}} \\
+        z = &0,4135 + 1,376*X_{mean\_kills} + 0,143*X_{mean\_assists} - 1,402*X_{mean\_deaths} - \\
+            &- 0,615*X_{mean\_hs} - 0,064*X_{mean\_fkdiff} - 0,001*X_{team\_rank} - \\
+            &- 0,040*X_{mapCache*starting\_ct} - 0,282*X_{mapCobblestone*starting\_ct} - \\
+            &- 0,318*X_{mapDust2*starting\_ct} - 0,272*X_{mapInferno*starting\_ct} - \\
+            &- 0,239*X_{mapMirage*starting\_ct} - 0,113*X_{mapNuke*starting\_ct} - \\
+            &- 0,418*X_{mapOverpass*starting\_ct} - 0,177*X_{mapTrain*starting\_ct} + \\
+            &+ 0,259*X_{mapVertigo*starting\_ct}
+    \end{split}
+\end{align}

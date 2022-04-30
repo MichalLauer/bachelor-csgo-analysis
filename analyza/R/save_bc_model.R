@@ -23,7 +23,8 @@ save_bc_model <- function(.model, .file, .cap, .lab) {
   .file = paste(MODELS_DIR, .file, sep = "/")
   
   print(xtable,
-        file = .file
+        file = .file,
+        include.rownames = T
   )
 }
 

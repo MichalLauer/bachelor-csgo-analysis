@@ -1,40 +1,7 @@
 
-\section{Predikce výhry týmu}
-Cílem modelů je predikovat výhru na základě agregovaných charakteristik hráčů za tým na mapě. Charakteristiky jsou agregované buď pomocí aritmetického průměru,
-nebo pomocí průměru geometrického. Ostatní charakteristiky zápasu jako počáteční strana či výherní tým nejsou nijak změněny. V modelu pro predikci týmu vystupuje
-navíc prediktor \textit{team\_rank}, který ukazuje rank daného týmu na mapě. Dále je v modelu zakomponovaná interakce
-mezi počáteční stranou (\textit{starting\_ct}) a hranou mapou (\textit{map}). Příklad tabulky s agregovanými charakteristikami je v příloze \ref{tab:data_agregovana}.
 
-\subsection{Celkový model}
 
-\input{kod/modely/team_model_All.tex}
 
-Parametry celkového modelu se nachází v tabulce \ref{tab:team_model_All}. První vytvořený model je sestavený na celém trénovacím datovém souboru. Pro model jsou
-významné všechny prediktory bez interakce, jmenovitě \textit{mean\_kills}, \textit{mean\_assists}, \textit{mean\_deaths}, \textit{mean\_hs},\textit{mean\_fkdiff} a
-\textit{team\_rank}. Interakce mezi prediktory \textit{map} a \textit{starting\_ct} není významná u map Vertigo, Cache a Nuke.
-
-Agregované charakteristiky hráče \textit{mean\_kills} a \textit{mean\_assists} šanci na výhru týmu zvyšují. Pokud se průměr zabitých nepřátel za tým zvýší o jednotku,
-šance na výhru týmu se zvýší zhruba 3,96 krát. Pokud se průměr smrtí hráčů za tým zvýší o jednotku, šance na výhru se sníží zhruba 0,25 krát. Všechny statisticky
-významné interakce mezi prediktory \textit{map} a \textit{starting\_ct} naznačují, že je pro tým nevýhodné začínat na straně Counter-Terroristů. Jejich šance
-na výhru se vždy sníží, a to nejvíce na mapě Overpass, kde se šance sníží zhruba 0,62 krát. Zajímavý je koeficient u prediktoru \textit{team\_rank}, který říká,
-že s růstem ranku týmu se šance na výhru sníží zhruba 0,99 krát. To lze vysvětlit tím, že lepší týmy hrají proti lepším týmům a jejich 
-šance na výhru je nižší. Model lze zapsat jako přepis funkce následovně:
-
-\begin{align*}
-    \begin{split}
-        P(1 | &X_{mean\_kills}, X_{mean\_assists}, X_{mean\_deaths}, X_{mean\_hs}, X_{mean\_fkdiff}, X_{team\_rank}, \\
-              &X_{mapCache*starting\_ct}, X_{mapCobblestone*starting\_ct}, X_{mapDust2*starting\_ct}, X_{mapInferno*starting\_ct}, \\
-              &X_{mapMirage*starting\_ct}, X_{mapNuke*starting\_ct}, X_{mapOverpass*starting\_ct}, X_{mapTrain*starting\_ct}, \\
-              &X_{mapVertigo*starting\_ct}) = \frac{1}{1 + e^{-z}} \\
-        z = &0,322 + 1,376*X_{mean\_kills} + 0,143*X_{mean\_assists} - 1,402*X_{mean\_deaths} - \\
-            &- 0,615*X_{mean\_hs} - 0,064*X_{mean\_fkdiff} - 0,001*X_{team\_rank} - \\
-            &- 0,040*X_{mapCache*starting\_ct} - 0,282*X_{mapCobblestone*starting\_ct} - \\
-            &- 0,318*X_{mapDust2*starting\_ct} - 0,272*X_{mapInferno*starting\_ct} - \\
-            &- 0,239*X_{mapMirage*starting\_ct} - 0,113*X_{mapNuke*starting\_ct} - \\
-            &- 0,418*X_{mapOverpass*starting\_ct} - 0,177*X_{mapTrain*starting\_ct} + \\
-            &+ 0,259*X_{mapVertigo*starting\_ct}
-    \end{split}
-\end{align*}
 
 \subsubsection{Matice záměn pro obecný model}
 Model je vyhodnocen na validační podmnožině, která činní 20 \% původního datového souboru.
