@@ -1,12 +1,12 @@
 \chapter{Teoretická část}
-Cílem praktické části je prozkoumat dva typy modelů. První typ modelu bude predikovat výhru zápasu pro jednotlivé hráče a druhý typ pro jednotlivé mapy. Hlavním cílem 
-modelu pro hráče bude identifikovat významné charakteristiky hráčů na vybraných mapách, a následně rozdíly interpretovat. V druhém modelu bude zkoumaná výhra týmu v zápase.
+Cílem praktické části je prozkoumat dva typy modelů. První typ modelu bude predikovat výhru zápasu pro jednotlivé hráče a druhý typ pro jednotlivé týmy. Hlavním cílem 
+modelů pro hráče bude identifikovat významné charakteristiky hráčů na vybraných mapách, a následně rozdíly interpretovat. V druhém modelu bude zkoumaná výhra týmu v zápase.
 V tomto typu modelu se jako prediktory použijí agregované charakteristiky hráčů jednotlivých týmu. Pro agregaci bude použit buď aritmetický nebo geometrický průměr. Všechny
 modely jsou vyhodnoceny pomocí testovacího datového souboru a matice záměn. Pro tvorbu modelů a veškerou práci s daty je použit programovací jazyk R \cite{r_core_team_r_2022}
 a vývojové prostředí RStudio \cite{rstudio_rstudio_2022}.
 
 \section{Cíle analýzy}
-Cílem analýzy je vytvořit logistické modely pro předpověď výhry jak pro individuální hráče, tak pro tým. Jelikož se charakteristiky hráčů i zápasů mohou měnit dle mapy,
+Cílem analýzy je vytvořit logistické modely pro předpověď výhry jak pro individuální hráče, tak pro dva referenční týmy nebo všechny týmy. Jelikož se charakteristiky hráčů i zápasů mohou měnit dle mapy,
 na které se zápas odehrává, modely pro individuální hráče jsou tříděné přes kategorie map. Modely pro předpověď výhry týmu používají interakci mezi mapou a začínající
 stranou.
 
@@ -15,8 +15,8 @@ z matice záměn a bude porovnána významnost jejich parametrů. Modely budou p
 ve hře od jeho vydání. Vertigo je naopak nejnovější přírůstek do profesionální scény a hráči, v době extrakce datového souboru, mapu ještě plně strategicky 
 neznali. Modely budou porovnány podle přesnosti predikce a podle toho, jaké prediktory jsou pro model významné.
 
-Modely pro týmy budou sestavené nejprve z agregovaného datového souboru a následně pro dva vybrané referenční týmy. První tým, pro který se vytvoří model, bude tým Astralis.
-Ten je dlouhodobě považován za jeden z nejlepších týmu na světě a v grafu \ref{fig:mira_vyhry_tymu} je vidět, že má v datovém souboru největší míru výhry. Druhým týmem bude 
+Modely pro týmy budou sestavené pro dva vybrané referenční týmy a pro všechny týmy. První tým, pro který se vytvoří model, bude tým Astralis.
+Ten je dlouhodobě považován za jeden z nejlepších týmu na světě, vyhrál několik prestižních Majoru a v grafu \ref{fig:mira_vyhry_tymu} je vidět, že má v datovém souboru největší míru výhry. Druhým týmem bude 
 německý celek Sprout. Tým Sprout se řadí v době extrakce dat k profesionálnímu týmu s průměrným třicátým místem na světovém žebříčku. Modely jsou vytvořené pouze pro dva týmy z toho
 důvodu, že je celkový počet týmů velmi vysoký a bylo by komplikované porovnávat všechny týmy naráz. Z toho důvodu se budou hledat významné rozdíly mezi dvěma referenčními modely a
 jedním celkovým modelem, který je sestaven na celém datovém souboru. Mezi modely bude porovnaná jak přesnost predikce, tak významnost parametrů. Jelikož je původní spojený datový
@@ -77,7 +77,7 @@ na jedné mapě. Příklad je zobrazen v přiložené tabulce \ref{tab:results_c
     \item \textbf{team\_rank} --- rank týmu v okamžik, kdy se zápas hrál\footnote{\url{https://www.hltv.org/news/16061/introducing-csgo-team-ranking}}
 \end{itemize}
 
-\subsection{Datový soubor pro modelování} \label{sec:spojent_datovy_soubor}
+\subsection{Datový soubor pro modelování} \label{sec:spojeny_datovy_soubor}
 Pro modelování je nutné vytvořit jeden datový soubor, na kterém bude model sestaven. Datový model je získán spojením představených souborů
 \textit{players.csv} a \textit{results.csv}. Datové soubory jsou spojené pomocí proměnných \textit{match\_id}, \textit{team} a \textit{map}. Při propojování
 souborů jsou smazané záznamy, které nejsou reprezentovány v obou souborech. To znamená, že charakteristiky hráčů v zápase, pro který není výsledek, jsou smazané.
@@ -86,8 +86,8 @@ v právě jednom zápase na právě jedné mapě. Příklad spojeného datového
 
 \subsection{Agregovaný datový soubor} \label{sec:agregovany_datovy_soubor}
 Spojený datový soubor obsahuje charakteristiky hráčů na úrovni jednotlivých zápasů. To je vhodné pro první logistický model, který se zabývá predikcí a identifikací
-významných prediktorů pro individuální hráče. Pro predikci výhry týmu a identifikaci významných prediktorů pro tým je nutné data agregovat. Agregace charakteristik, u kterých
-to dává věcný smysl, je použit aritmetický průměr. Pro statistiky, u kterých dává věcný smysl násobení, je použit průměr geometrický. Jako příklad lze uvést charakteristika 
+významných prediktorů pro individuální hráče. Pro predikci výhry týmu a identifikaci významných prediktorů pro tým je nutné data agregovat. Pro agregaci charakteristik, u kterých
+to dává věcný smysl, je použit aritmetický průměr. Pro charakteristiky, u kterých dává věcný smysl násobení, je použit průměr geometrický. Jako příklad lze uvést charakteristika 
 počtu zabití (prediktor \textit{kills}), která je agregovaná pro daný tým jako průměrný počet zabití (prediktor \textit{mean\_kills}) hráčů týmu na dané mapě. Pro charakteristiku
 procent zabití do hlavy (prediktor \textit{hs}) je použit geometrický průměr a v modelu je použitý průměr procenta zabití do hlavy (prediktor \textit{mean\_hs}).
 Příklad agregovaných dat je v přiložené tabulce \ref{tab:data_agregovana}. Popis agregovaných prediktorů je pak v následující tabulce.
@@ -107,7 +107,7 @@ Příklad agregovaných dat je v přiložené tabulce \ref{tab:data_agregovana}.
 \end{table}
 
 \subsection{Trénování a validace modelů}
-Pro trénování a validaci modelů se vytvoří náhodné rozdělení souboru v poměru 8:2. Pro trénování modelu bude použito 80 \% z datového souboru, na validaci je použito zbylých 20 \%.
+Pro křížovou validaci modelů se vytvoří náhodné rozdělení dat v poměru 8:2. Pro trénování modelu bude použito 80 \% z datového souboru, na validaci je použito zbylých 20 \%.
 Natrénované modely jsou vyhodnoceny pomocí Waldova testu, který je v každé tabulce v posledním sloupci $Pr(>|z|)$. Případné nevýznamné prediktory jsou pak z modelu
 odstraněny a model je natrénován znovu na stejné trénovací množině. Pro validaci modelu je vytvořena matice záměn, která popisuje přesnost predikcí modelu na validačních
 datech. K následnému vyhodnocení modelů jsou použity statistiky Přesnost, Senzitivita a Specificita. 
@@ -155,15 +155,15 @@ Pro výběr do logistického modelu je nutné vybrat referenční tým, který j
     \label{fig:mira_vyhry_tymu}
 \end{figure}
 
-Obrázek \ref{fig:mira_vyhry_tymu} ukazuje, že tým Astralis má v datovém souboru nejlepší míru výhry. Rozdíl mezi mírou výhry Astralis a týmy SK je necelých 7 procent.
+Obrázek \ref{fig:mira_vyhry_tymu} ukazuje, že tým Astralis má v datovém souboru nejlepší míru výhry. Rozdíl mezi mírou výhry Astralis a týmu SK je necelých 7 procent.
 Z tohoto důvodu je tým Astralis použit při analýze dat jako jeden z referenčních týmů.
 
 \newpage
 \section{Predikce výhry hráčů na různých mapách}
-Cílem modelu je predikovat výhru zápasu pro jednotlivé hráče na různých mapách a identifikovat významné prediktory s nimi spojené. Model lze využít na profesionální
+Cílem modelů je predikovat výhru zápasu pro jednotlivé hráče na různých mapách a identifikovat významné prediktory s nimi spojené. Model lze využít na profesionální
 úrovni k identifikaci toho, jaká charakteristika nejvíce přispívá k výhře či prohře hráče. Prediktory se týkají pouze výkonu jednotlivých
 hráčů, model tedy pro předpověď výhry hráče nepoužívá charakteristiky spoluhráčů. K modelování je použit spojený datový soubor, který je detailně popsaný v
-sekci \ref{spojent_datovy_soubor}. Obecně by šlo model zapsat následovně:
+sekci \ref{sec:spojeny_datovy_soubor}. Obecně by šlo model zapsat následovně:
 
 \begin{align*}
     \begin{split}
@@ -174,13 +174,13 @@ sekci \ref{spojent_datovy_soubor}. Obecně by šlo model zapsat následovně:
 \end{align*}
 
 Pro porovnání jsou vybrány mapy Mirage a Vertigo. Mapa Mirage je jednou z nejvíce tradičních map a mapa Vertigo je naopak nejnovější přídavek do hry.
-Díky rozdílným modelům bude možné zkoumat, na čem pravděpodobnost výhry na mapách záleží a jaké strategie je na dané mapě výhodnější použít.
+Díky rozdílným modelům bude možné zkoumat, jaký prediktor hraje významnou roli při predikování výhry hráče na různé mapě.
 
 \subsection{Model pro mapu Mirage}
 
 \input{modely/Mirage_model.tex}
 
-Tabulka \ref{tab:Mirage_model} představuje model se všemi významnými prediktory. Prediktory \textit{kills}, \textit{assists} a \textit{fkdiff} šanci na výhru
+Tabulka \ref{tab:Mirage_model} představuje model pro mapu Mirage se všemi významnými prediktory. Prediktory \textit{kills}, \textit{assists} a \textit{fkdiff} šanci na výhru
 hráče zvyšují. Naopak prediktory \textit{deaths} a \textit{starting\_ct} šanci snižují. Model lze také zapsat jako přepis funkce.
 
 \begin{align}
@@ -213,7 +213,7 @@ na výhru snižuje.
     \end{split}
 \end{align}
 
-Parametr lze interpretovat tak, že s každou další hráčovou smrtí se jeho šance na výhru sníží o zhruba 31 \%. 
+Parametr lze interpretovat tak, že s každou další hráčovou smrtí se jeho šance na výhru sníží o zhruba 31 \% ($(1 - 0.6934)*100$). 
 
 \subsubsection{Matice záměn pro mapu Mirage}
 Na predikci je použitá validační podmnožina a model z tabulky \ref{tab:Mirage_model}.
@@ -223,7 +223,7 @@ Na predikci je použitá validační podmnožina a model z tabulky \ref{tab:Mira
 \input{statistiky/Mirage_stats.tex}
 
 Z tabulky \ref{tab:Mirage_matice} je vidět, že model predikoval správně 7 037 výher ($\sim 81,31 \%$) a 6 804 proher ($\sim 77,83 \%$).
-Celkově model určil správně 13 841 objektů ($\sim 79,56 \%$).
+Celkově model určil správně 13 841 objektů ($\sim 79,56 \%$). Statistiky z matice záměn jsou zobrazené v tabulce \ref{tab:Mirage_stats}.
 
 \newpage
 \subsection{Model pro mapu Vertigo}
@@ -231,13 +231,13 @@ Model pro mapu Vertigo má identické vstupní prediktory, podle kterých se pre
 
 \input{modely/Vertigo_model.tex}
 
-Na rozdíl od mapy Mirage jsou v modelu pro mapu Vertigo nevýznamné parametry. Statisticky nevýznamné prediktory \textit{hs}, \textit{fkdiff} a \textit{starting\_ct}
+Pro mapu Vertigo jsou v modelu nevýznamné parametry. Statisticky nevýznamné prediktory \textit{hs}, \textit{fkdiff} a \textit{starting\_ct}
 jsou z modelu odebrány a model je znovu natrénován.
 
 \input{modely/Vertigo_model_opt.tex}
 
-Pro hráče jsou na mapě Vertigo významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths}. Ostatní prediktory \textit{hs},
-\textit{fkdiff} a \textit{starting\_ct} jsou pro model nevýznamné. Optimalizovaný model lze zapsat do následující rovnice:
+Pro hráče jsou na mapě Vertigo významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths}. Ostatní prediktory \textit{hs}.
+Optimalizovaný model lze zapsat do následující rovnice:
 
 \begin{align}
     \begin{split}
@@ -246,7 +246,7 @@ Pro hráče jsou na mapě Vertigo významné pouze prediktory \textit{kills}, \t
     \end{split}
 \end{align}
 
-Každé hráčovo zabití vede ke zvýšení šance na výhru o zhruba 20 \%. Každá další hráčova smrt vede ke snížení šance na výhru o zhruba 30 \%. 
+Každé hráčovo zabití vede ke zvýšení šance na výhru na mapě Vertigo o zhruba 20 \%. Každá další hráčova smrt vede ke snížení šance na výhru o zhruba 30 \%. 
 Matice záměn i statistiky modelu jsou potom vyhodnocené na optimalizovaném modelu pomocí validačních dat.
 
 \input{matice/Vertigo_matice_opt.tex}
@@ -254,35 +254,37 @@ Matice záměn i statistiky modelu jsou potom vyhodnocené na optimalizovaném m
 \input{statistiky/Vertigo_stats_opt.tex}
 
 Z tabulky \ref{tab:Vertigo_stats_opt} je vidět, že model predikoval správně 455 výher ($\sim 77,65 \%$) a 411 proher ($\sim 78,44 \%$).
-Celkově model určil správně 866 objektů ($\sim 78,02 \%$).
+Celkově model určil správně 866 objektů ($\sim 78,02 \%$). Vybrané statistiky jsou vyobrazené v tabulce \ref{tab:Vertigo_stats_opt}.
 
 \subsection{Interpretace a porovnání modelů}
 Na mapě Mirage jsou pro hráče významné všechny prediktory. Nejvíc pozitivní vliv má na výhru hráče počet asistencí a největší negativní vliv
 na výhru hráče má pak počet smrtí. Významnost prediktorů \textit{fkdiff} a \textit{assists} naznačuje, že je důležitá souhra hráčů a zkušenější týmy
 mají na mapě výhodu. Pokud hráči hrají spolu, mohou se při zabíjení nepřátel doplňovat (prediktor \textit{assists}). Zároveň je důležité, aby se v zápase
-hráči navzájem podporovali a mohli získat první zabití v daném kole (prediktor \textit{fkdiff}).
+hráči navzájem podporovali a mohli získat první zabití v daném kole (prediktor \textit{fkdiff}). Pokud hráči začínají mapu Mirage na straně Counter-Terroristů,
+je jejich šance na výhru nižší.
 
-Pro mapu Vertigo jsou naopak významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths}. Pro hráče tedy není důležité, jak přesně
+Pro mapu Vertigo jsou  významné pouze prediktory \textit{kills}, \textit{assists} a \textit{deaths}. Pro hráče tedy není důležité, jak přesně
 střílí (prediktor \textit{hs}), jak dobře se tým podporuje na začátku kola (prediktor \textit{fkdiff}) ani na jaké straně hráč začíná (prediktor \textit{starting\_ct}).
 Největší vliv na výhru zde má prediktor \textit{assists}, největší vliv na výhru má pak prediktor \textit{deaths}. Porovnání obou statistik obou modelů je pak
 v následující tabulce.
 
 \input{tabulky/Mirage_Vertigo_porovnani.text}
 
-Mapa Mirage se hodí nejvíce na predikci proher díky své vysoké specificitě. Rozdíly mezi statistikami pro mapu Vertigo jsou pak nepatrné a menší než 1 \%.
+Mapa Mirage se hodí nejvíce na predikci proher díky své vysoké specificitě. Rozdíly mezi statistikami pro mapu Vertigo jsou pak nepatrné a pohybují se okolo 1 \%.
 Největší rozdíl mezi modely je ve Specificitě, která je pro model na mapě Mirage větší o zhruba 3,5 procentních bodů.
 
 Modely, matice záměn i vybrané statistiky z matic záměn pro ostatní mapy jsou v příloze \ref{apx:02}. Zajímavé je, že pro všechny ostatní modely
-jsou významné všechny prediktory. To z mapy Vertigo, která má významné pouze 3 prediktory, dělá poněkud unikátní mapu. Z tohoto závěru lze usoudit, že
+jsou významné všechny prediktory. To z mapy Vertigo, která má významné pouze 3 prediktory, dělá poněkud unikátní mapu. Z tohoto výsledku lze usoudit, že
 pro všechny mapy, které se hrají už nějakou dobu, je důležitý jak výkon hráče, tak sehranost týmu. Jelikož je mapa Vertigo nová, je na začátku svého
 vývoje a pro hráče je stále relativně neznámá. Jelikož je na mapě Vertigo méně významná sehranost, zkušenosti a spolupráce v týmu, měli by jí preferovat
 nové či semi-profesionální týmy. Mapu také mohou využít profesionální týmy, které spoléhají spíše na individuální výkon hráčů, než na týmové strategie.
 
 \newpage
 \section{Predikce výhry týmu}
-Cílem modelů je predikovat výhru na základě agregovaných charakteristik hráčů za tým na mapě. Tento typ modelu se hodí zejména v sázkových kancelářích. Díky referenčním
-modelům lze určit šanci, že určitý tým vyhraje. To umožní kancelářím stanovit výdělečný kurz pro zápas ještě před tím, než vůbec začal. Matematický přepis modelu
-je následující:
+Cílem modelů je predikovat výhru týmu na základě agregovaných charakteristik hráčů za tým na mapě. Tento typ modelu se hodí zejména v sázkových kancelářích. Celkový model
+je také vhodný při predikci výhry týmu, pro který není dostatek dat. V tomto případě by nebylo možné vytvořit separátní model a predikci výhry lze tak určit pomocí 
+jednoho celkového modelu. Díky referenčním modelům lze určit šanci, že určitý tým vyhraje. To umožní kancelářím stanovit výdělečný kurz pro zápas.
+Matematický přepis modelu je následující:
 
 \begin{align}
     \begin{split}
@@ -296,13 +298,13 @@ je následující:
             &+ \beta_9*X_{mapDust2*starting\_ct} +\beta_{10}*X_{mapInferno*starting\_ct} + \\
             &+ \beta_{11}*X_{mapMirage*starting\_ct} + \beta_{12}*X_{mapNuke*starting\_ct} + \\
             &+ \beta_{13}*X_{mapOverpass*starting\_ct} + \beta_{14}*X_{mapTrain*starting\_ct} + \\
-            &+ \beta_{15}*X_{mapVertigo*starting\_ct}
+            &+ \beta_{15}*X_{mapVertigo*starting\_ct}.
     \end{split}
 \end{align}
 
 Prediktory \textit{mean\_kills}, \textit{mean\_assists}, \textit{mean\_deaths}, \textit{mean\_hs}, \textit{mean\_fkdiff} jsou průměrné charakteristiky hráčů v týmu na dané mapě
 v daném zápase a lze očekávat, že šanci na výhru ovlivňují. Dále do modelu vstupuje prediktor \textit{team\_rank}, který značí rank týmu v daném zápase. Model následně
-obsahuje interakci mezi proměnnou \textit{map} a \textit{starting\_ct}. Interakce je z toho důvodu, že vliv počáteční strany je na každé mapě jiný. Přesněji jsou prediktory
+obsahuje interakci mezi proměnnou \textit{map} a \textit{starting\_ct}. Interakce je z toho důvodu, že vliv počáteční strany může být na každé mapě jiný. Přesněji jsou prediktory
 definované v sekci \ref{sec:agregovany_datovy_soubor}
 
 \subsection{Celkový model}
@@ -313,25 +315,115 @@ Parametry celkového modelu se nachází v tabulce \ref{tab:Global_model}. Prvn�
 významné všechny prediktory bez interakce, jmenovitě \textit{mean\_kills}, \textit{mean\_assists}, \textit{mean\_deaths}, \textit{mean\_hs},\textit{mean\_fkdiff} a
 \textit{team\_rank}. Interakce mezi prediktory \textit{map} a \textit{starting\_ct} není významná u map Vertigo, Cache a Nuke.
 
-Agregované charakteristiky hráče \textit{mean\_kills} a \textit{mean\_assists} šanci na výhru týmu zvyšují. Pokud se průměr zabitých nepřátel za tým zvýší o jednotku,
-šance na výhru týmu se zvýší zhruba 3,96 krát. Pokud se průměr smrtí hráčů za tým zvýší o jednotku, šance na výhru se sníží zhruba 0,25 krát. Všechny statisticky
-významné interakce mezi prediktory \textit{map} a \textit{starting\_ct} naznačují, že je pro tým nevýhodné začínat na straně Counter-Terroristů. Jejich šance
-na výhru se vždy sníží, a to nejvíce na mapě Overpass, kde se šance sníží zhruba 0,62 krát. Zajímavý je koeficient u prediktoru \textit{team\_rank}, který říká,
-že s růstem ranku týmu se šance na výhru sníží zhruba 0,99 krát. To lze vysvětlit tím, že lepší týmy hrají proti lepším týmům a jejich 
-šance na výhru je nižší. Model lze zapsat jako přepis funkce následovně:
-
 \begin{align}
     \begin{split}
         P(1 | &X_{mean\_kills}, X_{mean\_assists}, X_{mean\_deaths}, X_{mean\_hs}, X_{mean\_fkdiff}, X_{team\_rank}, \\
               &X_{mapCache*starting\_ct}, X_{mapCobblestone*starting\_ct}, X_{mapDust2*starting\_ct}, X_{mapInferno*starting\_ct}, \\
               &X_{mapMirage*starting\_ct}, X_{mapNuke*starting\_ct}, X_{mapOverpass*starting\_ct}, X_{mapTrain*starting\_ct}, \\
               &X_{mapVertigo*starting\_ct}) = \frac{1}{1 + e^{-z}} \\
-        z = &0,4135 + 1,376*X_{mean\_kills} + 0,143*X_{mean\_assists} - 1,402*X_{mean\_deaths} - \\
-            &- 0,615*X_{mean\_hs} - 0,064*X_{mean\_fkdiff} - 0,001*X_{team\_rank} - \\
-            &- 0,040*X_{mapCache*starting\_ct} - 0,282*X_{mapCobblestone*starting\_ct} - \\
-            &- 0,318*X_{mapDust2*starting\_ct} - 0,272*X_{mapInferno*starting\_ct} - \\
-            &- 0,239*X_{mapMirage*starting\_ct} - 0,113*X_{mapNuke*starting\_ct} - \\
-            &- 0,418*X_{mapOverpass*starting\_ct} - 0,177*X_{mapTrain*starting\_ct} + \\
-            &+ 0,259*X_{mapVertigo*starting\_ct}
+        z = &  0,3423 + 1,376*X_{mean\_kills} + 0,1321*X_{mean\_assists} - 1,3958*X_{mean\_deaths} - \\
+            &- 0,4997*X_{mean\_hs} - 0,0741*X_{mean\_fkdiff} - 0,0009*X_{team\_rank} - \\
+            &- 0,0240*X_{mapCache*starting\_ct} - 0,3211*X_{mapCobblestone*starting\_ct} - \\
+            &- 0,2051*X_{mapDust2*starting\_ct} - 0,2993*X_{mapInferno*starting\_ct} - \\
+            &- 0,2362*X_{mapMirage*starting\_ct} - 0,1404*X_{mapNuke*starting\_ct} - \\
+            &- 0,4307*X_{mapOverpass*starting\_ct} - 0,2341*X_{mapTrain*starting\_ct} + \\
+            &+ 0,2211*X_{mapVertigo*starting\_ct}
     \end{split}
 \end{align}
+
+Agregované charakteristiky hráče \textit{mean\_kills} a \textit{mean\_assists} šanci na výhru týmu zvyšují. Pokud se průměr zabitých nepřátel za tým zvýší o jednotku,
+šance na výhru týmu se zvýší zhruba 3,93 krát. Pokud se průměr smrtí hráčů za tým zvýší o jednotku, šance na výhru se sníží o zhruba 75 \%. Všechny statisticky
+významné interakce mezi prediktory \textit{map} a \textit{starting\_ct} naznačují, že je pro tým nevýhodné začínat na straně Counter-Terroristů. Jejich šance
+na výhru se vždy sníží, a to nejvíce na mapě Overpass, kde je zhoršení o zhruba 35 \%. 
+
+\subsubsection{Matice záměn pro obecný model}
+
+\input{matice/Global_matice.tex}
+
+\input{statistiky/Global_stats.tex}
+
+Dle matice \ref{tab:Global_matice} model úspěšně predikoval 8 321 výher ($\sim 94,77 \%$) a 8 337 proher ($\sim 94,16 \%$). Celkem
+model predikoval správně 16 658 objektů ($\sim 94,47 \%$). Všechny výkonnostní statistiky z matice záměn jsou identické v řádu setin procent.
+Z tabulky \ref{tab:Global_stats} nelze jednoznačně určit, zda je tým vhodnější na predikci výher či proher.
+
+\subsection{Model pro tým Astralis}
+
+\input{modely/Astralis_model_opt.tex}
+
+Po odstranění nevýznamných prediktorů lze získat logistický model, který je popsán v tabulce \ref{tab:Astralis_model_opt}. Pro tým Astralis jsou významné pouze prediktory
+\textit{mean\_kills} a \textit{mean\_deaths}. 
+
+\begin{align}
+    \begin{split}
+        P(1 | &X_{mean\_kills}, X_{mean\_deaths}, X_{team\_rank}) = \frac{1}{1 + e^{-z}} \\
+        z =   &1,9185 + 1,3452*X_{mean\_kills} - 1,4180*X_{mean\_deaths} -\\
+              &- 0,1120*X_{team\_rank}
+    \end{split}
+\end{align}
+
+S každým dalším průměrným zabitím (prediktor \textit{mean\_kills}) se zvýší šance týmu Astralis na výhru zhruba 3,84 krát. S každou další průměrnou smrtí (prediktor \textit{mean\_deaths})
+se šance na výhru týmu sníží o zhruba 76 \%. Před začátkem zápasu, tedy při nulových prediktorech \textit{mean\_kills} a \textit{mean\_deaths}, je šance na výhru týmu Astralis zhruba 
+6,81 větší, než jeho prohra.
+
+\subsubsection{Matice záměn pro tým Astralis}
+
+\input{matice/Astralis_matice_opt.tex}
+
+\input{statistiky/Astralis_stats_opt.tex}
+
+Z matice záměn v tabulce \ref{tab:Astralis_matice_opt} lze vidět, že model predikoval správně 44 výher ($\sim 88,00 \%$) a 118 proher ($\sim 94,40 \%$).
+Celkem optimální model predikoval správně 162 objektů ($\sim 92,57 \%$). Statistiky jsou zobrazené v tabulce \ref{tab:Astralis_stats_opt}.
+
+\subsection{Model pro tým Sprout}
+Tým Sprout byl v době extrakce dat čistě německý tým a patřil k průměrným profesionálnímu týmům. Na žebříčků týmů se obvykle řadil kolem třicátého místa.
+
+\input{modely/Sprout_model_opt.tex}
+
+Tabulka \ref{tab:Sprout_model_opt} obsahuje pouze významné prediktory pro model týmu Sprout. Významé prediktory pro tým jsou pouze \textit{mean\_kills} a \textit{mean\_deaths}.
+Matematický zápis modelu je v následujícím přepisu.
+
+\begin{align}
+    \begin{split}
+        P(1 | &X_{mean\_kills}, X_{mean\_deaths}, X_{team\_rank}) = \frac{1}{1 + e^{-z}} \\
+        z =   &-2,7474 + 1,5741*X_{mean\_kills} - 1,4307*X_{mean\_deaths}
+    \end{split}
+\end{align}
+
+S každým dalším průměrným zabitím (prediktor \textit{mean\_kills}) se šance na výhru týmu zvýší zhruba 4,83 krát. S každou další průměrnou smrtí (prediktor \textit{mean\_deaths})
+se šance na výhru sníží o zhruba 76 \%. Ještě před začátkem zápasu, tedy při nulovém průměrném počtu zabití a smrtí, je šance na výhru týmu Sprout zhruba 6 \%.
+
+\input{matice/Sprout_matice_opt.tex}
+
+\input{statistiky/Sprout_stats_opt.tex}
+
+Z matice záměn v tabulce \ref{tab:Sprout_matice_opt} lze vidět, že model predikoval správně 47 výher ($\sim 92,16 \%$) a 71 proher ($\sim 98,61 \%$).
+Celkem optimální model predikoval správně 118 objektů ($\sim 95,93 \%$). Statistiky jsou zobrazené v tabulce \ref{tab:Sprout_stats_opt}.
+
+\subsection{Interpretace a porovnání modelů}
+Pro celkový model, tedy model pro predikci výhry jakéhokoliv týmu, jsou významné všechny průměrné charakteristiky hráčů. Nejvíce šanci na výhru zvyšuje každé
+další průměrné zabití. Šanci na prohru pak nejvíce zvyšuje každá další průměrná smrt. Z modelu lze usoudit, že při určování šance výhry na určitých mapách je významné, na jaké 
+straně tým začíná. Pokud tým začíná na straně Counter-Terroristů, jeho šance na výhru je na mapách Cobblestone, Dust 2,
+Inferno, Mirage, Overpass a Train nižší. Na mapách Cache, Nuke a Vertigo je pak začínající strana nevýznamná. Statistiky z matice záměn jsou velmi podobné a proto se model hodí 
+jak na predikci výhry, tak prohry. Na rozdíl od modelů pro tým Astralis a Sprout je model velmi komplexní a obsahuje 15 prediktorů. To lze odůvodnit tím, že je model 
+ovlivněn neprofesionálními týmy, pro které je mnoho prediktorů významných z důvodu nezkušenosti. Nezkušené týmy mezi sebou nejsou vůbec vyrovnané a proto je pro ně důležité 
+získat jakoukoli výhodu proti nepřátelskému týmu. Profesionální týmy jsou naopak velmi vyrovnané a proto je nejdůležitější to, jak dobře budou hráči týmu hrát. 
+
+Model pro tým Astralis naznačuje, že je pro tým významný pouze průměrný počet zabití a průměrný počet úmrtí. Výhru týmu neovlivňuje průměrný počet asistencí, průměrné
+procento zabití do hlavy, průměrný rozdíl prvního zabití a úmrtí, rank týmu v okamžik zápasu a počáteční strana na jakékoliv mapě. Jelikož se tým Astralis řadí mezi jedny z 
+nejlepších týmů na  světě, jeho šance na výhru před začátkem zápasu je poměrně vysoká. To potvrzuje jak logistický model, tak průzkumová analýza dat. Vytvořený model pro tým Astralis je vhodný
+spíše na predikci výhry než prohry. 
+
+Významné prediktory pro tým Sprout jsou pouze průměrný počet zabití a průměrný počet smrtí. Výhru týmu tedy neovlivňuje průměrný počet asistencí, průměrné
+procento zabití do hlavy, průměrný rozdíl prvního zabití a úmrtí, rank týmu v okamžik zápasu a počáteční strana na jakékoliv mapě. Tým se nepovažuje za jeden z nejlepších na světě,
+a proto má před začátkem zápasu větší šanci na prohru. Vliv průměrného počtu zabití je větší než vliv průměrného počtu smrtí a proto by měl tým více riskovat a hrát spíše na velký
+počet průměrného zabití. Tento model je nejvíce vhodný na predikci výhry týmu a méně vhodný na predikci prohry týmu.
+
+\input{tabulky/Tymy_porovnani.text}
+
+Oba dva referenční modely mají stejné významné prediktory, a to \textit{mean\_kills} a \textit{mean\_deaths}. Z modelů lze usoudit, že nejlepší tým na světě a průměrný profesionální
+tým má stejné významné prediktory. Tabulka \ref{tab:Tymy_porovnani} ukazuje porovnání mezi jednotlivými statistikami přes vybrané modely. Model pro tým Sprout má největší přesnost
+i senzitivitu, zatímco celkový model má největší specificitu. Ze statistik vychází, že nejméně spolehlivě předpovídá model pro referenční tým Astralis. 
+
+Rozdíl mezi referenčními modely a celkovým modelem by bylo možné vysvětlit např. vlivem neprofesionálních týmů. Amatérské týmy musí využít každé možné výhody,
+kterou mohou získat, aby vyhráli. Z tohoto důvodu lze usoudit, že je pro ně mnoho prediktoru významných. Když proti sobě hrají profesionální týmy, jejich rozdíl je
+méně patrný a je proto nejvíce signifikantní výkon jednotlivých hráčů.

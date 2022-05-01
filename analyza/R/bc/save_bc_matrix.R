@@ -32,7 +32,8 @@ save_bc_matrix <- function(.table, .file, .cap, .lab) {
   .file = paste(MATRIXES_DIR, .file, sep = "/")
   
   print(xtable,
-        file = .file
+        file = .file,
+        include.rownames = T
   )
   
 }

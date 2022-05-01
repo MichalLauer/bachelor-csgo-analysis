@@ -241,7 +241,11 @@ interpretovat pravděpodobnost jako šanci, použije se logitová funkce
     \textit{šance jevu A} = \frac{p}{1 - p},
 \end{equation}
 
-kde $p$ je pravděpodobnost výskytu jevu A.
+kde $p$ je pravděpodobnost výskytu jevu A. Pokud je vhodné šanci interpretovat spíše v procentech, šanci lze převést pomocí následujícího vztahu
+
+\begin{equation}
+    \textit{Pravděpodobnost jevu A} = \frac{\textit{šance jevu A}}{1 + \textit{šance jevu A}},
+\end{equation}
 
 \subsection{Maximální pravděpodobnost}
 Parametry logistického modelu v rovnici \ref{eq:pravdepodobnost_y} jsou pouze teoretické a je třeba je odhadnout. Již vypočtené odhady
