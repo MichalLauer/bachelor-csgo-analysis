@@ -1,21 +1,16 @@
 ---
 title: "Analýza dat pro Bakalářskou práci"
 author: "Michal Lauer"
-date: '2022-04-10'
+date: '2022-05-01'
+header-includes:
+  - \usepackage[utf8]{inputenc}
 output:
-  html_document:
-    css: style.css
-    toc: true
-    toc_float:
-      collapsed: false
-      smooth_scroll: true
-    df_print: paged
-    theme: cosmo
-    highlight: haddock
-editor_options: 
-  chunk_output_type: console
+  pdf_document:
+    dev: png
+    latex_engine: xelatex
 ---
 # Funkce a globální nastavení
+Nastavení generování bloků kódu a výstupu z print funkcí, načtení knihoven, a načtení funkcí.
 
 ## Nastavení
 ```{r setup, message=F}
@@ -35,13 +30,9 @@ library(readr)
 library(dplyr)
 library(stringr)
 library(tidyr)
-library(runner)
 library(ggplot2)
 library(GGally)
-library(kableExtra)
-library(knitr)
 library(caret)
-library(broom)
 library(xtable)
 library(rsample)
 library(paletteer)
@@ -52,93 +43,61 @@ theme_set(theme_minimal() +
             ))
 ```
 
-## Vygenerování pomocních grafů
-```{r grafy.Rmd, include=F}
-rmarkdown::render("grafy.Rmd",
-                  quiet = T)
+## Globální proměnné
+```{r bc, file = "R/_GLOBAL.R"}
 ```
 
-## globální proměnná maps
-```{r maps}
-maps <- c(
-  "Dust2", "Inferno", "Vertigo", "Overpass", "Nuke", "Mirage",
-  "Train", "Cache", "Cobblestone"
-)
+## Uložení grafu
+```{r file = "R/bc/save_bc_picture.R"}
+
 ```
 
-## Ukládání pro bakalářskou ráci
-```{r bc, file="R/_GLOBAL.R"}
+## Uložení tabulky
+```{r file = "R/bc/save_bc_table.R"}
+
 ```
 
-## funkce clear_player_map
-```{r clear_player_map}
-clear_player_map <- function(tbl, map) {
-  m_ <- sprintf("m%i_", map)
-  tbl |>
-    select(match_id, player_id, team,
-           # Vybrání mapy a statisik podle pro i-tou mapu
-           map = sprintf("map_%i", map),
-           matches(sprintf("^m%i_", map))
-    ) |>
-    # Získání pouze agregovanýc statistik za obě strany
-    # e.g. vyloučení m1_kills_ct, m1_kills_t a ponechání pouze m1_kills
-    select(!matches("_c?t$")) |>
-    drop_na(map) |>
-    # Sjednocení názvů, e.g. m1_kills -> kills
-    rename_with(
-      .cols = starts_with(m_),
-      .fn = ~ str_remove_all(.x, m_)
-    ) |>
-    # Odstranění sloupečků, které nejsou kompletní
-    # kvůli historii vývoje cs:go a hltv.org
-    select(-c(kddiff, flash_assists, kast, adr)) |>
-    # konverze HS na relativní jednotky
-    mutate(hs = ifelse(kills == 0, 0, hs / kills))
-}
+## Uložení modelu do tabulky
+```{r file = "R/bc/save_bc_model.R"}
+
 ```
 
-## funkce clear_results_team
-```{r clear_results_team}
-clear_results_team <- function(.tbl, i) {
-  .tbl |>
-    select(
-      date, match_id, team = matches(sprintf("team_%i", i)),
-      map, map_winner, starting_ct, 
-      team_rank = matches(sprintf("rank_%i", i))
-    ) |>
-    filter(map %in% maps) |>
-    mutate(
-      map_winner = as.numeric(map_winner == i),
-      starting_ct = as.numeric(starting_ct == i)
-    )
-}
+## Uložení matice záměn do tabulky
+```{r file = "R/bc/save_bc_matrix.R"}
+
 ```
 
-## funkce geom_mean
-```{r geom_mean}
-geom_mean <- function(x) {
-  exp(sum(log(x)) / length(x))
-}
+## Uložení statistik z matice záměn do tabulky
+```{r file = "R/bc/save_bc_matrix_output.R"}
+
 ```
 
-## funkce save_bc_code
-```{r save_bc_code, file="R/save_bc_code.R"}
+## Vytvoření matice záměn
+```{r file = "R/get_matrix.R"}
+
 ```
 
-## funkce save_bc_picture
-```{r save_bc_picture, file="R/save_bc_picture.R"}
+## Záskání charakteristik pro hráče na určité mapě
+```{r file = "R/clear_player_map.R"}
+
+```
+
+## Sjednocení výsledků pro daný tým
+```{r file = "R/clear_results_team.R"}
+
+```
+
+## Geometrický průměr
+```{r file = "R/geom_mean.R"}
+
 ```
 
 # Datový soubor players.csv
 
 ## Nahrání dat
 ```{r }
-players.raw <- read_csv("data/players.csv", show_col_types = F)
 
-sprintf("%s proměnných a %s pozorování",
-        ncol(players.raw),
-        prettyNum(nrow(players.raw), big.mark = " ")
-)
+players.raw <- read_csv("data/players.csv", show_col_types = F)
 ```
 
 ## Čištění dat
@@ -164,11 +123,6 @@ players <-
     deaths = as.integer(deaths),
     fkdiff = as.integer(fkdiff)
   )
-
-sprintf("%s proměnných a %s pozorování",
-        ncol(players),
-        prettyNum(nrow(players), big.mark = " ")
-)
 ```
 
 ## Uložení LaTeX tabulky
@@ -190,11 +144,6 @@ players |>
 ## Nahrání dat
 ```{r }
 results.raw <- read_csv("data/results.csv", show_col_types = F)
-
-sprintf("%s proměnných a %s pozorování",
-        ncol(results.raw),
-        prettyNum(nrow(results.raw), big.mark = " ")
-)
 ```
 
 ## Čištění dat
@@ -207,8 +156,10 @@ results <- results.raw |>
   # Chybná extrakce dat
   filter(match_id != 2314674)
 
-results <-  
+results <-
+  # Získání charakteristik pro první tým
   clear_results_team(.tbl = results, 1) |>
+  # Záskání charakteristik pro druhý tým
   rbind(clear_results_team(.tbl = results, 2)) |> 
   mutate(
     match_id = as.integer(match_id),
@@ -217,11 +168,6 @@ results <-
     team_rank = as.integer(team_rank)
   ) |> 
   mutate(team = ifelse(team == "?", "Astralis", team))
-
-sprintf("%s proměnných a %s pozorování",
-        ncol(results),
-        prettyNum(nrow(results), big.mark = " ")
-)
 ```
 
 ## Uložení LaTeX tabulky
@@ -273,6 +219,7 @@ data.aggregated <- data |>
     mean_deaths = mean(deaths),
     mean_hs = geom_mean(hs),
     mean_fkdiff = mean(fkdiff),
+    # Průměr z vektoru stejných čísel c je c
     map_winner = mean(map_winner),
     starting_ct = mean(starting_ct),
     team_rank = mean(team_rank),
@@ -298,7 +245,7 @@ data.aggregated |>
 
 ## Kvantitativní proměnné
 ```{r }
-data |> 
+g <- data |> 
   select(kills, assists, deaths, hs, fkdiff, rating, team_rank) |> 
   ggcorr(hjust = 0.8, size = 4, label = T) +
   labs(
@@ -306,14 +253,14 @@ data |>
     caption = "Spojený datový soubor"
   )
 
-save_bc_picture(.graph = last_plot(),
+save_bc_picture(.graph = g,
                 .file = "prediktory_corr_matice.png")
 ```
 
 ## Histogram prediktorů
 ```{r }
 bin_count <- round(1 + 3.3*log10(nrow(data)/5))
-data |>
+g <- data |>
   pivot_longer(
     cols = c(kills, assists, deaths, hs, fkdiff),
     names_to = "stats",
@@ -337,7 +284,7 @@ data |>
     caption = "Spojení souboru players.csv a results.csv"
   )
 
-save_bc_picture(.graph = last_plot(),
+save_bc_picture(.graph = g,
                 .file = "histogram_prediktoru.png")
 
 ```
@@ -357,7 +304,7 @@ data.plot <- data.aggregated |>
   summarise(mmw = mean(map_winner)) |> 
   arrange(desc(mmw))
 
-ggplot(data = data.plot,
+g <- ggplot(data = data.plot,
        aes(x = reorder(team, mmw), y = mmw, fill = team)) +
   geom_col(show.legend = F) +
   geom_text(data = filter(data.plot, mmw > 0.6),
@@ -374,10 +321,10 @@ ggplot(data = data.plot,
     caption = "Agregovaný datový soubor"
   )
 
-save_bc_picture(.graph = last_plot(),
+save_bc_picture(.graph = g,
                 .file = "mira_vyhry_tymu.png")
 ```
-♣
+
 # Modely pro hráče - Mirage
 
 ## Optimalizovaný model
@@ -408,10 +355,10 @@ save_bc_model(
 ```
 
 ## Matice záměn
-```{r label, options}
+```{r }
 mirage.matrix <- get_matrix(
   .model = mirage.model,
-  .split = mirage.splitF
+  .split = mirage.split
 )
 
 ```
@@ -431,23 +378,11 @@ save_bc_matrix_output(
   .cap = "Vybrané statistiky z matice záměn pro model hráčů na mapě Mirage",
   .lab = NA
 )
-
-prettyNum(mirage.matrix$table[1, 1],
-          big.mark = " ")
-round(mirage.matrix$byClass["Specificity"] * 100, 2)
-prettyNum(mirage.matrix$table[2, 2],
-          big.mark = " ")
-round(mirage.matrix$byClass["Sensitivity"] * 100, 2)
-prettyNum(
-  mirage.matrix$table[1, 1] + mirage.matrix$table[2, 2],
-  big.mark = " ")
-round(mirage.matrix$overall["Accuracy"] * 100, 2)
-
 ```
 
 # Modely pro hráče - Vertigo
 
-## Neotimalizovaný model
+## Neoptimalizovaný model
 ```{r }
 set.seed(547)
 vertigo.data <- data |> 
@@ -501,7 +436,7 @@ save_bc_model(
 
 
 ## Matice záměn
-```{r label, options}
+```{r }
 vertigo.matrix <- get_matrix(
   .model = vertigo.model,
   .split = vertigo.split
@@ -524,22 +459,11 @@ save_bc_matrix_output(
   .cap = "Vybrané statistiky z matice záměn pro modelu hráčů na mapě Vertigo",
   .lab = NA
 )
-
-prettyNum(vertigo.matrix$table[1, 1],
-          big.mark = " ")
-round(vertigo.matrix$byClass["Specificity"] * 100, 2)
-prettyNum(vertigo.matrix$table[2, 2],
-          vertigo.matrix = " ")
-round(vertigo.matrix$byClass["Sensitivity"] * 100, 2)
-prettyNum(
-  vertigo.matrix$table[1, 1] + vertigo.matrix$table[2, 2],
-  big.mark = " ")
-round(vertigo.matrix$overall["Accuracy"] * 100, 2)
-
 ```
 
 # Porovnání statistik obou modelů
 ```{r }
+# Vytvoření statistik z matice záměn pro mapu Mirage
 m1 <-
   bind_rows(
     tibble(
@@ -554,6 +478,7 @@ m1 <-
   filter(statistika %in% c("Accuracy", "Sensitivity", "Specificity")) |> 
   mutate(statistika = c("Přesnost", "Senzitivita", "Specificita"))
 
+# Vytvoření statistik z matice záměn pro mapu Vertigo
 m2 <-
   bind_rows(
     tibble(
@@ -585,6 +510,7 @@ save_bc_table(
 # Uložení ostatních map
 ```{r }
 set.seed(962147)
+# Uložení modelů, matic záměn a statistik pro zbývající mapy
 for (.map in setdiff(maps, c("Mirage", "Vertigo"))) {
   
   .data <- data |> 
@@ -664,7 +590,7 @@ save_bc_model(
 ```
 
 ## Matice záměn
-```{r label, options}
+```{r }
 global.matrix <- get_matrix(
   .model = global.model,
   .split = global.split
@@ -686,18 +612,6 @@ save_bc_matrix_output(
   .cap = "Vybrané statistiky z matice záměn pro model týmu pro všechny týmy",
   .lab = NA
 )
-
-prettyNum(global.matrix$table[1, 1],
-          big.mark = " ")
-round(global.matrix$byClass["Specificity"] * 100, 2)
-prettyNum(global.matrix$table[2, 2],
-          global.matrix = " ")
-round(global.matrix$byClass["Sensitivity"] * 100, 2)
-prettyNum(
-  global.matrix$table[1, 1] + global.matrix$table[2, 2],
-  big.mark = " ")
-round(global.matrix$overall["Accuracy"] * 100, 2)
-
 ```
 
 # Model pro tým Astralis
@@ -730,11 +644,10 @@ astralis.split <- initial_split(data.aggregated |>
 
 
 astralis.model <- glm(
-    formula = map_winner ~ mean_kills + mean_deaths,
-    data = training(astralis.split),
-    family = binomial
-  )
-
+  formula = map_winner ~ mean_kills + mean_deaths,
+  data = training(astralis.split),
+  family = binomial
+)
 ```
 
 ### Uložení LaTeX tabulky
@@ -748,7 +661,7 @@ save_bc_model(
 ```
 
 ## Matice záměn
-```{r label, options}
+```{r }
 astralis.matrix <- get_matrix(
   .model = astralis.model,
   .split = astralis.split
@@ -770,17 +683,6 @@ save_bc_matrix_output(
   .cap = "Vybrané statistiky z matice záměn pro model týmu pro tým Astralis",
   .lab = NA
 )
-
-prettyNum(astralis.matrix$table[1, 1],
-          big.mark = " ")
-round(astralis.matrix$byClass["Specificity"] * 100, 2)
-prettyNum(astralis.matrix$table[2, 2],
-          astralis.matrix = " ")
-round(astralis.matrix$byClass["Sensitivity"] * 100, 2)
-prettyNum(
-  astralis.matrix$table[1, 1] + astralis.matrix$table[2, 2],
-  big.mark = " ")
-round(astralis.matrix$overall["Accuracy"] * 100, 2)
 ```
 
 # Model pro tým Sprout
@@ -789,9 +691,9 @@ round(astralis.matrix$overall["Accuracy"] * 100, 2)
 ```{r }
 set.seed(8741)
 sprout.split <- initial_split(data.aggregated |> 
-                                  filter(team == "Sprout"),
-                                prop = 0.8,
-                                strata = "map")
+                                filter(team == "Sprout"),
+                              prop = 0.8,
+                              strata = "map")
 
 
 sprout.model <- 
@@ -807,17 +709,16 @@ sprout.model <-
 ```{r }
 set.seed(326598)
 sprout.split <- initial_split(data.aggregated |> 
-                                  filter(team == "Sprout"),
-                                prop = 0.8,
-                                strata = "map")
+                                filter(team == "Sprout"),
+                              prop = 0.8,
+                              strata = "map")
 
 
 sprout.model <- glm(
-    formula = map_winner ~ mean_kills + mean_deaths,
-    data = training(sprout.split),
-    family = binomial
-  )
-
+  formula = map_winner ~ mean_kills + mean_deaths,
+  data = training(sprout.split),
+  family = binomial
+)
 ```
 
 ### Uložení LaTeX tabulky
@@ -831,7 +732,7 @@ save_bc_model(
 ```
 
 ## Matice záměn
-```{r label, options}
+```{r }
 sprout.matrix <- get_matrix(
   .model = sprout.model,
   .split = sprout.split
@@ -853,21 +754,11 @@ save_bc_matrix_output(
   .cap = "Vybrané statistiky z matice záměn pro model týmu pro tým Sprout",
   .lab = NA
 )
-
-prettyNum(sprout.matrix$table[1, 1],
-          big.mark = " ")
-round(sprout.matrix$byClass["Specificity"] * 100, 2)
-prettyNum(sprout.matrix$table[2, 2],
-          sprout.matrix = " ")
-round(sprout.matrix$byClass["Sensitivity"] * 100, 2)
-prettyNum(
-  sprout.matrix$table[1, 1] + sprout.matrix$table[2, 2],
-  big.mark = " ")
-round(sprout.matrix$overall["Accuracy"] * 100, 2)
 ```
 
 # Porovnání statistik týmových modelů
 ```{r }
+# Vytvoření statistik z matice záměn pro všechny týmy
 m1 <-
   bind_rows(
     tibble(
@@ -882,6 +773,7 @@ m1 <-
   filter(statistika %in% c("Accuracy", "Sensitivity", "Specificity")) |> 
   mutate(statistika = c("Přesnost", "Senzitivita", "Specificita"))
 
+# Vytvoření statistik z matice záměn pro tým Astralis
 m2 <-
   bind_rows(
     tibble(
@@ -896,6 +788,7 @@ m2 <-
   filter(statistika %in% c("Accuracy", "Sensitivity", "Specificity")) |> 
   mutate(statistika = c("Přesnost", "Senzitivita", "Specificita"))
 
+# Vytvoření statistik z matice záměn pro tým Sprout
 m3 <-
   bind_rows(
     tibble(
@@ -924,4 +817,3 @@ save_bc_table(
   .lab = NA
 )
 ```
-

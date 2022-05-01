@@ -1,11 +1,18 @@
+#' Uložení logistického modelu do LaTeX souboru ve formě tabulky
+#'
+#' @param .model Logistický model
+#' @param .file Soubor, do kterého tabulku uložit
+#' @param .cap Caption
+#' @param .lab Label
 save_bc_model <- function(.model, .file, .cap, .lab) {
   
-  # if .lab is NA, extract it from the file name
+  # Pokud není zadaný label, použije se jako label název souboru
+  # bez přípony
   if (is.na(.lab)) {
     .lab <- sprintf("tab:%s", str_extract(.file, "^.*(?=\\.tex)"))
   }
   
-  # Create xtable
+  # Vytvoření pojmenované tabulky
   xtable <- xtable(
     .model,
     caption = .cap,
@@ -13,15 +20,17 @@ save_bc_model <- function(.model, .file, .cap, .lab) {
     digits = 4 
   )
   
-  # pokud je .lab NULL, model nesmí mít label
+  # Pokud není zadaný label, vytvoří se tabulka bez labelu a 
+  # captionu
   if (is.null(.lab)) {
     xtable <- xtable(.model,
                      digits = 4 )
   }
   
-  # Setup file path
+  # Vytvoření cesty pro soubor
   .file = paste(MODELS_DIR, .file, sep = "/")
   
+  # Uložení tabulky do souboru
   print(xtable,
         file = .file,
         include.rownames = T

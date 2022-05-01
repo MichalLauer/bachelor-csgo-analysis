@@ -15,11 +15,8 @@ output:
 editor_options: 
   chunk_output_type: console
 ---
-# Analýza
-Přejít [zpět](analyza.html) na analýzu
-
 # Globální nastavení
-```{r global-settings, message=F}
+```{r sesetup, message=F}
 data("mtcars")
 library(ggplot2)
 library(grid)
@@ -32,7 +29,8 @@ theme_set(theme_minimal())
 
 # Načtení funkcí a dat
 ```{r data-load}
-sapply(list.files("R", pattern = ".R$",full.names = T), source) |>
+sapply(list.files("R", pattern = ".R$",
+                  full.names = T, recursive = T), source) |>
   invisible()
 ```
 

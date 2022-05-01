@@ -1,7 +1,15 @@
+#' Uložení libovolné tabulky do LaTeX souboru
+#'
+#' @param .tibble Tabulka
+#' @param .file Soubor, do kterého uložit tabulku
+#' @param .cap Caption
+#' @param .lab Label
+#' @param .scale Poměr tabulky
 save_bc_table <- function(.tibble, .file, .cap, .lab,
                           .scale = 1) {
   
-  # if .lab is NA, extract it from the file name
+  # Pokud není zadaný label, použije se jako label název souboru
+  # bez přípony
   if (is.na(.lab)) {
     .lab <- sprintf("tab:%s", str_extract(.file, "^.*(?=\\.tex)"))
   }
@@ -16,7 +24,7 @@ save_bc_table <- function(.tibble, .file, .cap, .lab,
     
   }
   
-  # Create xtable
+  # Vytvoření pojmenované tabulky
   xtable <- xtable(
     .tibble,
     caption = .cap,
@@ -24,19 +32,19 @@ save_bc_table <- function(.tibble, .file, .cap, .lab,
     digits = 4 
   )
   
-  # There is a bug with decimal.mark and scalebox and
-  # this parameter needs to be set to '.' in order to make
-  # the scalebox parameter work
+  # V xtable existuje bug, kde při globálním nastavení decimálního
+  # oddělovače na ',' se vypíše .scale s čárkou a LaTeX hází error
   options(OutDec = ".")
   
-  # Setup file path
+  # Vytvoření cesty pro soubor
   .file = paste(TABLES_DIR, .file, sep = "/")
   
+  # Uložení tabulky do souboru
   print(xtable,
         file = .file,
         scalebox = .scale
   )
   
-  # Setting back OutDec
+  # Znovunastavení decimálního oddělovače na ','
   options(OutDec = ",")
 }
