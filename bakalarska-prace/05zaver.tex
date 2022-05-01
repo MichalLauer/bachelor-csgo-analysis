@@ -1,15 +1,14 @@
 \chapter{Závěr}
-Bakalářská práce se zabírala predikcí výher zápasů ve hře \ac{CSGO} pro hráče i pro týmy. Významnost modelů byla zjištěna pomocí Waldova testu a hladiny významnosti
-$\alpha = 0.05$. Predikce modelů byla vyhodnocena pomocí matice záměn a statistik Přesnost, Senzitivita a Specificita.
+Esport neustále roste a rozvíjí se do odvětví jako sázení, analytika či podnikání. Jedná se o nový trend, který zajímá nejvíce mladou populaci a hráče her.
+Díky propojení esportu a sázkových kanceláří vzniká potřeba pro kvalitní a přesné modely, díky kterým lze výsledky zápasů předpovídat a stanovovat tak
+vhodné kurzy. V profesionální scéně lze modely využít na identifikaci významných prediktorů pro výhru zápasu. Hráči a týmy se pak mohou pomocí dat
+a modelů mohou soustředit pouze na charakteristiky, které jejich šanci na výhru zvyšují.
 
-Pro práci s modely bylo prve nutné data spojit do jednoho datového souboru. Modely byly vytvořené pomocí trénovací množiny dat, která činila 80\% ze 
-spojeného datového souboru. Validační množina pak tvořila zbylých 20\% dat. Ta byla použita k tvorbě matice záměn.
+Vytvořené modely v bakalářské práci byli sestavené jak pro individuální hráče, tak pro dva referenční týmy a pro všechny týmy v datovém souboru. Z modelů
+je patrné, že nejdůležitější prediktory se týkají počtu zabití nepřátel a počtu úmrtí hráče. Ty hrají významnou roli jak v modelech pro hráče, tak pro tým.
+Rozdíl ve významnosti prediktorů se nachází mezi profesionálními týmy a amatérskými týmy. Z modelů lze odvodit důraz na individuální charakteristiky hráčů
+v profesionálních týmech. V týmech amatérských lze pak pozorovat důraz na různé charakteristiky hráčů a na charakteristiky zápasu. 
 
-Modely pro hráče byly vytvořené přes všechny kategorie map a modely pro mapu Mirage a Vertigo mezi sebou byli porovnané. Modely se lišily hlavně tím, zda se hodí pro 
-predikci výher či proher. Model pro mapu Mirage je díky své vyšší specificitě vhodný pro identifikaci proher. Model pro mapu Vertigo má naopak vyšší senzitivitu
-a hodí se spíše pro predikci výhry hráče. Každý model má také jiné významné prediktory, což značí, že každá se specifikuje jiným stylem hraním.
-
-Modely pro celé týmy byly vytvořeny tři. Celkový model měl významnou většinu prediktorů. Jeho přesnost, senzitivita i specificita jsou velmi podobné a model díky tomu
-predikuje stejně úspěšně jak výhry, tak prohry. Model pro referenční tým Astralis má významné pouze dva prediktory \textit{mean\_kills} a \textit{mean\_deaths}. Statistiky
-z matice záměn naznačují, že se model hodí spíše k predikci výher. Model referenčního týmu Sprout má významné statistiky také pouze \textit{mean\_kills} a \textit{mean\_deaths}.
-Z matice záměn lze usoudit, že se model hodí spíše k predikci výher týmu.
+Model by bylo možné rozšířit více podrobnými a specifickými charakteristikami hráčů. Modely zároveň nepočítají s tím, že se hráči v týmu mohou měnit a každý hráč má jiné
+charakteristiky a délku hraní v týmu. Předpoklad pro aktuální modely je takový, že je známé, na jaké mapě se hraje a jaký tým začíná na jaké straně. 
+V praxi je tento fakt známý až velmi krátce před začátkem zápasu. K modelům by bylo proto vhodné přidat predikci mapy, která se bude mezi dvěma týmy hrát.

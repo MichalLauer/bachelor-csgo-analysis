@@ -6,8 +6,9 @@ modely jsou vyhodnoceny pomocí testovacího datového souboru a matice záměn.
 a vývojové prostředí RStudio \cite{rstudio_rstudio_2022}. Zdrojový kód celé analýzy je v příloze \ref{apx:03}
 
 \section{Cíle analýzy}
-Cílem analýzy je vytvořit logistické modely pro předpověď výhry jak pro individuální hráče, tak pro dva referenční týmy nebo všechny týmy. Jelikož se charakteristiky hráčů i zápasů mohou měnit dle mapy,
-na které se zápas odehrává, modely pro individuální hráče jsou tříděné přes kategorie map. Modely pro předpověď výhry týmu používají interakci mezi mapou a začínající
+Cílem analýzy je vytvořit logistické modely pro předpověď výhry jak pro individuální hráče, tak pro dva referenční týmy nebo všechny týmy. Jelikož se charakteristiky hráčů i 
+zápasů mohou měnit dle mapy, na které se zápas odehrává, modely pro individuální hráče jsou tříděné přes kategorie map. Modely pro předpověď výhry týmu používají interakci
+mezi mapou a začínající
 stranou.
 
 Pro hráče budou sestaveny logistické modely z celého datového souboru a pro každou mapu zvlášť. Modely budou následně vyhodnoceny pomocí statistik vycházejících
@@ -16,11 +17,11 @@ ve hře od jeho vydání. Vertigo je naopak nejnovější přírůstek do profes
 neznali. Modely budou porovnány podle přesnosti predikce a podle toho, jaké prediktory jsou pro model významné.
 
 Modely pro týmy budou sestavené pro dva vybrané referenční týmy a pro všechny týmy. První tým, pro který se vytvoří model, bude tým Astralis.
-Ten je dlouhodobě považován za jeden z nejlepších týmu na světě, vyhrál několik prestižních Majoru a v grafu \ref{fig:mira_vyhry_tymu} je vidět, že má v datovém souboru největší míru výhry. Druhým týmem bude 
-německý celek Sprout. Tým Sprout se řadí v době extrakce dat k profesionálnímu týmu s průměrným třicátým místem na světovém žebříčku. Modely jsou vytvořené pouze pro dva týmy z toho
-důvodu, že je celkový počet týmů velmi vysoký a bylo by komplikované porovnávat všechny týmy naráz. Z toho důvodu se budou hledat významné rozdíly mezi dvěma referenčními modely a
-jedním celkovým modelem, který je sestaven na celém datovém souboru. Mezi modely bude porovnaná jak přesnost predikce, tak významnost parametrů. Jelikož je původní spojený datový
-soubor na úrovni hráčů, charakteristiky hráčů se musí agregovat na úroveň týmů a zápasů.
+Ten je dlouhodobě považován za jeden z nejlepších týmu na světě, vyhrál několik prestižních Majoru a v grafu \ref{fig:mira_vyhry_tymu} je vidět, že má v datovém souboru
+největší míru výhry. Druhým týmem bude německý celek Sprout. Tým Sprout se řadí v době extrakce dat k profesionálnímu týmu s průměrným třicátým místem na světovém žebříčku.
+Modely jsou vytvořené pouze pro dva týmy z toho důvodu, že je celkový počet týmů velmi vysoký a bylo by komplikované porovnávat všechny týmy naráz. Z toho důvodu se budou
+hledat významné rozdíly mezi dvěma referenčními modely a jedním celkovým modelem, který je sestaven na celém datovém souboru. Mezi modely bude porovnaná jak přesnost predikce,
+tak významnost parametrů. Jelikož je původní spojený datový soubor na úrovni hráčů, charakteristiky hráčů se musí agregovat na úroveň týmů a zápasů.
 
 \section{Příprava dat}
 Dataset\footnote{https://www.kaggle.com/datasets/mateusdmachado/csgo-professional-matches} obsahuje čtyři datové soubory, které popisují zápasy ve hře
@@ -108,9 +109,9 @@ Příklad agregovaných dat je v přiložené tabulce \ref{tab:data_agregovana}.
 
 \subsection{Trénování a validace modelů}
 Pro křížovou validaci modelů se vytvoří náhodné rozdělení dat v poměru 8:2. Pro trénování modelu bude použito 80 \% z datového souboru, na validaci je použito zbylých 20 \%.
-Natrénované modely jsou vyhodnoceny pomocí Waldova testu, který je v každé tabulce v posledním sloupci $Pr(>|z|)$. Případné nevýznamné prediktory jsou pak z modelu
-odstraněny a model je natrénován znovu na stejné trénovací množině. Pro validaci modelu je vytvořena matice záměn, která popisuje přesnost predikcí modelu na validačních
-datech. K následnému vyhodnocení modelů jsou použity statistiky Přesnost, Senzitivita a Specificita. 
+Natrénované modely jsou vyhodnoceny pomocí Waldova testu, který je v každé tabulce v posledním sloupci $Pr(>|z|)$. Pro určení významnosti je použitá hladina významnosti
+$\alpha = 0.05$. Případné nevýznamné prediktory jsou pak z modelu odstraněny a model je natrénován znovu na stejné trénovací množině. Pro validaci modelu je vytvořena
+matice záměn, která popisuje přesnost predikcí modelu na validačních datech. K následnému vyhodnocení modelů jsou použity statistiky Přesnost, Senzitivita a Specificita. 
 
 \newpage
 \section{Průzkumová analýza dat}
