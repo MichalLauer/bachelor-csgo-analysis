@@ -5,7 +5,7 @@ rstudioapi::restartSession()
 renv::activate("analyza/")
 
 # Nastavení working directory pro render
-wd <- setwd(rstudioapi::getActiveDocumentContext()$path |> dirname())
+wd <- rstudioapi::getActiveDocumentContext()$path |> dirname()
 setwd(wd)
 
 # Kontrola dat
