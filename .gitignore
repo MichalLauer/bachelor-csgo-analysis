@@ -4,13 +4,16 @@
 .RDataTmp
 .Rhistory
 *.Rproj
+*.log
 
 # VSCode
 *.code-workspace
 
 # Analýza
 data/
-analyza/analyza_cache/
+analyza/*_cache/
+analyza/analyza.pdf
+bakalarska
 *.png
 *.html
 

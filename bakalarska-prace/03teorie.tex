@@ -164,10 +164,11 @@ existuje kladná korelace mezi proměnnou $X$ a $Y$, neznamená to, že růst je
 
 \subsubsection{Korelační matice}
 Korelační matice je nástroj, díky kterému lze zobrazit korelaci mezi více jak dvěma páry proměnných. Matice může být zobrazená pomocí grafu a
-je velmi užitečná v regresní analýze kvůli předpokladu nezávislosti vysvětlujících proměnných.
-Pokud jsou při tvorbě modelu prediktory korelované, vzniká problém tzn. multikolinearity. Při multikolinearitě se zhoršuje přesnost a 
-vypovídací hodnota koeficientů \cite{kleinbaum_logistic_2010}. V takovém případě je potřeba zvýšit počet pozorování nebo z modelu jeden z vysoce 
-korelovaných prediktorů odebrat. 
+je velmi užitečná v regresní analýze kvůli předpokladu nezávislosti vysvětlujících proměnných. Pokud jsou při tvorbě modelu prediktory korelované,
+vzniká problém tzn. multikolinearity. Multikolinearita je spojení s regresním modelem popsána v \cite{hebak_regrese_1998} následovně:
+\uv{Pojem multikolinearity je velmi úzce svázán se silnou vzájmenou lineární závislostí vysvětlujícíchproměných, jejímž důsledkem je špatně podmíněná matice X}.
+Matice X zde značí matici prediktorů regresního modelu. V takovém případě je potřeba zvýšit počet pozorování nebo z modelu jeden z vysoce korelovaných prediktorů
+odebrat \cite{kleinbaum_logistic_2010}.
 
 \begin{figure}[H]
     \centering
@@ -278,12 +279,11 @@ na které model není připraven a lze tak objektivněji určit kvalitu modelu. 
 rozdělit, je mnoho. Existuje například $k$-fold validace, kdy se trénovací množina dat rozdělí na $k$ 
 náhodných podmnožin. Jedna podmnožina dat se použije pro validaci a zbylých $k-1$ podmnožin se použije pro trénování.
 Celý proces se opakuje $k$ krát, tedy každá podmnožina bude právě jednou použita pro testování. Výsledné statistiky lze zprůměrovat a použít jako hodnocení
-daného modelu.
+daného modelu \cite{hill_statistics_2006}.
 
 \subsection{Matice záměn}
 Matice záměn je nástroj pro vyhodnocení predikcí modelu. Matice je o velikosti $2 \times 2$. Pro potřeby logistické regrese se matice skládá ze dvou řádku a dvou sloupců.
 Ve sloupcích se nachází původní hodnoty, tedy hodnoty, které chceme předpovídat. Ve řádcích se pak nachází předpovědi z modelu.  
-
 
 \begin{table}[H]
     \centering
@@ -332,45 +332,48 @@ spíše negativní klasifikace, tedy zdravé pacienty, lze použit statistiku zv
 \end{equation}
 
 \subsection{Testování hypotéz}
-Cílem testovací hypotézy je zjistit, zda neznámý parametr $\theta$ patří do nějaké prostoru $\Omega_0$. V případě testování parametrů logistického modelu bude
-neznámý parametr $\theta$ roven parametru $\beta_i$. Prostor $\Omega_0$ je pak populace. Testuje se nulová hypotéza, značená $H_0$, která říká, že
-parametr $\theta$ do prostoru $\Omega_0$ patří. Proti ní je postavená hypotéza alternativní, značená $H_1$, která tvrdí, že parametr $\theta$ do prostoru
-$\Omega_0$ nepatří. Pro testování je nutné zvolit parametr $\alpha$, který značí maximální hodnotu chyby prvního druhu. Chyba prvního druhu stanovuje, jaká je 
-pravděpodobnost, že se zamítne testovaná nulová hypotéza $H_0$ za předpokladu, že je $H_0$ pravdivá \cite{hardle_applied_2015}.
+Testování hypotéz slouží k zjištění, zda se charakteristika $\theta$ v populaci za určitých podmínek mění. Statistický hypotéza
+je definována jako předpoklad o náhodné veličině. Nulová hypotéza představuje aktuální stav veličiny a odráží současný stav.
+Značí se jako $H$ či $H_0$. Hypotéza, která se od aktuálního stavu nějakým způsobem odlišuje, se nazývá jako alternativní hypotéza
+a značí se $H_1$, popřípadě $H_A$. Nulová hypotéza $H_0$ a testovaná hypotéza $H_1$ se navzájem vylučují. Testování hypotéz je
+pak rozhodovací postup, který určí platnost právě jedné testované hypotézy. Rozhodnutí, zda platí testovaná či alternativní hypotéza,
+pak záleží na testovací kritériu $T$. Testovací kritérium $T$ je náhodná veličina se známým pravděpodobnostním rozdělením.
 
-\begin{equation}
-    P(\text{Zamítnutní }H_0 | H_0\text{ je platná}) = \alpha
-\end{equation}
+Testovací kritérium $T$ může být přiřazeno do dvou podmnožin. První množina, zvaná obor přijetí, odpovídá množině charakteristik $\theta$
+při platné nulové hypotéze $H_0$. Druhá množina se nazývá jako kritický obor a obsahuje charakteristiky $\theta$ tak extrémní, že je 
+pravděpodobnost jejich výskytu velmi malá. Pokud testovaná charakteristika $\theta$ vypočtená z náhodného výběrů padne do oboru přijetí,
+lze usoudit, že test neprokázal nepravdivost alternativní hypotézy. Pokud naopak padne testovací kritérium do kritického oboru, nulová
+hypotéza je zamítnutá ve prospěch hypotézy alternativní.
 
-Existuje také chyba druhého typu $\beta$, která značí pravděpodobnost nezamítnutí neplatné nulové hypotézy.
+Při zamítnutí či přijmutí alternativní hypotézy vznikají chyby dvojího typu. První typ chyby je nazýván jako hladina významnosti a značí
+se $\alpha$. Hladina významnosti je pravděpodobnost chybného přijmutí alternativní hypotézy. Platí tedy, že testovací kritérium $T$ 
+s pravděpodobností $\alpha$ padne do kritického oboru, ačkoliv patří do oboru přijetí. Chyba druhého typu pak říká, s jakou pravděpodobnostní
+padne testovací kritérium $T$ do oboru přijetí, ačkoliv patří do kritického oboru. Chyba druhého typu se značí jako $\beta$ a je to doplněk
+hladiny významnosti, tedy $\beta = 1 - \alpha$.
 
-\begin{equation}
-    P(\text{Nezamítnutí }H_0 | H_0\text{ je neplatná}) = \beta
-\end{equation}
-
-Chyby nelze eliminovat a je nutné je s nimi při testování hypotézy počítat. Pro parametr $\alpha$ se ustálily hodnoty $0.1, 0.05$ a $0.01$.
-
+Pro určení, zda kritická hodnota patří do oboru přijetí či do kritického oboru, slouží známé pravděpodobnostní rozdělení testovaného kritéria.
+Pokud testové kritérium patří do kritického oboru o o velikosti $\alpha$, je nulová hypotéza zamítnuta. Hladina ýznamnosti $\alpha$ lze změnit.
+S růstem hladiny významnosti se zmenšuje kritický obor a zároveň zvětšuje pravděpodobnost chyby prvního řádu.
+\cite{hebak_praktikum_2009}
 
 \subsection{Waldův test}
-Koeficienty v logistickém regresním modelu nemusí být statisticky významné. Pokud je prediktor nevýznamný, znamená to, že není významný při predikci prediktoru.
-K otestování významnosti prediktoru lze použít Waldův test.
+Waldův test testuje hypotézu, zda je parametr logistického regresního modelu $\beta_i$ rovný nule.
 
-Waldův test ověřuje, zda je parametr $\beta_i$ v populaci významný či nikoliv. Definice testu hypotézy je tedy:
+\begin{align}
+    \begin{split}
+        H_0 &: \beta_i = 0 \\
+        H_1 &: \beta_i \neq 0
+    \end{split}
+\end{align}
 
-$H_0:$ Koeficient $\beta_i$ je rovný nule. \\
-$H_A:$ Koeficient $\beta_i$ je různý od nuly.
+Testovací kritérium Waldova testu se vypočítá vydělením parametr $\hat{\beta_i}$ jeho standardní chybou $S_{\hat{\beta_i}}$
 
-Pro vyhodnocení hypotézy se používá
+\begin{align}
+    \begin{split}
+        T = \frac{\hat{\beta_i}}{S_{\hat{\beta_i}}}
+    \end{split}
+\end{align}
 
-testové kritérium
-
-$Z$, který se vypočítá jako poměr testovaného parametru $\beta_i$
-a směrodatné chyby koeficientu $S_{\hat{\beta_i}}$
-
-\begin{equation}
-    Z = \frac{\hat{\beta_i}}{S_{\hat{\beta_i}}}.
-\end{equation}
-
-
-Testové kritérium
-$Z$ má za platnosti nulové hypotézy normální $N(0, 1)$ a její druhá mocnina, $Z^2$, má chí-kvadrát rozdělení s jedním stupněm volnosti \cite{kleinbaum_logistic_2010}.
+Testovací kritérium má pravděpodobnostní rozdělení Chí-kvadrát se dvěma stupni volnosti, tedy $\chi^2$. Pokud testovací kritérium patří do 
+kritického oboru $\chi^2_\alpha$, hypotéza o nulovém parametru $\beta_i$ je zamítnuta ve prospěch alternativní hypotézy. Pokud testovací kritérium nepadne do kritického oboru,
+tedy padne do oboru přijetí, lze usoudit, že test neprokázal platnost alternativní hypotézy \cite{kleinbaum_logistic_2010}, \cite{powers_statistical_2000}
