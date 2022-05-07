@@ -152,7 +152,7 @@ g <- mtcars |>
   ggplot(aes(x = mpg, y = wt)) +
   geom_point() +
   labs(
-    title = 'Hmotnost vozidla vysvětlená mílemy za galon',
+    title = 'Hmotnost vozidla vysvětlená mílemi za galon',
     subtitle = 'Hmotnost je udaná v (lb/1000)',
     caption = "Henderson and Velleman (1981)",
     x = 'Míle za galon',
