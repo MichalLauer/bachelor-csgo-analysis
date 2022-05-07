@@ -32,36 +32,46 @@
 % Nepovinné poděkování (vedoucímu práce, konzultantovi, tomu, kdo
 % zapůjčil software, literaturu apod.)
 \def\Podekovani{%
-Rád bych poděkoval panu doktoru Zdeňku Šulcovi, který mou bakalářskou práci podpořil a vedl, i přes odlišný studijní obor.
-Dále děkuji autorům citovaných knihm, článků a softwaru za poskytnutou příležitost se v logistických modelech zlepšit a napsat 
+Rád bych poděkoval panu doktoru Zdeňku Šulcovi, který mou bakalářskou práci podpořil a vedl i přes odlišný studijní obor.
+Dále děkuji autorům citovaných knih, článků a softwaru za poskytnutou příležitost se v logistických modelech zlepšit a napsat 
 na toto téma bakalářskou práci.
 }
 
 % Abstrakt (doporučený rozsah cca 150-250 slov; nejedná se o zadání práce)
 \def\Abstrakt{%
-Esport je sport ve virtuálním světě, který se od počátku dvacátého prvního století rozrůstá mezi novou generací, která
-vyrůstala ve světě počítačů, mobilů a technologií. Esport nejsou jen klasické sporty jako fotbal, hokej či rugby, ale soutěžit se může
-i v různých počítačtích, mobilních či konzolovích hrách. Tato práce je zaměřená na jednu z počítačovích her, a to na hru \ac{CSGO}.
-Téma je aktuální zejména díky tomu, že je esport ve světě relativně nová záležitost a neustále se vyvíjí. Na to se musí přizpůsobit například
-sázkové kanceláře, které využívají analýzu esportových dat pro nabízení mnoha různých kurzů. 
+Esport je sport ve virtuálním světě. Rozšiřuje se od počátku dvacátého prvního století především mezi generací, jež vyrůstala ve světě počítačů,
+mobilů a technologií. Esport nabízí jak klasické sporty jako fotbal, hokej či rugby, tak další typy počítačových, mobilních a konzolových her.
+Tato práce je zaměřená na jednu z počítačových her, a to na hru \ac{CSGO}. Téma je aktuální zejména proto, že je esport ve světě relativně novou záležitostí a
+neustále se vyvíjí. Tomu se musí přizpůsobit například sázkové kanceláře, když na esportové zápasy vypisují nejrůznější kurzy.
 
 Cílem bakalářské práce je kvantitativně zanalyzovat esportové zápasy ze hry \ac{CSGO}, predikovat výhry
 hráčů a týmů a zjistit, jaké prediktory jsou pro výhru zápasu statisticky významné. Použitý datový soubor je z internetového portálu
 kaggle.com a obsahuje data od roku 2015 až do roku 2020.
 
-Teoretická část práce se zabývá představením a historií esportu a esportové hry \ac{CSGO}. Teoretická část je pak zaměřená na analýzu dat v 
-programovacím jazyku R. Predikce výher je založena na logistickém vícerozměrném modelu a k jeho vyhodnocení je použita matice záměn a statistiky z 
-ní vypočítané. Pro určení významnosti prediktorů je použit Waldův test.
+Teoretická část práce se zabývá představením a historií esportu a esportové hry \ac{CSGO}. Praktická část je pak zaměřená na analýzu dat v 
+programovacím jazyku R. Predikce výher je založena na logistickém vícerozměrném modelu. K jeho vyhodnocení je použita matice záměn a statistiky z 
+ní vypočítané. K určení významnosti prediktorů je použit Waldův test.
 
-Výsledek práce jsou logistické modely, které jsou schopné predikovat výhru hráče či týmu podle různých charakteristik. Zároveň jsou
-identifikované významné prediktory, které výhru zápasu ovlivňují. Toto zjištění by bylo možné použit např. pro stanovení kurzu sázkovou 
+Výsledkem práce jsou logistické modely, které jsou schopné predikovat výhru hráče či týmu podle různých charakteristik. Zároveň jsou
+identifikované významné prediktory, které výhru zápasu ovlivňují. Toto zjištění by bylo možné použít např. pro stanovení kurzu sázkovou 
 kanceláří na výhru či prohru daného hráče či týmu.
 }
 
 \def\AbstraktEN{%
-{\color{red}
-Přeložit před odevzdáním
-}
+Esport is a sport in a virtual world. Since the start of the 21st century, it has been growing amongst a new generation of people who grew up with computers, phones, and new
+technology. Esport offers classical sports, such as football, hockey, or rugby, as well as other types of computer, mobile, or console games. This thesis focuses on a computer
+game called \ac{CSGO}. The topic is especially relevant because it is a new thing that continuously grows and evolves. The continuous growth affects, for example, betting shops,
+who are including esport matches in their day-to-day operations.
+
+This bachelor thesis aims to quantitatively analyze esport matches in-game \ac{CSGO}, predict winnings of both players and teams, and identify statistically significant
+predictors. The data used for this analysis are from kaggle.com and contain data between 2015 and 2020.
+
+The theoretical part deals with an introduction to esport history and an esport title called \ac{CSGO}. The practical part focuses on data analysis in the programming
+language R. Predictions are based on a multivariate logistic regression model. Evaluation of predictions is done on a confusion matrix and resulting coming from it. The
+significance of predictors is then assessed using the Wald test.
+
+The result of this thesis are logistic models capable of predicting the results of a match based on player and team characteristics. Thanks to logistic models,
+significant predictors are identified, and their effect on the final result is assessed. These predictions help, for example, to identify a betting rate for betting shops.
 }
 
 
@@ -106,8 +116,8 @@ Přeložit před odevzdáním
 \include{zkratky}
 
 %%% Přílohy k bakalářské práci
-\part{Přílohy}
-\appendix
+% \part{Přílohy}
+% \appendix
 \include{ap01DatoveSoubory.tex}
 \include{ap02ModelyHrace.tex}
 \include{ap03Kod.tex}

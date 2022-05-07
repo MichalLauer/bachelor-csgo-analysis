@@ -1,40 +1,33 @@
 \chapter{Teoretická část}
 V následující části jsou popsány jak teoretické metody pro vizualizaci dat, tak i tvar, forma a vyhodnocení logistického regresního modelu. 
-Ke každé části, která se věnuje popisu dat pomocí nějakého grafu, je přidána praktická ukázka s popisem a praktickým vysvětlením.
-vhodné.
+Ke každé části, která zpracovává data pomocí grafu, je přidána praktická ukázka s popisem a vysvětlením.
 
 \section{Vizualizace dat} \label{sec:vizualizace_dat}
 \subsection{Bodový graf}
-Bodový graf slouží pro zobrazení vztahu dvou kvantitativních proměnných. Z pravidla se vysvětlovaná proměnná dává na osu Y,
-zatímco proměnná vysvětlující se nachází na ose X. Vysvětlovaná (nezávislá) proměnná je ta proměnná, která má být předvídaná.
-Vysvětlující proměnná se naopak snaží vysvětlovanou proměnnou předpovědět či popsat. 
+Bodový graf slouží k zobrazení vztahu dvou kvantitativních proměnných. Zpravidla se vysvětlovaná proměnná přiřazuje k ose Y,
+zatímco proměnná vysvětlující se nachází na ose X. Vysvětlovaná (nezávislá) proměnná je ta proměnná, která má být předpovězena.
+Vysvětlující proměnná se naopak snaží vysvětlovanou proměnnou předpovědět či popsat.
 
-Zobrazením
-vysvětlované a vysvětlující proměnné
-na bodovém grafu lze vidět např. sílu korelace nebo vztah mezi proměnnými (např. lineární, kvadratický, logaritmický).
-
+Díky zobrazení vysvětlované a vysvětlující proměnné lze na bodovém grafu vidět např. sílu korelace nebo vztah mezi proměnnými (např. lineární, kvadratický, logaritmický).
+  
 \begin{figure}[H]
     \centering
     \includegraphics{../obrazky/bodovy_graf_mtcars.png}
-    \caption{Bodový graf hmotnosti a míly za galon} 
+    \caption{Bodový graf hmotnosti a míle za galon} 
     \label{fig:bodovy_graf_mtcars}
 \end{figure}
 
 Obrázek \ref{fig:bodovy_graf_mtcars} zobrazuje negativní korelaci mezi hmotností vozidla a mílemi ujetými za galon.
 
 \subsection{Sloupcový graf}
-Sloupcový graf slouží k zobrazení četností
-kategorií. Na jednu osu (z pravidla osu X) se položí možné kategorie. Na druhou osu
-se pak položí sledovaná statistika.
+Sloupcový graf slouží k zobrazení četnosti
+kategorií. Na jednu osu (zpravidla osu X) se položí možné kategorie. Na druhé ose je pak sledovaná statistika.
 Sledovat můžeme nejen četnost, ale i průměr či kteroukoli jinou statistiku, kterou bude možné na ose zobrazit.
 
-Nejčastější se pomocí sloupcového grafu porovnává absolutní četnost přes kategorie. Řazení kategorií se dále odvíjí podle toho, zda je
-daná proměnná ordinální či nominální. V případě nominální proměnné se sloupce řadí podle absolutní četnosti, a to od nejvyšší po nejnižší.
-V případě ordinální proměnné se zachovává přirozené řazení. Příklad sloupcového grafu je zobrazen na obrázku 
-
-\ref{fig:sloupcovy_graf_mtcars}
-, který porovnává průměrnou hrubou koňskou sílu s počtem válců.
-Je na něm také vidět závislost hrubé koňské síly na počtu válců.
+Nejčastěji se pomocí sloupcového grafu porovnává absolutní četnost přes kategorie. Řazení kategorií se dále odvíjí od toho, zda je
+daná proměnná ordinální, či nominální. V případě nominální proměnné se sloupce řadí podle absolutní četnosti, a to od nejvyšší po nejnižší.
+V případě ordinální proměnné se zachovává přirozené řazení. Příkladem sloupcového grafu je graf na obrázku \ref{fig:sloupcovy_graf_mtcars}, který porovnává průměrnou hrubou
+koňskou sílu s počtem válců. Ukazuje také závislost hrubé koňské síly na počtu válců.
 
 \begin{figure}[H]
     \centering
@@ -45,11 +38,10 @@ Je na něm také vidět závislost hrubé koňské síly na počtu válců.
 
 \subsection{Histogram}
 
-Histogram je speciální typ sloupcového grafu. Hlavní rozdíl je v tom, že popisuje rozdělení spojité proměnné a mezi sloupci není žádná mezera.
-Pro histogram je třeba data sloučit do skupin o určité šířce. Správný výběr počtu skupin je kritický, jelikož může velmi
-silně ovlivnit interpretaci dat. Pokud se vybere příliš malý počet skupin, data se seskupí a může se ztratit důležitý vztah. Pokud se ovšem
-vybere moc velký počet skupin, v datech bude obtížné najít nějaký obecný vztah či trend,
-viz obrázek \ref{fig:histogram_porovnani_mtcars}.
+Histogram je speciálním typem sloupcového grafu. Hlavní rozdíl mezi nimi spočívá v tom, že zobrazuje rozdělení spojité proměnné a mezi sloupci není žádná mezera.
+K vytvoření histogramu je třeba data sloučit do skupin o určité šířce. Správný výběr počtu skupin je kritický, jelikož může velmi silně ovlivnit interpretaci dat. Pokud
+se vybere příliš malý počet skupin, data se seskupí a může se ztratit důležitý vztah. Pokud se ovšem vybere příliš vysoký počet skupin, v datech bude obtížné najít nějaký
+obecný vztah či trend, viz obrázek \ref{fig:histogram_porovnani_mtcars}.
 
 \begin{figure}[H]
     \centering
@@ -58,26 +50,24 @@ viz obrázek \ref{fig:histogram_porovnani_mtcars}.
     \label{fig:histogram_porovnani_mtcars}
 \end{figure}
 
-Pro vhodný počet skupin existuje mnoho způsobů. Nejznámější je takzvané Sturgesovo pravidlo, které se spočítá následujícím vztahem:
+Pro zjištění vhodného počtu skupin existuje mnoho způsobů. Nejznámějším je takzvané Sturgesovo pravidlo, které se spočítá následujícím vztahem:
 
 \begin{equation}
     \label{eq:sturgesovo_pravidlo}
-    k \text{ } \dot{\mathbf{=}} \text{ } 1 + 3,3 * log_{10}(n)
+    k \text{ } \dot{\mathbf{=}} \text{ } 1 + 3,3 * log_{10}(n),
 \end{equation}
 
-kde $k$ je přibližný počet skupin a $n$ je počet pozorování. Druhý parametr, který je pro tvorbu histogramu potřeba, je šířka skupiny.
+kde $k$ je přibližný počet skupin a $n$ je počet pozorování. Druhým parametrem nezbytným pro tvorbu histogramu je šířka skupiny.
 Ta by měla být ideálně stejná pro všechny skupiny. Pokud tomu tak není, histogram může být zavádějící a čtenář mu nemusí plně rozumět.
-Pro vypočtení počtu skupin má šířka skupiny následující tvar:
+Pro určení počtu skupin má šířka skupiny následující tvar:
 
 \begin{equation}
-    w = \frac{max(X) - min(X)}{k}
+    w = \frac{max(X) - min(X)}{k},
 \end{equation}
 
 kde $X$ je zobrazovaná proměnná, $k$ je počet skupin a $w$ je výsledná šířka intervalu. 
-Nutné je však podotknout, že není pravidlem se danými výpočty řídit a výsledný
-sloupcový graf je nutné přizpůsobit
-
-konkrétnímu datovému souboru.
+Je však nutné podotknout, že není pravidlem se danými výpočty řídit. Výsledný
+sloupcový graf je nutné přizpůsobit konkrétnímu datovému souboru.
 
 \begin{figure}[H]
     \centering
@@ -86,13 +76,14 @@ konkrétnímu datovému souboru.
     \label{fig:histogram_mtcars_sturges}
 \end{figure}
 
-Obrázek \ref{fig:histogram_mtcars_sturges} ukazuje histogram proměnné míle za galon. Počet sloupců je vypočítán podle Sturgesova pravidla \ref{eq:sturgesovo_pravidlo}. 
+Obrázek \ref{fig:histogram_mtcars_sturges} ukazuje histogram proměnné míle za galon. Počet sloupců je vypočítán podle Sturgesova pravidla,
+vysvětleno v \ref{eq:sturgesovo_pravidlo}. 
 
 \subsection{Krabičkový graf}
 \subsubsection{Pětičíselné shrnutí}
-Pětičíselné shrnutí je číselná tabulka, která pomocí pěti různých čísel shrnuje seřazenou číselnou řadu. Základní statistický nástroj pro
+Pětičíselné shrnutí tvoří číselná tabulka, která pomocí pěti různých čísel shrnuje seřazenou číselnou řadu. Základním statistickým nástrojem pro
 vytvoření takové tabulky jsou kvantily. Hodnota $P$-tého percentilu označuje číslo, které rozděluje seřazenou číselnou řadu na dva intervaly. 
-První interval obsahuje $P*100\%$ číselné řady a druhý analogicky $(1-P)*100\%$. Různé hodnoty percentilů mohou mít specifičtější pojmenování a značí se $Q_P$.
+První interval obsahuje $P*100 \%$ číselné řady a druhý analogicky $(1-P)*100\,\% $. Různé hodnoty percentilů mohou mít specifičtější pojmenování a značí se $Q_P$.
 Percentil $P = 0,5$ se označuje jako medián a rozděluje seřazenou číselnou řadu na polovinu. Percentily, kde $P = 0,25$ nebo $P = 0,75$, se označují
 jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použité při tvorbě tabulky.
 
@@ -105,19 +96,17 @@ jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použ
         1,513 & 2,58125 & 3,325 & 3,61 & 5,424\\
         \hline
     \end{tabular}
-    \caption{\label{tab:five-number_summary}pětičíselné shrnutí hmotnosti vozidla (lb/1000)}
+    \caption{\label{tab:five-number_summary}Pětičíselné shrnutí hmotnosti vozidla (lb/1000)}
 \end{table}
 
 
-Příkladem pětičíselné shrnutí je tabulka \ref{tab:five-number_summary},
-
-kde $Q_{0}$ a $Q_{1,00}$ označují minimum a maximum číselné řady. Kvartily $Q_{1}$, $Q_{2}$ (medián) a $Q_{3}$ jsou čísla, která rozděluji časovou řadu na na čtvrtiny. V prvním
-případě, tedy $Q_1 = Q_{0,25}$, je 25\% čísel menší než 1,513 a 75\% dat větší. Pro kvantil $Q_3 = Q_{0,75}$ je 75\% čísel menších než 3,61 a 25\% větších. $Q_{0,50}$ označuje medián.
+Příkladem pětičíselného shrnutí je tabulka \ref{tab:five-number_summary}, kde $Q_{0}$ a $Q_{1,00}$ označují minimum a maximum číselné řady. Kvartily $Q_{1}$, $Q_{2}$ (medián)
+a $Q_{3}$ jsou čísla, která rozděluji časovou řadu na čtvrtiny. V prvním případě, tedy $Q_1 = Q_{0,25}$, je 25\,\%  čísel menších než 1,513 a 75\,\%  dat větších. Pro kvantil
+$Q_3 = Q_{0,75}$ je 75\,\%  čísel menších než 3,61 a 25\,\%  větších. $Q_{0,50}$ označuje medián.
 
 \subsubsection{Krabičkový graf}
-Krabičkový graf je grafické zobrazení a rozšíření pětičíselné shrnutí. Kromě grafického zobrazení 
-pěti kvantilů  ukazuje odlehlé a extrémní hodnoty.
-V Krabičkovém grafu se také nachází obdélník, který ukazuje mezikvartilové rozpětí (IQR), tedy prostředních 50 \% dat. V obdélníku se také nachází černá čára, která značí medián.
+Krabičkový graf je grafické zobrazení a rozšíření pětičíselného shrnutí. Kromě grafického zobrazení pěti kvantilů  zobrazuje odlehlé a extrémní hodnoty.
+V krabičkovém grafu se také nachází obdélník, který ukazuje mezikvartilové rozpětí (IQR), tedy prostředních 50\,\% dat. V obdélníku se nachází černá čára značící medián.
 Z prostředního obdélníku vedou oběma směry čáry, jejichž konce značí hranici pro odlehlá pozorování. Pokud datový soubor neobsahuje žádná odlehlá pozorování, konec těchto čar
 značí minimum a maximum datového souboru.
 Pozorování, která jsou buď větší než horní hranice, nebo menší než spodní hranice, označujeme jako odlehlá nebo extrémní. 
@@ -127,12 +116,12 @@ Pozorování, která jsou buď větší než horní hranice, nebo menší než s
     \textit{Horní hranice } &= Q_3 + 1,5 * IQR
 \end{align*}
 
-Hodnoty, které spadají do intervalu $\langle Q_1 - 1,5IQR; Q_1 - 3IQR\rangle$ a $\langle Q_3 + 1,5IQR, Q_3 + 3IQR \rangle$ se nazývají jako odlehlé.
-Hodnoty které leží mimo tento vztah, tedy hodnoty menší než $Q_1 - 3IQR$ nebo větší než $Q_3 + 3IQR$ se nazývají jako hodnoty extrémní.
+Hodnoty, které spadají do intervalu $\langle Q_1 - 1,5IQR; Q_1 - 3IQR\rangle$ a $\langle Q_3 + 1,5IQR, Q_3 + 3IQR \rangle$ se nazývají odlehlé.
+Hodnoty, které leží mimo tento vztah, tedy hodnoty menší než $Q_1 - 3IQR$ nebo větší než $Q_3 + 3IQR$, se nazývají hodnoty extrémní.
 
-Odlehlá pozorování se v krabičkovém grafu většinou značí kolečkem, zatím co pozorování extrémní hvězdičkou.
+Odlehlá pozorování se v krabičkovém grafu většinou značí kolečkem, zatímco pozorování extrémní hvězdičkou.
 
-Díky grafickému zobrazení lze lehce porovnávat rozdělení jedné vysvětlované kvantitativní proměnné tříděné přes několik kategorií.
+Díky grafickému zobrazení lze snadno porovnávat rozdělení jedné vysvětlované kvantitativní proměnné tříděné přes několik kategorií.
 
 \begin{figure}[H]
     \centering
@@ -155,19 +144,19 @@ r = \frac{n \sum_{i=1}^n x_i y_i - \sum_{i=1}^n x_i \sum_{i=1}^n y_i}
 \end{equation}
 
 Čím větší je absolutní hodnota korelace mezi proměnnou $X$ a $Y$, tím lépe lze pomocí jedné proměnné vysvětlit proměnnou druhou. Kladnost, případně zápornost korelace
-pak značí směr vztahu, tedy zda proměnná $X$ s růstem proměnné $Y$ klesá či stoupá. Pokud je korelace záporná, tedy $r < 0$, s růstem jedné proměnné klesá proměnná druhá.
-Naopak při kladné korelace, tedy $r > 0$, s růstem jedné proměnné roste i druhá.
+pak značí směr vztahu, tedy zda proměnná $X$ s růstem proměnné $Y$ klesá, či stoupá. Pokud je korelace záporná, tedy $r < 0$, s růstem jedné proměnné klesá proměnná druhá.
+Naopak při kladné korelaci, tedy $r > 0$, s růstem jedné proměnné roste i druhá.
 
-Pokud se korelace $r$ vychází kolem nuly, neexistuje lineární závislost mezi proměnnou $X$ a $Y$. Důležité je také podotknout, že korelace neznamená kauzalitu. Pokud
+Pokud korelace $r$ vychází kolem nuly, lineární závislost mezi proměnnou $X$ a $Y$ neexistuje. Důležité je také podotknout, že korelace neznamená kauzalitu. Pokud
 existuje kladná korelace mezi proměnnou $X$ a $Y$, neznamená to, že růst jedné proměnné způsobil růst druhé proměnné.  
 
 
 \subsubsection{Korelační matice}
-Korelační matice je nástroj, díky kterému lze zobrazit korelaci mezi více jak dvěma páry proměnných. Matice může být zobrazená pomocí grafu a
-je velmi užitečná v regresní analýze kvůli předpokladu nezávislosti vysvětlujících proměnných. Pokud jsou při tvorbě modelu prediktory korelované,
-vzniká problém tzn. multikolinearity. Multikolinearita je spojení s regresním modelem popsána v \cite{hebak_regrese_1998} následovně:
-\uv{Pojem multikolinearity je velmi úzce svázán se silnou vzájmenou lineární závislostí vysvětlujícíchproměných, jejímž důsledkem je špatně podmíněná matice X}.
-Matice X zde značí matici prediktorů regresního modelu. V takovém případě je potřeba zvýšit počet pozorování nebo z modelu jeden z vysoce korelovaných prediktorů
+Korelační matice je nástroj, díky kterému lze zobrazit korelaci mezi více než dvěma páry proměnných. Matice může být zobrazená pomocí grafu. V regresní analýze
+je velmi užitečná kvůli předpokladu nezávislosti vysvětlujících proměnných. Pokud jsou při tvorbě modelu prediktory korelované,
+vzniká problém tzv. multikolinearity. Multikolinearita je spojená s regresním modelem a v \cite{hebak_regrese_1998} je popsána následovně:
+\uv{Pojem multikolinearity je velmi úzce svázán se silnou vzájemnou lineární závislostí vysvětlujících proměnných, jejímž důsledkem je špatně podmíněná matice X.}
+Matice X zde značí matici prediktorů regresního modelu. V případě multikolinearity je potřeba zvýšit počet pozorování, případně jeden z vysoce korelovaných prediktorů z modelu
 odebrat \cite{kleinbaum_logistic_2010}.
 
 \begin{figure}[H]
@@ -177,23 +166,23 @@ odebrat \cite{kleinbaum_logistic_2010}.
     \label{fig:mtcars_korelace}
 \end{figure}
 
-Graf korelační matice může mít mnoho podob. V příkladu obrázku \ref{fig:mtcars_korelace} je zobrazená korelační matice jako teplotní mapa. Z obrázku je možné pozorovat vysokou
-pozitivní korelaci mezi páry proměnných \textit{cyl}, \textit{disp} a \textit{hp}. Naopak skoro žádná korelace není mezi proměnnou \textit{qsec} a proměnnou \textit{drat}.
-Korelační matice je zároveň symetrická, jelikož korelace mezi $X$ a $Y$ je stejná jako korelace mezi $Y$ a $X$. Díky této vlastnosti je možné zobrazit pouze část 
-korelační matice pod úhlopříčkou bez ztráty jakékoliv informace.
+Graf korelační matice může mít mnoho podob. V příkladu na obrázku \ref{fig:mtcars_korelace} je zobrazená korelační matice jako teplotní mapa. Je z ní možné vypozorovat vysokou
+pozitivní korelaci mezi páry proměnných \textit{cyl}, \textit{disp} a \textit{hp}. Naopak mezi proměnnou \textit{qsec} a proměnnou \textit{drat} není téměř žádná korelace.
+Korelační matice je zároveň symetrická, jelikož korelace mezi $X$ a $Y$ je stejná jako korelace mezi $Y$ a $X$. Díky této vlastnosti je možné zobrazit pouze část korelační matice
+pod úhlopříčkou bez ztráty jakékoliv informace.
 
 \newpage
 \section{Logistická regrese}
-Logistická regrese je způsob, jak popsat vztah mezi jedním či několika prediktory a jednou binární vysvětlovanou 
+Logistická regrese je způsob, jakým lze popsat vztah mezi jedním, či několika prediktory a jednou binární vysvětlovanou 
 proměnnou. K tomu slouží spojovací funkce, která transformuje lineární kombinaci prediktorů na index $z$. V případě
-logistické regrese se tato funkce nazývá logistická a je definovaná jako
+logistické regrese se tato funkce nazývá logistickou a je definovaná jako
 
 \begin{equation}
     \label{eq:logisticka_funkce}
     f(z) = \frac{1}{1 + e^{-z}}.
 \end{equation}
 
-Obor hodnot funkce je interval $\langle 0, 1 \rangle$. Proměnná $z$ je lineární kombinace prediktorů  $X_1, X_2, ..., X_k$, 
+Obor hodnot funkce je interval $\langle 0, 1 \rangle$. Proměnná $z$ je lineární kombinací prediktorů  $X_1, X_2, ..., X_k$, 
 jejich koeficientů $\beta_1, \beta_2, ..., \beta_k$ a parametru $\alpha$.
 
 \begin{equation}
@@ -204,8 +193,8 @@ jejich koeficientů $\beta_1, \beta_2, ..., \beta_k$ a parametru $\alpha$.
     \end{split}
 \end{equation}
 
-Mějme tedy binární vysvětlovanou proměnnou $Y$, u které hodnota $1$ značí výskyt jevu. Pravděpodobnost, že jev nastane
-vzhledem k definovaným prediktorům lze zapsat jako
+Mějme tedy binární vysvětlovanou proměnnou $Y$, u které hodnota $1$ značí výskyt jevu. Pravděpodobnost, že jev
+vzhledem k definovaným prediktorům nastane, lze zapsat jako
 
 \begin{equation}
     \label{eq:pravdepodobnost_y}
@@ -215,15 +204,29 @@ vzhledem k definovaným prediktorům lze zapsat jako
 kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru \cite{kleinbaum_logistic_2010}.
 
 \subsection{Interakce mezi prediktory}
-Prediktory mohou na výslednou pravděpodobnost působit i dohromady, tzn. interakcí. Jako příklad lze uvést model, který predikuje \textit{nehodu} podle
-číselného prediktoru \textit{rychlost} a dichotomického prediktoru \textit{dálnice}. Šance na nehodu může být ovlivněná jak rychlostí, tak tím, zda je 
-řidič na dálnici. 
+Mějme logistický model, který má libovolné prediktory $x_1$ a $x_2$. Při tvorbě takového modelu se může stat, že má na výsledek vliv jak prediktor $x_1$ a prediktor
+$x_2$, tak kombinace prediktoru $x_1$ a $x_2$. Kombinace prediktorů $x_1$ a $x_2$ se nazývá \textit{interakce}. Parametr interakce je pak součet parametrů pro $x_1$ a $x_2$,
+tedy $\beta_1$ a $\beta_2$.
 
+\begin{equation}
+    \label{eq:interakce_dlouha}
+    y = \beta_0 + \beta_1*x_1 + \beta_2*x_2 + (\beta_1 + \beta_2)*(x_1*x_2)
+\end{equation}
+
+Interakci mezi prediktory $x_1$ a $x_2$ z modelu \ref{eq:interakce_dlouha} lze označit jako nový prediktor $x_3$. Poté lze říct, že prediktor $x_3$ značí interakci mezi prediktory
+$x_1$ a $x_2$.
+
+\begin{equation}
+    \label{eq:interakce}
+    y = \beta_0 + \beta_1*x_1 + \beta_2*x_2 + (\beta_1 + \beta_2)*(x_3)
+\end{equation}
+
+Interakce ovlivňuje především kategoriální proměnné, jelikož každá kategorie s interakci má poté vlastní směrnici \cite{hindls_statistika_2018}.
 
 \subsection{Interpretace parametrů}
-Parametry $\alpha$ a $\beta_i$ značí logaritmus šance. $\alpha$ je logaritmus šance v případě, že všechny prediktory
-jsou teoreticky rovné $0$. Parametr $\beta_i$ značí logaritmus šance pro prediktor $X_i$
-V případě, že všechny prediktory jsou konstantní a prediktor $X_i$ se změní o jednotku, přirozený logaritmus
+Parametry $\alpha$ a $\beta_i$ značí logaritmus šance, kde $\alpha$ je logaritmus šance v případě, že všechny prediktory
+jsou si teoreticky rovné $0$. Parametr $\beta_i$ značí logaritmus šance pro prediktor $X_i$.
+Pokud jsou všechny prediktory konstantní a prediktor $X_i$ se změní o jednotku, přirozený logaritmus
 šance se změní o $B_i$. Toto lze pozorovat například u binárních prediktorů, kdy typicky přítomnost
 daného prediktoru, značená jedničkou, změní výslednou šanci právě o odhadnutý parametr $\beta$.
 Pro přechod z přirozeného logaritmu šance na šanci lze využít vztahu
@@ -233,8 +236,8 @@ Pro přechod z přirozeného logaritmu šance na šanci lze využít vztahu
 \end{equation}
 
 Šance je podíl dvou pravděpodobností. Pokud bychom měli šanci jevu A oproti jevu B $2 : 1$, značí to, že výskyt jevu A je dvakrát pravděpodobnější než
-výskyt jevu B a jev A se vyskytuje ve $\frac{2}{3}$ případů. Šance $e^{\beta_i}$ tedy značí vztah mezi prediktorem $X_i$ a vysvětlovanou proměnnou $Y$. Pokud je
-šance kladná, značí to, že s vyšší hodnotou prediktoru $X_i$ se zvyšuje šance že $Y = 1$. Pokud je naopak nižší, pravděpodobnost se zmenšuje. Pokud je potřeba
+výskyt jevu B a že jev A se vyskytuje ve $\frac{2}{3}$ případů. Šance $e^{\beta_i}$ tedy značí vztah mezi prediktorem $X_i$ a vysvětlovanou proměnnou $Y$. Pokud je
+šance kladná, s vyšší hodnotou prediktoru $X_i$ se zvyšuje šance, že $Y = 1$. Pokud je naopak nižší, pravděpodobnost se zmenšuje. Pokud je potřeba
 interpretovat pravděpodobnost jako šanci, použije se logitová funkce
 
 \begin{equation}
@@ -242,16 +245,16 @@ interpretovat pravděpodobnost jako šanci, použije se logitová funkce
     \textit{šance jevu A} = \frac{p}{1 - p},
 \end{equation}
 
-kde $p$ je pravděpodobnost výskytu jevu A. Pokud je vhodné šanci interpretovat spíše v procentech, šanci lze převést pomocí následujícího vztahu
+kde $p$ je pravděpodobnost výskytu jevu A. Pokud je vhodné šanci interpretovat spíše v procentech, šanci lze převést pomocí následujícího vztahu:
 
 \begin{equation}
-    \textit{Pravděpodobnost jevu A} = \frac{\textit{šance jevu A}}{1 + \textit{šance jevu A}},
+    \textit{pravděpodobnost jevu A} = \frac{\textit{šance jevu A}}{1 + \textit{šance jevu A}}.
 \end{equation}
 
 \subsection{Maximální pravděpodobnost}
 Parametry logistického modelu v rovnici \ref{eq:pravdepodobnost_y} jsou pouze teoretické a je třeba je odhadnout. Již vypočtené odhady
 se proto neznačí pouze $\beta_i$, ale $\hat{\beta_i}$. Pro odhad parametrů se při logistické regresi používá metoda maximální věrohodnosti. Pro výpočet
-maximální věrohodnosti se používá věrohodnostní funkce $L(\theta)$ kde $\theta$ jsou parametry logistického modelu $\alpha, \beta_1, ..., \beta_k$.
+maximální věrohodnosti se používá věrohodnostní funkce $L(\theta)$, kde $\theta$ jsou parametry logistického modelu $\alpha, \beta_1, ..., \beta_k$.
 Pro logistickou regresi má věrohodnostní funkce tvar
 
 \begin{equation}
@@ -260,44 +263,44 @@ Pro logistickou regresi má věrohodnostní funkce tvar
 \end{equation}
 
 kde $n$ je počet pozorování a $m_1$ je počet příznivých ($Y = 1$) jevů. Funkce předpokládá, že datový soubor je seřazen tak, že prvních $m_1$ výskytů
-jsou jevy příznivé. $P(X_i)$ poté značí logistickou funkci \ref{eq:logisticka_funkce}. Pro vypočtení optimálního parametru $\beta_i$ je nutné vypočítat
+jsou jevy příznivé. $P(X_i)$ poté značí logistickou funkci uvedenou v \ref{eq:logisticka_funkce}. Pro vypočtení optimálního parametru $\beta_i$ je nutné vypočítat
 maximum funkce $L(\theta)$ vzhledem k parametru $\beta_i$. Parametr $\beta_i$ lze tedy získat derivací funkce $L(\theta)$ vzhledem k parametru $\beta_i$
-\cite{kleinbaum_logistic_2010}.
+\cite{kleinbaum_logistic_2010}, tedy
 
 \begin{equation}
-    \frac{\partial L(\theta)}{\partial \beta_i} = 0
+    \frac{\partial L(\theta)}{\partial \beta_i} = 0.
 \end{equation}
 
 \subsection{Křížová validace}
-Při tvorbě logistického modelu může dojít k takzvanému přeučení modelu. To znamená, že výsledný model je velmi přizpůsobený na data, ze kterých byl vytvořen, a nebude
+Při tvorbě logistického modelu může dojít k takzvanému přeučení modelu. To znamená, že výsledný model je velmi přizpůsobený datům, z nichž byl vytvořen, a nebude
 připravený na náhodnou variaci, která může v nových datech nastat. Z tohoto důvodu se datový soubor rozděluje na dvě podmnožiny. Jedna podmnožina, většinou zvaná
 \textit{trénovací},
-slouží k sestavení a natrénování modelu. Model se pak otestuje
-na druhé množině dat, na které nebyl natrénovaný. Druhá množina dat se většinou nazývá \textit{validační} nebo \textit{testovací}. 
-Pokud je následně model použit na \textit{testovací} množinu dat a výsledky jsou vyhodnocené např. pomocí matice záměn, jsou zachycené variace,
-na které model není připraven a lze tak objektivněji určit kvalitu modelu. Způsobů, jak datový soubor
-rozdělit, je mnoho. Existuje například $k$-fold validace, kdy se trénovací množina dat rozdělí na $k$ 
+slouží k sestavení a natrénování modelu. Model se 
+následně otestuje na druhé množině dat. Druhá množina se většinou nazývá \textit{validační} nebo \textit{testovací}. 
+Pokud je následně model použit na \textit{testovací} množinu dat a výsledky jsou vyhodnocené např. pomocí matice záměn, jsou zachyceny variace,
+na které model není připraven, a lze tak objektivněji určit jeho kvalitu. Způsobů, jak datový soubor
+rozdělit, je mnoho. Existuje například $k$-fold validace, kdy se trénovací množina dat rozdělí do $k$ 
 náhodných podmnožin. Jedna podmnožina dat se použije pro validaci a zbylých $k-1$ podmnožin se použije pro trénování.
-Celý proces se opakuje $k$ krát, tedy každá podmnožina bude právě jednou použita pro testování. Výsledné statistiky lze zprůměrovat a použít jako hodnocení
+Celý proces se opakuje $k$-krát, tedy každá podmnožina bude právě jednou použita pro testování. Výsledné statistiky lze zprůměrovat a použít jako hodnocení
 daného modelu \cite{hill_statistics_2006}.
 
 \subsection{Matice záměn}
-Matice záměn je nástroj pro vyhodnocení predikcí modelu. Matice je o velikosti $2 \times 2$. Pro potřeby logistické regrese se matice skládá ze dvou řádku a dvou sloupců.
-Ve sloupcích se nachází původní hodnoty, tedy hodnoty, které chceme předpovídat. Ve řádcích se pak nachází předpovědi z modelu.  
+Matice záměn je nástroj pro vyhodnocení predikcí modelu. Matice má velikost $2 \times 2$. Pro potřeby logistické regrese se matice skládá ze dvou řádku a dvou sloupců.
+Ve sloupcích se nacházejí původní hodnoty, tedy hodnoty, které chceme předpovídat. V řádcích se pak nacházejí předpovědi z modelu.  
 
 \begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|c|}
         \hline
-                           &   & Původní pozitivní   & Původní negativní    \\ \hline
+                           &   & původní pozitivní   & původní negativní    \\ \hline
                            &   & 1                  & 0                  \\ \hline
-        Pozitivní predikce & 1 & Skutečně pozitivní & Falešně pozitivní  \\ \hline
-        Negativní predikce & 0 & Falešně negativní  & Skutečně negativní \\ \hline
+        pozitivní predikce & 1 & skutečně pozitivní & falešně pozitivní  \\ \hline
+        negativní predikce & 0 & falešně negativní  & skutečně negativní \\ \hline
     \end{tabular}
     \caption{\label{tab:matice_zamen}Matice záměn}
 \end{table}
 
-Pro sestavení matice je potřeba množina dat, u kterých známe vysvětlovanou proměnnou. Na datech pak provedeme predikci, díky čemuž získáme predikované hodnoty. Porovnáním
+K sestavení matice je třeba množina dat, u kterých známe vysvětlovanou proměnnou. Na datech pak provedeme predikci, díky čemuž získáme predikované hodnoty. Porovnáním
 původních a predikovaných hodnot vznikne matice \ref{tab:matice_zamen}. Každá ze čtyř vnitřních buněk má vlastní označení a interpretaci:
 
 \begin{itemize}
@@ -307,57 +310,56 @@ původních a predikovaných hodnot vznikne matice \ref{tab:matice_zamen}. Každ
     \item \textbf{Falešně negativní} --- počet predikcí rovných nule, kde byla původní hodnota rovná jedné.
 \end{itemize}
 
-Z matice záměn lze následně vypočítat mnoho statistik. Pro vyhodnocení regresního modelu lze použít např. přesnost, která se vypočítá jako počet všech správných predikcí nad
-počtem všech provedených predikcí $n$.
+Z matice záměn lze následně vypočítat mnoho statistik. Pro vyhodnocení regresního modelu lze použít např. přesnost, která se vypočítá jako počet všech správných predikcí
+dělený počtem všech provedených predikcí $n$.
 
 \begin{equation}
-    \textit{Přesnost = } \frac{\text{Skutečně pozitivní} + \text{Skutečně negativní}}{n}
+    \textit{přesnost = } \frac{\text{skutečně pozitivní} + \text{skutečně negativní}}{n}
 \end{equation}
 
-
-Přesnost říká, jaké procento objektů bylo klasifikováno správně. Pokud je ovšem poměr původních pozitivních a negativních hodnot velmi nevyrovnaný,
+Přesnost udává, jaké procento objektů bylo klasifikováno správně. Pokud je ovšem poměr původních pozitivních a negativních hodnot velmi nevyrovnaný,
 tato statistika není vhodná. V případě velké nevyrovnanosti predikovaných hodnot přesnost zkresluje schopnost modelu predikovat méně zastoupenou predikovanou hodnotu. 
 Toto se může stát například v lékařství při identifikaci nemocného pacienta. Zde většinou dochází k velkému nepoměru mezi počtem nemocných a počtem zdravých.
-V takovém případě lze použít statistiku zvanou senzitivita. Ta se rovná poměru správných pozitivních predikcí a úhrnu všech pozitivních predikcí, neboli
+V takovém případě lze použít statistiku zvanou senzitivita. Ta se rovná poměru správných pozitivních predikcí a úhrnu všech pozitivních predikcí neboli
 
 \begin{equation}
-    \textit{Senzitivita = } \frac{\text{Skutečně pozitivní}}{\text{Skutečně pozitivní} + \text{Falešně pozitivní}}.
+    \textit{senzitivita = } \frac{\text{skutečně pozitivní}}{\text{skutečně pozitivní} + \text{falešně pozitivní}}.
 \end{equation}
 
 Senzitivita tedy určuje poměr správně klasifikovaných pozitivních případů a všech pozitivně klasifikovaných případů. Pokud by bylo vhodné preferovat
-spíše negativní klasifikace, tedy zdravé pacienty, lze použit statistiku zvanou specificita a je definovaná jako
+spíše negativní klasifikace, tedy zdravé pacienty, lze použít statistiku zvanou specificita, která je definovaná jako
 
 \begin{equation}
-    \textit{Specificita = } \frac{\text{Skutečně negativní}}{\text{Skutečně negativní} + \text{Falešně negativní}}.
+    \textit{specificita = } \frac{\text{skutečně negativní}}{\text{skutečně negativní} + \text{falešně negativní}}.
 \end{equation}
 
 \subsection{Testování hypotéz}
-Testování hypotéz slouží k zjištění, zda se charakteristika $\theta$ v populaci za určitých podmínek mění. Statistický hypotéza
-je definována jako předpoklad o náhodné veličině. Nulová hypotéza představuje aktuální stav veličiny a odráží současný stav.
-Značí se jako $H$ či $H_0$. Hypotéza, která se od aktuálního stavu nějakým způsobem odlišuje, se nazývá jako alternativní hypotéza
+Testování hypotéz slouží ke zjištění, zda se charakteristika $\theta$ v populaci za určitých podmínek mění. Statistická hypotéza
+je definována jako předpoklad o náhodné veličině. Nulová hypotéza představuje aktuální stav veličiny.
+Značí se jako $H$ či $H_0$. Hypotéza, jež se od aktuálního stavu nějakým způsobem odlišuje, se nazývá alternativní hypotéza
 a značí se $H_1$, popřípadě $H_A$. Nulová hypotéza $H_0$ a testovaná hypotéza $H_1$ se navzájem vylučují. Testování hypotéz je
-pak rozhodovací postup, který určí platnost právě jedné testované hypotézy. Rozhodnutí, zda platí testovaná či alternativní hypotéza,
-pak záleží na testovací kritériu $T$. Testovací kritérium $T$ je náhodná veličina se známým pravděpodobnostním rozdělením.
+pak rozhodovací postup, který určí platnost právě jedné testované hypotézy. Rozhodnutí, zda platí testovaná, či alternativní hypotéza,
+pak záleží na testovacím kritériu $T$. Testovacím kritériem $T$ je náhodná veličina se známým pravděpodobnostním rozdělením.
 
 Testovací kritérium $T$ může být přiřazeno do dvou podmnožin. První množina, zvaná obor přijetí, odpovídá množině charakteristik $\theta$
-při platné nulové hypotéze $H_0$. Druhá množina se nazývá jako kritický obor a obsahuje charakteristiky $\theta$ tak extrémní, že je 
-pravděpodobnost jejich výskytu velmi malá. Pokud testovaná charakteristika $\theta$ vypočtená z náhodného výběrů padne do oboru přijetí,
+při platné nulové hypotéze $H_0$. Druhá množina se nazývá kritický obor a obsahuje charakteristiky $\theta$ tak extrémní, že je 
+pravděpodobnost jejich výskytu velmi malá. Pokud testovaná charakteristika $\theta$ vypočtená z náhodného výběru padne do oboru přijetí,
 lze usoudit, že test neprokázal nepravdivost alternativní hypotézy. Pokud naopak padne testovací kritérium do kritického oboru, nulová
 hypotéza je zamítnutá ve prospěch hypotézy alternativní.
 
-Při zamítnutí či přijmutí alternativní hypotézy vznikají chyby dvojího typu. První typ chyby je nazýván jako hladina významnosti a značí
-se $\alpha$. Hladina významnosti je pravděpodobnost chybného přijmutí alternativní hypotézy. Platí tedy, že testovací kritérium $T$ 
+Při zamítnutí nebo přijmutí alternativní hypotézy vznikají chyby dvojího typu. První typ chyby je nazýván \textit{hladina významnosti} a značí
+se $\alpha$. \textit{Hladina významnosti} je pravděpodobnost chybného přijmutí alternativní hypotézy. Platí tedy, že testovací kritérium $T$ 
 s pravděpodobností $\alpha$ padne do kritického oboru, ačkoliv patří do oboru přijetí. Chyba druhého typu pak říká, s jakou pravděpodobnostní
-padne testovací kritérium $T$ do oboru přijetí, ačkoliv patří do kritického oboru. Chyba druhého typu se značí jako $\beta$ a je to doplněk
-hladiny významnosti, tedy $\beta = 1 - \alpha$.
+padne testovací kritérium $T$ do oboru přijetí, ačkoliv patří do kritického oboru. Chyba druhého typu se značí jako $\beta$. Jedná se o doplněk \textit{hladiny významnosti},
+tedy $\beta = 1 - \alpha$.
 
-Pro určení, zda kritická hodnota patří do oboru přijetí či do kritického oboru, slouží známé pravděpodobnostní rozdělení testovaného kritéria.
-Pokud testové kritérium patří do kritického oboru o o velikosti $\alpha$, je nulová hypotéza zamítnuta. Hladina ýznamnosti $\alpha$ lze změnit.
-S růstem hladiny významnosti se zmenšuje kritický obor a zároveň zvětšuje pravděpodobnost chyby prvního řádu.
-\cite{hebak_praktikum_2009}
+Pro určení, zda kritická hodnota patří do oboru přijetí, či do kritického oboru, slouží známé pravděpodobnostní rozdělení testovaného kritéria.
+Pokud testované kritérium patří do kritického oboru o velikosti $\alpha$, je nulová hypotéza zamítnuta. Hladinu významnosti $\alpha$ lze změnit.
+S růstem hladiny významnosti se zmenšuje kritický obor a zároveň zvětšuje pravděpodobnost chyby prvního řádu
+\cite{hebak_praktikum_2009}.
 
 \subsection{Waldův test}
-Waldův test testuje hypotézu, zda je parametr logistického regresního modelu $\beta_i$ rovný nule.
+Waldův test ověřuje hypotézu, zda je parametr logistického regresního modelu $\beta_i$ rovný nule.
 
 \begin{align}
     \begin{split}
@@ -366,14 +368,14 @@ Waldův test testuje hypotézu, zda je parametr logistického regresního modelu
     \end{split}
 \end{align}
 
-Testovací kritérium Waldova testu se vypočítá vydělením parametr $\hat{\beta_i}$ jeho standardní chybou $S_{\hat{\beta_i}}$
+Testovací kritérium Waldova testu se vypočítá vydělením parametru $\hat{\beta_i}$ jeho standardní chybou $S_{\hat{\beta_i}}$
 
 \begin{align}
     \begin{split}
-        T = \frac{\hat{\beta_i}}{S_{\hat{\beta_i}}}
+        T = \frac{\hat{\beta_i}}{S_{\hat{\beta_i}}}.
     \end{split}
 \end{align}
 
-Testovací kritérium má pravděpodobnostní rozdělení Chí-kvadrát se dvěma stupni volnosti, tedy $\chi^2$. Pokud testovací kritérium patří do 
+Testovací kritérium má pravděpodobnostní rozdělení chí-kvadrát se dvěma stupni volnosti, tedy $\chi^2$. Pokud testovací kritérium patří do 
 kritického oboru $\chi^2_\alpha$, hypotéza o nulovém parametru $\beta_i$ je zamítnuta ve prospěch alternativní hypotézy. Pokud testovací kritérium nepadne do kritického oboru,
-tedy padne do oboru přijetí, lze usoudit, že test neprokázal platnost alternativní hypotézy \cite{kleinbaum_logistic_2010}, \cite{powers_statistical_2000}
+tedy padne do oboru přijetí, lze usoudit, že test neprokázal platnost alternativní hypotézy \cite{kleinbaum_logistic_2010}, \cite{powers_statistical_2000}.
