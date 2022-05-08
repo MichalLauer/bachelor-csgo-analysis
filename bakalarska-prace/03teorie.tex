@@ -6,9 +6,8 @@ Ke každé části, která zpracovává data pomocí grafu, je přidána praktic
 \subsection{Bodový graf}
 Bodový graf slouží k zobrazení vztahu dvou kvantitativních proměnných. Zpravidla se vysvětlovaná proměnná přiřazuje k ose Y,
 zatímco proměnná vysvětlující se nachází na ose X. Vysvětlovaná (nezávislá) proměnná je ta proměnná, která má být předpovězena.
-Vysvětlující proměnná se naopak snaží vysvětlovanou proměnnou předpovědět či popsat.
-
-Díky zobrazení vysvětlované a vysvětlující proměnné lze na bodovém grafu vidět např. sílu korelace nebo vztah mezi proměnnými (např. lineární, kvadratický, logaritmický).
+Vysvětlující proměnná se naopak snaží vysvětlovanou proměnnou předpovědět či popsat. Díky zobrazení vysvětlované a vysvětlující proměnné lze na
+bodovém grafu vidět vztah mezi proměnnými (např. lineární, kvadratický, logaritmický).
   
 \begin{figure}[H]
     \centering
@@ -17,17 +16,14 @@ Díky zobrazení vysvětlované a vysvětlující proměnné lze na bodovém gra
     \label{fig:bodovy_graf_mtcars}
 \end{figure}
 
-Obrázek \ref{fig:bodovy_graf_mtcars} zobrazuje negativní korelaci mezi hmotností vozidla a mílemi ujetými za galon.
+Obrázek \ref{fig:bodovy_graf_mtcars} zobrazuje negativní lineární vztah mezi hmotností vozidla a mílemi ujetými za galon.
 
 \subsection{Sloupcový graf}
-Sloupcový graf slouží k zobrazení četnosti
-kategorií. Na jednu osu (zpravidla osu X) se položí možné kategorie. Na druhé ose je pak sledovaná statistika.
-Sledovat můžeme nejen četnost, ale i průměr či kteroukoli jinou statistiku, kterou bude možné na ose zobrazit.
-
-Nejčastěji se pomocí sloupcového grafu porovnává absolutní četnost přes kategorie. Řazení kategorií se dále odvíjí od toho, zda je
-daná proměnná ordinální, či nominální. V případě nominální proměnné se sloupce řadí podle absolutní četnosti, a to od nejvyšší po nejnižší.
-V případě ordinální proměnné se zachovává přirozené řazení. Příkladem sloupcového grafu je graf na obrázku \ref{fig:sloupcovy_graf_mtcars}, který porovnává průměrnou hrubou
-koňskou sílu s počtem válců. Ukazuje také závislost hrubé koňské síly na počtu válců.
+Sloupcový graf slouží k zobrazení četnosti kategorií. Na jednu osu (zpravidla osu X) se položí možné kategorie. Na druhé ose je pak sledovaná statistika. Je možné sledovat 
+nejen četnost, ale i průměr či kteroukoli jinou statistiku, kterou bude možné na ose zobrazit. Nejčastěji se pomocí sloupcového grafu porovnává absolutní četnost přes kategorie.
+Řazení kategorií se dále odvíjí od toho, zda je daná proměnná ordinální, či nominální. V případě nominální proměnné se sloupce řadí podle absolutní četnosti, a to od nejvyšší po
+nejnižší. V případě ordinální proměnné se zachovává přirozené řazení. Příkladem sloupcového grafu je graf na obrázku \ref{fig:sloupcovy_graf_mtcars}, který porovnává průměrnou
+hrubou koňskou sílu s počtem válců. Ukazuje také závislost hrubé koňské síly na počtu válců.
 
 \begin{figure}[H]
     \centering
@@ -38,9 +34,9 @@ koňskou sílu s počtem válců. Ukazuje také závislost hrubé koňské síly
 
 \subsection{Histogram}
 
-Histogram je speciálním typem sloupcového grafu. Hlavní rozdíl mezi nimi spočívá v tom, že zobrazuje rozdělení spojité proměnné a mezi sloupci není žádná mezera.
+Histogram je speciálním typem sloupcového grafu. Hlavní rozdíl mezi nimi spočívá v tom, že histogram zobrazuje rozdělení spojité proměnné a mezi sloupci není žádná mezera.
 K vytvoření histogramu je třeba data sloučit do skupin o určité šířce. Správný výběr počtu skupin je kritický, jelikož může velmi silně ovlivnit interpretaci dat. Pokud
-se vybere příliš malý počet skupin, data se seskupí a může se ztratit důležitý vztah. Pokud se ovšem vybere příliš vysoký počet skupin, v datech bude obtížné najít nějaký
+se vybere příliš malý počet skupin, data se příliš shluknou a může se ztratit důležitý vztah. Pokud se ovšem vybere příliš vysoký počet skupin, v datech bude obtížné najít nějaký
 obecný vztah či trend, viz obrázek \ref{fig:histogram_porovnani_mtcars}.
 
 \begin{figure}[H]
@@ -81,8 +77,8 @@ vysvětleno v \ref{eq:sturgesovo_pravidlo}.
 
 \subsection{Krabičkový graf}
 \subsubsection{Pětičíselné shrnutí}
-Pětičíselné shrnutí tvoří číselná tabulka, která pomocí pěti různých čísel shrnuje seřazenou číselnou řadu. Základním statistickým nástrojem pro
-vytvoření takové tabulky jsou kvantily. Hodnota $P$-tého percentilu označuje číslo, které rozděluje seřazenou číselnou řadu na dva intervaly. 
+Pětičíselné shrnutí je číselná tabulka, která pomocí pěti různých čísel shrnuje seřazenou číselnou řadu. Základním statistickým nástrojem pro
+vytvoření takové tabulky jsou percentily. Hodnota $P$-tého percentilu označuje číslo, které rozděluje seřazenou číselnou řadu na dva intervaly. 
 První interval obsahuje $P*100 \%$ číselné řady a druhý analogicky $(1-P)*100\,\% $. Různé hodnoty percentilů mohou mít specifičtější pojmenování a značí se $Q_P$.
 Percentil $P = 0,5$ se označuje jako medián a rozděluje seřazenou číselnou řadu na polovinu. Percentily, kde $P = 0,25$ nebo $P = 0,75$, se označují
 jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použité při tvorbě tabulky.
@@ -91,7 +87,7 @@ jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použ
     \centering
     \begin{tabular}[t]{c|c|c|c|c}
         \hline
-        $Q_{0} (Q_0)$ & $Q_{0,25} (Q_1) $ & $Q_{0,50}$ & $Q_{0,75} (Q_3)$ & $Q_{1,00}$\\
+        $Q_{0}     $ & $Q_{0,25} (Q_1) $ & $Q_{0,50}$ & $Q_{0,75} (Q_3)$ & $Q_{1}$\\
         \hline
         1,513 & 2,58125 & 3,325 & 3,61 & 5,424\\
         \hline
@@ -100,28 +96,26 @@ jako kvartily a značí se $Q_{1}$ a $Q_{3}$. Oba tyto typy kvartilů jsou použ
 \end{table}
 
 
-Příkladem pětičíselného shrnutí je tabulka \ref{tab:five-number_summary}, kde $Q_{0}$ a $Q_{1,00}$ označují minimum a maximum číselné řady. Kvartily $Q_{1}$, $Q_{2}$ (medián)
-a $Q_{3}$ jsou čísla, která rozděluji časovou řadu na čtvrtiny. V prvním případě, tedy $Q_1 = Q_{0,25}$, je 25\,\%  čísel menších než 1,513 a 75\,\%  dat větších. Pro kvantil
-$Q_3 = Q_{0,75}$ je 75\,\%  čísel menších než 3,61 a 25\,\%  větších. $Q_{0,50}$ označuje medián.
+Příkladem pětičíselného shrnutí je tabulka \ref{tab:five-number_summary}, kde $Q_{0}$ a $Q_{1}$ označují minimum a maximum číselné řady. Kvartily $Q_{1}$, $Q_{2}$ (medián)
+a $Q_{3}$ jsou čísla, která rozděluji číselnou řadu na čtvrtiny. V prvním případě, tedy $Q_1 = Q_{0,25}$, je 25\,\%  čísel menších než 1,513 a 75\,\%  dat větších. Pro kvantil
+$Q_3 = Q_{0,75}$ je 75\,\%  čísel menších než 3,61 a 25\,\%  větších. $Q_{0,50}$ označuje medián a 50 \% dat je nad 3,325 a 50 \% dat pod 3,325.
 
 \subsubsection{Krabičkový graf}
-Krabičkový graf je grafické zobrazení a rozšíření pětičíselného shrnutí. Kromě grafického zobrazení pěti kvantilů  zobrazuje odlehlé a extrémní hodnoty.
+Krabičkový graf je grafické zobrazení a rozšíření pětičíselného shrnutí. Kromě grafického zobrazení pěti kvartilů  zobrazuje odlehlé a extrémní hodnoty.
 V krabičkovém grafu se také nachází obdélník, který ukazuje mezikvartilové rozpětí (IQR), tedy prostředních 50\,\% dat. V obdélníku se nachází černá čára značící medián.
 Z prostředního obdélníku vedou oběma směry čáry, jejichž konce značí hranici pro odlehlá pozorování. Pokud datový soubor neobsahuje žádná odlehlá pozorování, konec těchto čar
 značí minimum a maximum datového souboru.
 Pozorování, která jsou buď větší než horní hranice, nebo menší než spodní hranice, označujeme jako odlehlá nebo extrémní. 
 
 \begin{align*}
-    \textit{Spodní hranice } &= Q_1 - 1,5 * IQR \\
-    \textit{Horní hranice } &= Q_3 + 1,5 * IQR
+    \textit{Spodní hranice } &= Q_1 - 1,5 * \textit{IQR} \\
+    \textit{Horní hranice } &= Q_3 + 1,5 * \textit{IQR}
 \end{align*}
 
-Hodnoty, které spadají do intervalu $\langle Q_1 - 1,5IQR; Q_1 - 3IQR\rangle$ a $\langle Q_3 + 1,5IQR, Q_3 + 3IQR \rangle$ se nazývají odlehlé.
-Hodnoty, které leží mimo tento vztah, tedy hodnoty menší než $Q_1 - 3IQR$ nebo větší než $Q_3 + 3IQR$, se nazývají hodnoty extrémní.
-
-Odlehlá pozorování se v krabičkovém grafu většinou značí kolečkem, zatímco pozorování extrémní hvězdičkou.
-
-Díky grafickému zobrazení lze snadno porovnávat rozdělení jedné vysvětlované kvantitativní proměnné tříděné přes několik kategorií.
+Hodnoty, které spadají do intervalu $\langle Q_1 - 1,5*\textit{IQR}; Q_1 - 3*\textit{IQR}\rangle$ a $\langle Q_3 + 1,5*\textit{IQR}, Q_3 + 3*\textit{IQR} \rangle$ se nazývají
+odlehlé. Hodnoty, které leží mimo tento vztah, tedy hodnoty menší než $Q_1 - 3*\textit{IQR}$ nebo větší než $Q_3 + 3*\textit{IQR}$, se nazývají hodnoty extrémní. Odlehlá
+pozorování se v krabičkovém grafu většinou značí kolečkem, zatímco pozorování extrémní hvězdičkou. Díky grafickému zobrazení lze snadno porovnávat rozdělení jedné
+vysvětlované kvantitativní proměnné tříděné přes několik kategorií.
 
 \begin{figure}[H]
     \centering
@@ -131,8 +125,7 @@ Díky grafickému zobrazení lze snadno porovnávat rozdělení jedné vysvětlo
 \end{figure}
 
 Průhledná kolečka v obrázku \ref{fig:krabickovy_graf_mtcars} v kategorii osmi válců značí odlehlé hodnoty, t.j. hodnoty
-v intervalu $\langle Q_3 + 1,5IQR, Q_3 + 3IQR \rangle$.
-
+v intervalu $\langle Q_3 + 1,*\textit{IQR}, Q_3 + *\textit{IQR} \rangle$.
 
 \subsection{Korelační matice}
 \subsubsection{Korelace}
@@ -147,7 +140,7 @@ r = \frac{n \sum_{i=1}^n x_i y_i - \sum_{i=1}^n x_i \sum_{i=1}^n y_i}
 pak značí směr vztahu, tedy zda proměnná $X$ s růstem proměnné $Y$ klesá, či stoupá. Pokud je korelace záporná, tedy $r < 0$, s růstem jedné proměnné klesá proměnná druhá.
 Naopak při kladné korelaci, tedy $r > 0$, s růstem jedné proměnné roste i druhá.
 
-Pokud korelace $r$ vychází kolem nuly, lineární závislost mezi proměnnou $X$ a $Y$ neexistuje. Důležité je také podotknout, že korelace neznamená kauzalitu. Pokud
+Pokud korelace $r$ vychází kolem nuly, lineární závislost mezi proměnnými $X$ a $Y$ neexistuje. Důležité je také podotknout, že korelace neznamená kauzalitu. Pokud
 existuje kladná korelace mezi proměnnou $X$ a $Y$, neznamená to, že růst jedné proměnné způsobil růst druhé proměnné.  
 
 
@@ -188,8 +181,8 @@ jejich koeficientů $\beta_1, \beta_2, ..., \beta_k$ a parametru $\alpha$.
 \begin{equation}
     \label{eq:linearni_kombinace_z}
     \begin{split}
-        z &= \alpha + \beta_1 X_1 + ... + \beta_2 X_2 +\beta_k X_k \\
-          &= \alpha + \sum_{i=1}^k \beta_i X_i
+        z &= \beta_0 + \beta_1 X_1 + ... + \beta_2 X_2 +\beta_k X_k \\
+          &= \beta_0 + \sum_{i=1}^k \beta_i X_i
     \end{split}
 \end{equation}
 
@@ -201,7 +194,7 @@ vzhledem k definovaným prediktorům nastane, lze zapsat jako
     P(Y = 1 \mid X_1, X_2, ..., X_k) = \frac{1}{1 + e^{- \left( \alpha + \sum_{i=1}^k \beta_i X_i \right) }},
 \end{equation}
 
-kde $\alpha$ a $\beta_i$ jsou parametry odhadnuté z datového souboru \cite{kleinbaum_logistic_2010}.
+kde $\beta_0$ a $\beta_i$ jsou parametry odhadnuté z datového souboru \cite{kleinbaum_logistic_2010}.
 
 \subsection{Interakce mezi prediktory}
 Mějme logistický model, který má libovolné prediktory $x_1$ a $x_2$. Při tvorbě takového modelu se může stat, že má na výsledek vliv jak prediktor $x_1$ a prediktor
@@ -224,38 +217,37 @@ $x_1$ a $x_2$.
 Interakce ovlivňuje především kategoriální proměnné, jelikož každá kategorie s interakci má poté vlastní směrnici \cite{hindls_statistika_2018}.
 
 \subsection{Interpretace parametrů}
-Parametry $\alpha$ a $\beta_i$ značí logaritmus šance, kde $\alpha$ je logaritmus šance v případě, že všechny prediktory
-jsou si teoreticky rovné $0$. Parametr $\beta_i$ značí logaritmus šance pro prediktor $X_i$.
-Pokud jsou všechny prediktory konstantní a prediktor $X_i$ se změní o jednotku, přirozený logaritmus
-šance se změní o $B_i$. Toto lze pozorovat například u binárních prediktorů, kdy typicky přítomnost
-daného prediktoru, značená jedničkou, změní výslednou šanci právě o odhadnutý parametr $\beta$.
-Pro přechod z přirozeného logaritmu šance na šanci lze využít vztahu
+Parametry $\beta$ značí logaritmus šance, kde $\beta_0$ je logaritmus šance v případě, že všechny prediktory jsou si teoreticky rovné $0$. Parametr $\beta_i$ značí logaritmus
+šance pro prediktor $X_i$. Pokud jsou všechny prediktory konstantní a prediktor $x_i$ se změní o jednotku, přirozený logaritmus šance se změní o $\beta_i$. Toto lze pozorovat
+například u binárních prediktorů, kdy typicky přítomnost daného prediktoru, značená jedničkou, změní výslednou šanci právě o odhadnutý parametr $\beta$. Pro přechod z přirozeného
+logaritmu šance na šanci lze využít vztahu
 
 \begin{equation}
 \textit{šance } = e^{\beta_i}.
 \end{equation}
 
 Šance je podíl dvou pravděpodobností. Pokud bychom měli šanci jevu A oproti jevu B $2 : 1$, značí to, že výskyt jevu A je dvakrát pravděpodobnější než
-výskyt jevu B a že jev A se vyskytuje ve $\frac{2}{3}$ případů. Šance $e^{\beta_i}$ tedy značí vztah mezi prediktorem $X_i$ a vysvětlovanou proměnnou $Y$. Pokud je
-šance kladná, s vyšší hodnotou prediktoru $X_i$ se zvyšuje šance, že $Y = 1$. Pokud je naopak nižší, pravděpodobnost se zmenšuje. Pokud je potřeba
-interpretovat pravděpodobnost jako šanci, použije se logitová funkce
+výskyt jevu B a že jev A se vyskytuje ve $\frac{2}{3}$ případů. Šance $e^{\beta_i}$ tedy značí vztah mezi prediktorem $x_i$ a vysvětlovanou proměnnou $Y$. Pokud je
+šance kladná, s vyšší hodnotou prediktoru $x_i$ se zvyšuje šance, že $Y = 1$. Pokud je vhodné šanci interpretovat jako pravděpodobnost, šanci lze převést pomocí
+následujícího vztahu:
+
+\begin{equation}
+    \textit{pravděpodobnost jevu A} = \frac{\textit{šance jevu A}}{1 + \textit{šance jevu A}}.
+\end{equation}
+
+Pokud je potřeba interpretovat pravděpodobnost jako šanci, použije se logitová funkce
 
 \begin{equation}
     \label{eq:logitova_funkce}
     \textit{šance jevu A} = \frac{p}{1 - p},
 \end{equation}
 
-kde $p$ je pravděpodobnost výskytu jevu A. Pokud je vhodné šanci interpretovat spíše v procentech, šanci lze převést pomocí následujícího vztahu:
-
-\begin{equation}
-    \textit{pravděpodobnost jevu A} = \frac{\textit{šance jevu A}}{1 + \textit{šance jevu A}}.
-\end{equation}
+kde $p$ je pravděpodobnost výskytu jevu A.
 
 \subsection{Maximální pravděpodobnost}
-Parametry logistického modelu v rovnici \ref{eq:pravdepodobnost_y} jsou pouze teoretické a je třeba je odhadnout. Již vypočtené odhady
-se proto neznačí pouze $\beta_i$, ale $\hat{\beta_i}$. Pro odhad parametrů se při logistické regresi používá metoda maximální věrohodnosti. Pro výpočet
-maximální věrohodnosti se používá věrohodnostní funkce $L(\theta)$, kde $\theta$ jsou parametry logistického modelu $\alpha, \beta_1, ..., \beta_k$.
-Pro logistickou regresi má věrohodnostní funkce tvar
+Parametry logistického modelu v rovnici \ref{eq:pravdepodobnost_y} jsou pouze teoretické a je třeba je odhadnout. Pro odhad parametrů se při logistické regresi používá metoda
+maximální věrohodnosti. Pro výpočet maximální věrohodnosti se používá věrohodnostní funkce $L(\theta)$, kde $\theta$ jsou parametry logistického modelu
+$\beta_0, \beta_1, ..., \beta_k$. Pro logistickou regresi má věrohodnostní funkce tvar
 
 \begin{equation}
     \label{eq:pravdepodobnostni_fce}
@@ -320,7 +312,7 @@ dělený počtem všech provedených predikcí $n$.
 Přesnost udává, jaké procento objektů bylo klasifikováno správně. Pokud je ovšem poměr původních pozitivních a negativních hodnot velmi nevyrovnaný,
 tato statistika není vhodná. V případě velké nevyrovnanosti predikovaných hodnot přesnost zkresluje schopnost modelu predikovat méně zastoupenou predikovanou hodnotu. 
 Toto se může stát například v lékařství při identifikaci nemocného pacienta. Zde většinou dochází k velkému nepoměru mezi počtem nemocných a počtem zdravých.
-V takovém případě lze použít statistiku zvanou senzitivita. Ta se rovná poměru správných pozitivních predikcí a úhrnu všech pozitivních predikcí neboli
+V takovém případě lze použít statistiku zvanou senzitivita. Ta se rovná poměru správných pozitivních predikcí a úhrnu všech pozitivních predikcí, neboli
 
 \begin{equation}
     \textit{senzitivita = } \frac{\text{skutečně pozitivní}}{\text{skutečně pozitivní} + \text{falešně pozitivní}}.
@@ -368,7 +360,7 @@ Waldův test ověřuje hypotézu, zda je parametr logistického regresního mode
     \end{split}
 \end{align}
 
-Testovací kritérium Waldova testu se vypočítá vydělením parametru $\hat{\beta_i}$ jeho standardní chybou $S_{\hat{\beta_i}}$
+Testovací kritérium Waldova testu se vypočítá odhadnutého vydělením parametru $\beta_i$ jeho standardní chybou $S_{\beta_i}$
 
 \begin{align}
     \begin{split}

@@ -44,23 +44,20 @@ g
 # Porovnání histogramů
 ```{r histogram_porovnani_mtcars.png}
 hg <- \(bins) {
-  width <- (max(mtcars$mpg) - min(mtcars$mpg))/bins
-  width <- ceiling(width)
   mtcars |>
     ggplot(aes(x = mpg)) +
-    geom_histogram(binwidth = width,
-                 fill = "grey",
-                 color = "black") +
+    geom_histogram(bins = bins,
+                   fill = "grey",
+                   color = "black") +
     theme(panel.grid.major.x = element_blank(),
           plot.title = element_text(size = 10),
           plot.subtitle  = element_text(size = 8),
           axis.title.x = element_text(size = 8),
           axis.title.y = element_text(size = 8)
-          ) +
+    ) +
     labs(
       title = "Histogram míle za galon",
-      subtitle = paste0("Počet skupin: ", bins, ", ",
-                        "Šířka skupiny: ", round(width, 3)),
+      subtitle = paste0("Počet skupin: ", bins),
       caption = "Henderson and Velleman (1981)",
       x = "Míle za galon",
       y = "Absolutní četnost"
@@ -73,9 +70,9 @@ h3 <- hg(15)
 h4 <- hg(25)
 
 g <- arrangeGrob(h1 + labs(caption = ""),
-                  h2 + labs(caption = ""),
-                  h3 + labs(caption = ""),
-                  h4, nrow = 2)
+                 h2 + labs(caption = ""),
+                 h3 + labs(caption = ""),
+                 h4, nrow = 2)
 
 save_bc_picture(.graph = g, 
                 .file = "histogram_porovnani_mtcars.png")
@@ -95,13 +92,13 @@ g <- mtcars |>
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank()) +
   labs(
-      title = "Histogram míle za galon",
-      subtitle = paste0("Počet skupin: ", bins, ", ",
-                        "Šířka skupiny: ", round(width, 3)),
-      caption = "Henderson and Velleman (1981)",
-      x = "Míle za galon",
-      y = "Absolutní četnost"
-    )
+    title = "Histogram míle za galon",
+    subtitle = paste0("Počet skupin: ", bins, ", ",
+                      "Šířka skupiny: ", round(width, 3)),
+    caption = "Henderson and Velleman (1981)",
+    x = "Míle za galon",
+    y = "Absolutní četnost"
+  )
 
 save_bc_picture(.graph = g, 
                 .file = "histogram_mtcars_sturges.png")
@@ -124,7 +121,7 @@ mtcars |>
       align = 'c',
       position = 'H',
       escape = F,
-      ) |>
+  ) |>
   writeLines()
 ```
 
