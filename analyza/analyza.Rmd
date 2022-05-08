@@ -41,6 +41,10 @@ theme_set(theme_minimal() +
             theme(
               plot.caption = element_text(face = "italic")
             ))
+
+sapply(list.files("R", pattern = ".R$",
+                  full.names = T, recursive = T), source) |>
+  invisible()
 ```
 
 ## Globální proměnné
@@ -203,7 +207,8 @@ data |>
     .file = "data_spojena.tex",
     .cap = "Příklad záznamu z transformovaného datového souboru results.csv",
     .lab = NA,
-    .scale = 1
+    .scale = 0.88,
+    .rot = T
   )
 ```
 
@@ -237,7 +242,8 @@ data.aggregated |>
     .file = "data_agregovana.tex",
     .cap = "Agregovaná data pro týmy za zápas a mapu",
     .lab = NA,
-    .scale = 0.5
+    .scale = 0.83,
+    .rot = T
   )
 ```
 
@@ -501,7 +507,7 @@ m12 <-
 
 save_bc_table(
   .tibble = m12,
-  .file = "Mirage_Vertigo_porovnani.text",
+  .file = "Mirage_Vertigo_porovnani.tex",
   .cap = "Porovnání statistik pro model hráčů na mapě Mirage a Vertigo",
   .lab = NA
 )
@@ -812,7 +818,7 @@ m123 <-
 
 save_bc_table(
   .tibble = m123,
-  .file = "Tymy_porovnani.text",
+  .file = "Tymy_porovnani.tex",
   .cap = "Porovnání statistik pro týmové modely",
   .lab = NA
 )
